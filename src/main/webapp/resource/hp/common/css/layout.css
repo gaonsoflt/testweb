@@ -1,0 +1,106 @@
+
+/* ---------------------------------------------------------------------------------------------------------------------------
+    
+                                    2016.04.19   가온소프트(주) 신기술개발팀 대리 이희웅 작성 
+									        경우에 따라 소스의 수정은 자유롭게 사용 가능 하나
+									                       무단복제 및 배포를 금지합니다.
+
+--------------------------------------------------------------------------------------------------------------------------- */
+
+@charset "utf-8";
+
+.skip_nav{display:none;}
+
+.wrap{position:relative; width:100%;}
+
+header{width:100%; border-bottom:solid 5px #005eb6;  letter-spacing:-0.5px;}
+nav{width:100%; text-align:center; display:block;}
+nav ul{padding:15px 0 0 0;}
+nav ul li{display:inline-block;}
+nav ul li a{font-size:16px; padding:0 35px; font-weight:bold;}
+nav h2{display:none;}
+
+.header_area{overflow:hidden; width:1180px; margin:0 auto;}
+.logo_area{float:left; padding:24px 0 24px 0;}
+.navi_area{float:left; width:70%;}
+
+h1.gti{text-indent:-999999px; background:url('../images/main/img_tl_logo.jpg')no-repeat; width:158px; height:56px; float:left; margin:0 30px 0 0;}
+p.cti{text-indent:-999999px; background:url('../images/main/img_tl_logo2.jpg')no-repeat 0 20px; width:164px; height:56px; float:left;}
+.gnb{width:100%; text-align:right; padding:22px 0 0 0;}
+.gnb a{color:#b8b8b8;}
+.gnb span{color:#b8b8b8;}
+
+article.main{width:100%; position:relative; background:#f4f4f4;}
+.main_visual{width:1521px; margin:0 auto;}
+.main_visual>.visual_img{margin:0 auto; width:1521px;}
+.main_visual>.visual_text{position:absolute; z-index:15; top:110px; left:-590px; margin:0 50%;}
+
+.visual_area{background:#f4f4f4;}
+
+.sub_visual{width:1521px; margin:0 auto; position:relative;}
+.svisual_text{width:1180px; margin:0 50%; left:-590px; position:absolute; color:#ffffff; background:url('../images/sub/icon_sub_cate01.png')no-repeat 20px 45px; padding:45px 0 0 115px;}
+.svisual_text>h2.cat01{ font-size:35px; font-weight:normal;}
+.msnb{position:absolute; bottom:0; width:100%; width:1180px; margin:0 50%; left:-590px; background:#424f60; overflow:hidden;}
+.msnb ul li{float:left;}
+.msnb ul li a{display:block; padding:20px 22px; color:#ffffff;}
+.msnb ul li a:hover{background:#ffffff; color:#282828; text-decoration:none;}
+.msnb ul li a.on{background:#ffffff; color:#282828;}
+
+section.container{position:absolute; z-index:20; width:1180px; margin:0 50%; left:-590px; top:500px;}
+footer{width:100%; border-top:solid 1px #e4e4e4; margin:350px 0 0 0;}
+.footer_btn{width:1180px; margin:0 auto; overflow:hidden;}
+.footer_btn ul{}
+.footer_btn ul li{float:left;}
+.footer_btn ul li a{display:inline-block; padding:20px 40px 20px 0; font-size:16px; color:#575757;}
+.select_site{float:right; margin:20px 0 0 0;}
+.select_site>select{padding:3px 0 3px 5px; width:150px; font-size:12px; outline:none; }
+.copyright{background:#ededed;}
+.copy_logo{width:1180px; margin:0 auto; overflow:hidden;}
+.copy_logo>h2.copy_glogo{float:left; margin:30px 30px 100px 0;}
+.copy_logo>h2.copy_city{float:left; margin:45px 80px 0 0;}
+.copy_logo>p.copy_tx{float:left; margin:45px 0 0 0;}
+
+
+.row{width:100%; overflow:hidden;}
+.col{float:left;}
+.srow{clear:both; overflow:hidden;}
+.srow a{color:#ffffff;}
+.srow a dl{letter-spacing:-2px;}
+.srow a dl dt{font-size:20px; padding:27px 0 0 30px; font-weight:bold; line-height:26px;}
+.srow a dl dt span{font-weight:normal;}
+.srow a dl dd{padding:20px 0 0 30px;}
+
+.br{
+background:#ffffff;
+-webkit-border-radius:10px; 
+-moz-border-radius:10px; 
+border-radius:10px; 
+}
+
+.notice{margin:0 0 10px 0; overflow:hidden;}
+.notice h3.ct{float:left; padding:22px; font-size:17px; color:#000000; font-weight:bold;}
+.notice p{float:left; padding:22px; font-size:15px; color:#363636;}
+.notice span{display:block; float:right;  padding:22px; font-size:17px;}
+
+.ban01{margin:0 10px 0 0; position:relative;}
+.ban01 h3.ct{padding:15px 0 30px 20px;}
+.ban_btnarea{position:absolute; top:15px; right:20px;}
+
+.mban01{background:url('../images/main/bg_mid_ban01.png')no-repeat; width:229px; height:260px; float:left;}
+.mban02{background:url('../images/main/bg_mid_ban02.png')no-repeat; width:229px; height:260px; float:left; margin:0 10px;}
+.mban03{background:url('../images/main/bg_mid_ban03.png')no-repeat; width:229px; height:260px; float:left;}
+
+.mcha01{float:left; padding:25px 0 0 10px;}
+.mcha01>h3{padding:0 0 10px 0;}
+
+.scontainer{position:static; width:1180px; margin:0 auto;}
+.section_header{overflow:hidden; margin:100px 0 0 0;}
+.shl{float:left;}
+h3.conti{font-size:44px;}
+.navi{font-size:16px; width:100%;}
+.navi span{padding:0 10px;}
+.scb{float:right; overflow:hidden;}
+.scb ul li{float:left; padding:0 15px; font-size:16px;} 
+.scb ul li img{padding:0 5px 0 0;}
+
+.section_body{margin:100px 0 0 0;}

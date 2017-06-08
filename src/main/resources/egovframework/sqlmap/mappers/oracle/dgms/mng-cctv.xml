@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.MngCctvMapper">
+
+    <select id="selectMngCctvInfo" parameterType="hashMap" resultType="hashMap">
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (
+					SELECT
+					  CCTV_SEQ,
+					  AREA_ID,
+					  CCTV_NM,
+					  CCTV_URL,
+					  LATITUDE,
+					  LONGITUDE
+					FROM TB_CCTV_INFO
+					WHERE 1=1
+				        <if test="G_AreaIdVal != null">
+				          AND REPLACE(AREA_ID, 0, '') LIKE '%'||REPLACE(#{G_AreaIdVal}, 0, '')||'%'
+				        </if>  
+                     ORDER BY AREA_ID, CCTV_NM
+                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select>
+    
+  
+    <select id="selectMngCctvInfoTot" parameterType="hashMap" resultType="int">
+		SELECT COUNT(*) 
+		FROM TB_CCTV_INFO
+		WHERE 1=1
+	       <if test="G_AreaIdVal != null">
+	         AND REPLACE(AREA_ID, 0, '') LIKE '%'||REPLACE(#{G_AreaIdVal}, 0, '')||'%'
+	       </if>   
+    </select> 
+    
+    
+    <insert id="insertMngCctvInfo" >
+	    INSERT INTO TB_CCTV_INFO
+	      (	  CCTV_SEQ,
+			  AREA_ID,
+			  CCTV_NM,
+			  CCTV_URL,
+			  LATITUDE,
+			  LONGITUDE
+	      )
+	    VALUES
+	      (
+	      	#{CCTV_SEQ      ,  jdbcType=VARCHAR},
+	      	#{AREA_ID       ,  jdbcType=VARCHAR},
+			#{CCTV_NM       ,  jdbcType=VARCHAR},
+			#{CCTV_URL      ,  jdbcType=VARCHAR},
+			#{LATITUDE      ,  jdbcType=VARCHAR},
+			#{LONGITUDE     ,  jdbcType=VARCHAR} 
+	       ) 
+	</insert>
+ 
+	<update id="updateMngCctvInfo" >
+    UPDATE TB_CCTV_INFO
+       SET 
+     	  AREA_ID      = #{AREA_ID       ,  jdbcType=VARCHAR},
+		  CCTV_NM      = #{CCTV_NM       ,  jdbcType=VARCHAR},
+		  CCTV_URL     = #{CCTV_URL      ,  jdbcType=VARCHAR},
+		  LATITUDE     = #{LATITUDE      ,  jdbcType=VARCHAR},
+		  LONGITUDE    = #{LONGITUDE     ,  jdbcType=VARCHAR}
+     WHERE CCTV_SEQ = #{CCTV_SEQ}
+	</update>
+	
+	
+    <update id="deleteMngCctvInfo" >
+	    DELETE FROM TB_CCTV_INFO
+		 WHERE CCTV_SEQ = #{CCTV_SEQ}
+    </update>
+	
+       <!-- 
+	<update id="updateMngPassInfo" >
+    UPDATE TB_USER_INFO
+       SET 
+			LOGIN_PWD   = #{LOGIN_PWD     ,  jdbcType=VARCHAR}
+     WHERE USER_SEQ = #{USER_SEQ}
+	</update>
+	 
+	     -->
+
+<!--     <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngUserInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

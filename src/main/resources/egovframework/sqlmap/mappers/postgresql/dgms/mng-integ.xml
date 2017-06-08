@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.MngIntegMapper">
+
+    <select id="selectMngIntegDetailInfoJsonp" parameterType="hashMap" resultType="hashMap">
+		<![CDATA[
+		SELECT *
+		FROM (
+			SELECT 	ROWNUM RNUM,
+					A.*
+			FROM (
+				SELECT	USER_NM,
+				        USER_ID,
+				        AREA_ID,
+				        USER_TYPE,
+				        DTC,
+				        MEDC,
+				        CEIL((MEDC/DTC*100)) AS MEDC_P,
+				        BLDPRS,
+				        CEIL((BLDPRS/DTC*100)) AS BLDPRS_P,
+				        ECG,
+				        CEIL((ECG/DTC*100)) AS ECG_P
+				FROM(
+				    SELECT	A.USER_NM, 
+				           	A.USER_ID,
+				           	A.AREA_ID,
+				           	A.USER_TYPE,
+				           (CASE WHEN MEDC IS NULL THEN 0 ELSE MEDC END) AS MEDC,
+				           (CASE WHEN BLDPRS IS NULL THEN 0 ELSE BLDPRS END) AS BLDPRS,
+				           (CASE WHEN ECG IS NULL THEN 0 ELSE ECG END) AS ECG,
+				           TO_NUMBER(TO_DATE(REPLACE(#{todate}, '-',''), 'YYYYMMDD') - TO_DATE(REPLACE(#{fromdate}, '-',''), 'YYYYMMDD'))+1 AS DTC
+				    FROM TB_USER_INFO A
+				
+				    LEFT OUTER JOIN
+				        (SELECT CRE_USR, COUNT(*) AS MEDC
+				        FROM TB_TAKE_MEDC_IF
+				        WHERE #{fromdate} <=TO_CHAR(CRE_DT, 'YYYY-MM-DD') AND TO_CHAR(CRE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY CRE_USR) B
+				    ON A.USER_ID = B.CRE_USR
+				
+				    LEFT OUTER JOIN 
+				        (SELECT USER_ID, COUNT(*) BLDPRS
+				        FROM TB_BLDPRS_MEASURE_IF
+				        WHERE #{fromdate} <=TO_CHAR(CRE_DT, 'YYYY-MM-DD') AND TO_CHAR(CRE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY USER_ID) C
+				    ON A.USER_ID = C.USER_ID
+				
+				    LEFT OUTER JOIN
+				        (SELECT USER_ID, COUNT(*) ECG
+				        FROM TB_ECG_MEASURE_IF
+				        WHERE #{fromdate} <=TO_CHAR(MEASURE_DT, 'YYYY-MM-DD') AND TO_CHAR(MEASURE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY USER_ID) D
+				    ON A.USER_ID = D.USER_ID 
+				    
+					WHERE USER_TYPE = '100746'
+					ORDER BY USER_NM ASC
+					) 
+				) A ]]>
+			WHERE 1=1
+		<if test="percent != null and percent neq ''">
+			<if test="item eq 'MEDC'">
+			<![CDATA[
+				AND MEDC_P <= #{percent}
+			]]>
+			</if>
+			<if test="item eq 'BLDPRS'">
+			<![CDATA[
+				AND BLDPRS_P <= #{percent}
+			]]>
+			</if>
+			<if test="item eq 'ECG'">
+			<![CDATA[
+				AND ECG_P <= #{percent}
+			]]>
+			</if>
+		</if>
+		<![CDATA[
+		) A
+        LEFT OUTER JOIN TB_CODE_MASTER B 
+        ON A.AREA_ID = B.CD_ID
+		WHERE 1=1 
+	 	]]>
+		<if test="AREA_ID != null">
+	        AND B.CATGR = '100703'  
+                  AND (   CD = #{AREA_ID}
+                       OR CD_ID LIKE REPLACE((SELECT CD_ID FROM TB_CODE_MASTER WHERE CATGR='100703' AND CD=#{AREA_ID}), '00000000', '')||'%'
+                      )
+		</if> 
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND RNUM <= #{PAGE} * #{PAGESIZE}
+		]]>
+		</if>
+    </select> 
+    
+		<!-- <if test='user_id != null'>
+		    AND USER_ID = #{user_id}
+		</if> -->
+    
+     <select id="selectMngIntegInfoTot" parameterType="hashMap"  resultType="int">
+		<![CDATA[
+		SELECT count(*)
+		FROM (
+			SELECT 	ROWNUM RNUM,
+					A.*
+			FROM (
+				SELECT	USER_NM,
+				        USER_ID,
+				        AREA_ID,
+				        USER_TYPE,
+				        DTC,
+				        MEDC,
+				        CEIL((MEDC/DTC*100)) AS MEDC_P,
+				        BLDPRS,
+				        CEIL((BLDPRS/DTC*100)) AS BLDPRS_P,
+				        ECG,
+				        CEIL((ECG/DTC*100)) AS ECG_P
+				FROM(
+				    SELECT	A.USER_NM, 
+				           	A.USER_ID,
+				           	A.AREA_ID,
+				           	A.USER_TYPE,
+				           (CASE WHEN MEDC IS NULL THEN 0 ELSE MEDC END) AS MEDC,
+				           (CASE WHEN BLDPRS IS NULL THEN 0 ELSE BLDPRS END) AS BLDPRS,
+				           (CASE WHEN ECG IS NULL THEN 0 ELSE ECG END) AS ECG,
+				           TO_NUMBER(TO_DATE(REPLACE(#{todate}, '-',''), 'YYYYMMDD') - TO_DATE(REPLACE(#{fromdate}, '-',''), 'YYYYMMDD'))+1 AS DTC
+				    FROM TB_USER_INFO A
+				
+				    LEFT OUTER JOIN
+				        (SELECT CRE_USR, COUNT(*) AS MEDC
+				        FROM TB_TAKE_MEDC_IF
+				        WHERE #{fromdate} <=TO_CHAR(CRE_DT, 'YYYY-MM-DD') AND TO_CHAR(CRE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY CRE_USR) B
+				    ON A.USER_ID = B.CRE_USR
+				
+				    LEFT OUTER JOIN 
+				        (SELECT USER_ID, COUNT(*) BLDPRS
+				        FROM TB_BLDPRS_MEASURE_IF
+				        WHERE #{fromdate} <=TO_CHAR(CRE_DT, 'YYYY-MM-DD') AND TO_CHAR(CRE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY USER_ID) C
+				    ON A.USER_ID = C.USER_ID
+				
+				    LEFT OUTER JOIN
+				        (SELECT USER_ID, COUNT(*) ECG
+				        FROM TB_ECG_MEASURE_IF
+				        WHERE #{fromdate} <=TO_CHAR(MEASURE_DT, 'YYYY-MM-DD') AND TO_CHAR(MEASURE_DT, 'YYYY-MM-DD') <= #{todate}
+				        GROUP BY USER_ID) D
+				    ON A.USER_ID = D.USER_ID 
+				    
+					WHERE USER_TYPE = '100746'
+					ORDER BY USER_NM ASC
+					) 
+				) A ]]>
+			WHERE 1=1
+		<if test="percent != null and percent neq ''">
+			<if test="item eq 'MEDC'">
+			<![CDATA[
+				AND MEDC_P <= #{percent}
+			]]>
+			</if>
+			<if test="item eq 'BLDPRS'">
+			<![CDATA[
+				AND BLDPRS_P <= #{percent}
+			]]>
+			</if>
+			<if test="item eq 'ECG'">
+			<![CDATA[
+				AND ECG_P <= #{percent}
+			]]>
+			</if>
+		</if>
+		<![CDATA[
+		) A
+        LEFT OUTER JOIN TB_CODE_MASTER B 
+        ON A.AREA_ID = B.CD_ID
+		WHERE 1=1 
+	 	]]>
+		<if test="AREA_ID != null">
+	        AND B.CATGR = '100703'  
+                  AND (   CD = #{AREA_ID}
+                       OR CD_ID LIKE REPLACE((SELECT CD_ID FROM TB_CODE_MASTER WHERE CATGR='100703' AND CD=#{AREA_ID}), '00000000', '')||'%'
+                      )
+		</if>  
+	</select>
+	
+    <!-- 
+    <select id="selectMng IntegInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT RENT_USE_SEQ
+						      ,RENT_SEQ
+						      ,VISITER_ID
+						      ,VISIT_DT
+						      ,DECODE(EDU_YN,'0','false','true') EDU_YN
+						      ,DECODE(EQUIP_USE_YN,'0','false','true') EQUIP_USE_YN
+						      ,REMARK
+						      ,CRE_USR
+						      ,CRE_DT
+						      ,MOD_USR
+						      ,MOD_DT
+						  FROM TB_RENT_USE
+	                     WHERE 1=1
+	                       AND RENT_SEQ = #{RENT_SEQ}
+	                       
+	                     ORDER BY RENT_SEQ
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select> 
+    
+    <select id="selectMngIntegInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_RENT_MNG
+	     WHERE 1 = 1
+           AND RENT_SEQ = #{RENT_SEQ}
+    </select>
+    
+    
+    
+    <insert id="insertMngIntegInfo" >
+	    INSERT INTO TB_RENT_USE
+	      (
+			   RENT_USE_SEQ
+		      ,RENT_SEQ
+		      ,VISITER_ID
+		      ,VISIT_DT
+		      ,EDU_YN
+		      ,EQUIP_USE_YN
+		      ,REMARK
+		      ,CRE_USR
+		      ,CRE_DT
+		      ,MOD_USR
+		      ,MOD_DT
+	      )
+	    VALUES
+	      (
+	      	#{RENT_USE_SEQ,    	jdbcType=VARCHAR},
+	      	#{RENT_SEQ,  		jdbcType=VARCHAR},
+			#{VISITER_ID,  		jdbcType=VARCHAR},
+			#{VISIT_DT, 		jdbcType=VARCHAR},
+			#{EDU_YN,  			jdbcType=VARCHAR},
+			#{EQUIP_USE_YN,  	jdbcType=VARCHAR},
+			#{REMARK,			jdbcType=VARCHAR},
+			#{CRE_USR,  		jdbcType=VARCHAR},
+			SYSDATE,
+			#{MOD_USR,	 		jdbcType=VARCHAR},
+			SYSDATE
+	       ) 
+		
+	</insert>
+
+	<update id="updateMngIntegInfo" >
+	
+    UPDATE TB_RENT_USE
+       SET  VISITER_ID =
+			#{VISITER_ID,  		jdbcType=VARCHAR},
+			VISIT_DT =
+			#{VISIT_DT, 		jdbcType=VARCHAR},
+			EDU_YN =
+			#{EDU_YN,  			jdbcType=VARCHAR},
+			EQUIP_USE_YN =
+			#{EQUIP_USE_YN,  	jdbcType=VARCHAR},
+			REMARK =
+			#{REMARK,			jdbcType=VARCHAR},
+			MOD_USR =
+			#{MOD_USR,	 		jdbcType=VARCHAR},
+			MOD_DT = SYSDATE
+		   
+     WHERE RENT_SEQ = #{RENT_SEQ}
+       AND RENT_USE_SEQ = #{RENT_USE_SEQ}
+	</update>
+	
+	
+    <update id="deleteMngIntegInfo" >
+	    DELETE FROM TB_RENT_USE
+		 WHERE RENT_SEQ = #{RENT_SEQ}
+		   AND RENT_USE_SEQ = #{RENT_USE_SEQ}
+    </update>
+	    
+
+    
+    <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngIntegInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.DataMedcMapper">
+
+
+	
+    
+    <select id="selectDataMedcInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT 
+							TAKE_MEDC_SEQ, EQUIPMENT_ID, ALARM_STDT, 
+						   ALARM_ENDT, TAKE_DT,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'YYYY-MM-DD HH24:MI:SS') STAKE_DT, TAKE_STATE,CASE WHEN TAKE_STATE NOT IN ('TAKEN') THEN '오복용' ELSE '정상복용' END STAKE_STATE, 
+						   CRE_USR, CRE_DT, MOD_USR, 
+						   MOD_DT
+	                      FROM TB_TAKE_MEDC_IF 
+	                     WHERE 1=1
+	                     AND EQUIPMENT_ID IN(SELECT EQUIPMENT_ID FROM TB_RENT_MNG A LEFT OUTER JOIN TB_EQUIPMENT_INFO B ON A.EQUIPMENT_SEQ=B.EQUIPMENT_SEQ
+                         WHERE 1=1 AND EQUIP_TYPE='100756' AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id})))
+	                    <if test="fromdate != null and fromdate != ''">
+								<![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                    'YYYY-MM-DD') >= #{fromdate} ]]>
+						</if>
+						<if test="todate != null and todate != ''">
+							 <![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                    'YYYY-MM-DD') <= #{todate} ]]>
+						</if>
+	                     ORDER BY STAKE_DT DESC
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+		ORDER BY STAKE_DT DESC
+    </select>
+    
+    
+    <select id="selectDataMedcInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_TAKE_MEDC_IF
+	     WHERE 1 = 1 
+	     AND EQUIPMENT_ID IN(SELECT EQUIPMENT_ID FROM TB_RENT_MNG A LEFT OUTER JOIN TB_EQUIPMENT_INFO B ON A.EQUIPMENT_SEQ=B.EQUIPMENT_SEQ
+                         WHERE 1=1 AND EQUIP_TYPE='100756' AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id})))
+	     <if test="fromdate != null and fromdate != ''">
+				<![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                'YYYY-MM-DD') >= #{fromdate} ]]>
+		</if>
+		<if test="todate != null and todate != ''">
+			 <![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                'YYYY-MM-DD') <= #{todate} ]]>
+		</if>
+    </select>
+    
+    <select id="selectChartDataMedcDetailInfo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+		SELECT TO_CHAR (To_DATE(TAKE_DT,'yyyy-mm-dd HH24:MI:SS'),'yyyy-mm-dd HH24:MI:SS') action_date,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'HH24') action_hour,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'YYYY-MM-DD') saction_date
+        ,CASE WHEN TAKE_STATE NOT IN ('TAKEN') THEN 0 ELSE 1 END state
+        ,CASE WHEN TAKE_STATE NOT IN ('TAKEN') THEN '정상복용' ELSE '오복용' END dsc,TAKE_MEDC_SEQ FROM TB_TAKE_MEDC_IF 
+        WHERE 1=1 
+        AND  CAST(EQUIPMENT_ID AS VARCHAR2(8)) =(SELECT  CAST(EQUIPMENT_ID AS VARCHAR2(8)) FROM TB_RENT_MNG A LEFT OUTER JOIN TB_EQUIPMENT_INFO B ON A.EQUIPMENT_SEQ=B.EQUIPMENT_SEQ
+                         WHERE 1=1 AND EQUIP_TYPE='100756' AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id}))  AND ROWNUM=1)
+        ]]>
+	     <if test="fromdate != null and fromdate != ''">
+				<![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                'YYYY-MM-DD') >= #{fromdate} ]]>
+		</if>
+		<if test="todate != null and todate != ''">
+			 <![CDATA[ AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),
+                                'YYYY-MM-DD') <= #{todate} ]]>
+		</if>
+	   
+    </select>
+    
+    <select id="selectmobiledaymedcData" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+		SELECT TO_CHAR (To_DATE(TAKE_DT,'yyyy-mm-dd HH24:MI:SS'),'yyyy-mm-dd HH24:MI:SS') action_date,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'HH24') action_hour,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'MI') action_minute,TO_CHAR(To_DATE(TAKE_DT,'yyyymmddHH24MISS'),'YYYY-MM-DD') saction_date
+        ,CASE WHEN TAKE_STATE NOT IN ('TAKEN') THEN 0 ELSE 1 END state
+        ,CASE WHEN TAKE_STATE NOT IN ('TAKEN') THEN '오복용' ELSE '정상복용' END dsc,TAKE_STATE,TAKE_MEDC_SEQ FROM TB_TAKE_MEDC_IF 
+        WHERE 1=1 
+        AND  CAST(EQUIPMENT_ID AS VARCHAR2(8)) =(SELECT  CAST(EQUIPMENT_ID AS VARCHAR2(8)) FROM TB_RENT_MNG A LEFT OUTER JOIN TB_EQUIPMENT_INFO B ON A.EQUIPMENT_SEQ=B.EQUIPMENT_SEQ
+                         WHERE 1=1 AND EQUIP_TYPE='100756' AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id})))
+        ]]>
+	    <if test="mdate != null and mdate != ''">
+			<![CDATA[
+		       AND TO_CHAR (TO_DATE (TAKE_DT, 'yyyymmddHH24MISS'),'YYYY-MM-DD') = #{mdate}
+	    	]]>
+		</if>
+    </select>
+    
+    <insert id="insertDataMedcInfo" >
+	    INSERT INTO TB_TAKE_MEDC_IF
+	      (
+			TAKE_MEDC_SEQ ,
+			EQUIPMENT_ID  ,
+			ALARM_STDT    ,
+			ALARM_ENDT    ,
+			TAKE_DT       ,
+			TAKE_STATE    ,
+			CRE_USR       ,
+			CRE_DT        ,
+			MOD_USR       ,
+			MOD_DT        
+	      )
+	    VALUES
+	      (
+			#{TAKE_MEDC_SEQ , jdbcType=VARCHAR},
+			#{EQUIPMENT_ID  , jdbcType=VARCHAR},
+			#{ALARM_STDT    , jdbcType=VARCHAR},
+			#{ALARM_ENDT    , jdbcType=VARCHAR},
+			#{TAKE_DT       , jdbcType=VARCHAR},
+			#{TAKE_STATE    , jdbcType=VARCHAR},
+			#{CRE_USR       , jdbcType=VARCHAR},
+			SYSDATE                            ,
+			#{MOD_USR       , jdbcType=VARCHAR},
+			SYSDATE
+	       ) 
+		
+	</insert>
+
+	<update id="updateDataMedcInfo" >
+	
+    UPDATE TB_TAKE_MEDC_IF
+       SET 
+			EQUIPMENT_ID = #{EQUIPMENT_ID  , jdbcType=VARCHAR},
+			ALARM_STDT   = #{ALARM_STDT    , jdbcType=VARCHAR},
+			ALARM_ENDT   = #{ALARM_ENDT    , jdbcType=VARCHAR},
+			TAKE_DT      = #{TAKE_DT       , jdbcType=VARCHAR},
+			TAKE_STATE   = #{TAKE_STATE    , jdbcType=VARCHAR},
+			MOD_USR      = #{MOD_USR       , jdbcType=VARCHAR},
+			MOD_DT       = SYSDATE
+     WHERE TAKE_MEDC_SEQ = #{TAKE_MEDC_SEQ}
+	</update>
+	
+	
+    <update id="deleteDataMedcInfo" >
+	    DELETE FROM TB_TAKE_MEDC_IF
+		 WHERE TAKE_MEDC_SEQ = #{TAKE_MEDC_SEQ}
+    </update>
+	    
+<!--     <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngUserInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

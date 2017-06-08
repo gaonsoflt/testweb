@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.MediConsultNoteMapper">
+
+	<select id="selectConsultNote" parameterType="hashMap" resultType="hashMap">
+	   SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT
+	              			NOTE_SQ			,
+	              			MEDI_CONSULT_SQ	,
+							CONSULT_NOTE	, 
+							REG_DT			,           
+							REG_USER		,   
+							MOD_DT			,           
+							MOD_USER  
+						FROM TB_MEDI_CONSULT_NOTE
+                 		WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+                  		ORDER BY NOTE_SQ DESC
+					) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+    
+    <insert id="createConsultNote" >
+		INSERT INTO TB_MEDI_CONSULT_NOTE (
+			NOTE_SQ			,
+			MEDI_CONSULT_SQ	,
+			CONSULT_NOTE	, 
+			REG_USER		,   
+			REG_DT			           
+		) VALUES (
+			#{NOTE_SQ			, jdbcType=NUMERIC},
+			#{MEDI_CONSULT_SQ	, jdbcType=NUMERIC},
+			#{CONSULT_NOTE		, jdbcType=VARCHAR},
+			#{REG_USER			, jdbcType=VARCHAR},
+			SYSDATE								   
+		) 
+	</insert>
+
+	<update id="updateConsultNote" >
+		UPDATE TB_MEDI_CONSULT_NOTE 
+			SET 
+				CONSULT_NOTE	= #{CONSULT_NOTE		, jdbcType=VARCHAR},
+				MOD_DT			= SYSDATE							   ,
+				MOD_USER		= #{MOD_USER		, jdbcType=VARCHAR}  
+     	WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+	</update>
+	
+    <delete id="deleteConsultNote" >
+		DELETE FROM TB_MEDI_CONSULT_NOTE
+			WHERE NOTE_SQ = #{NOTE_SQ}
+    </delete>
+
+</mapper>

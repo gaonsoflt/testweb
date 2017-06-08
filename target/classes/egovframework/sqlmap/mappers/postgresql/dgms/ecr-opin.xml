@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.EcrOpinMapper">
+
+
+	
+    
+    <select id="selectEcrOpinInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT USER_ID
+						      ,CHECKUP_SEQ
+						      ,CHECKUP_TYPE
+						      ,HOSP_NM
+						      ,DOCTOR_NM
+						      ,CHECKUP_DT
+						      ,OPINION_WRITER
+						      ,OPINION
+						      ,CRE_USR
+						      ,CRE_DT
+						      ,MOD_USR
+						      ,MOD_DT
+						      ,MEASURE_DT
+						  FROM TB_CHECKUP_OPINION
+	                     WHERE 1=1
+
+	                       AND USER_ID = #{USER_ID}
+	                       AND CHECKUP_TYPE = '101043'
+
+	                     ORDER BY CHECKUP_SEQ
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select>
+    
+    
+    <select id="selectEcrOpinInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_CHECKUP_OPINION
+	     WHERE 1 = 1
+        <if test='USER_ID != null'>
+          AND USER_ID = #{USER_ID}
+        </if>  
+<!--         <if test='USER_NM != null'>
+          AND USER_NM = #{USER_NM}
+        </if>   -->
+    </select>
+    
+    
+    
+    <insert id="insertEcrOpinInfo" >
+	    INSERT INTO TB_CHECKUP_OPINION
+	      (
+			   USER_ID
+		      ,CHECKUP_SEQ
+		      ,CHECKUP_TYPE
+		      ,HOSP_NM
+		      ,DOCTOR_NM
+		      ,CHECKUP_DT
+		      ,OPINION_WRITER
+		      ,OPINION
+		      ,CRE_USR
+		      ,CRE_DT
+		      ,MOD_USR
+		      ,MOD_DT
+		      ,MEASURE_DT
+	      )
+	    VALUES
+	      (
+	      	#{USER_ID,    		jdbcType=VARCHAR},
+	      	#{CHECKUP_SEQ,  	jdbcType=VARCHAR},
+			#{CHECKUP_TYPE,  	jdbcType=VARCHAR},
+			#{HOSP_NM, 			jdbcType=VARCHAR},
+			#{DOCTOR_NM,  		jdbcType=VARCHAR},
+			#{CHECKUP_DT,  		jdbcType=VARCHAR},
+			#{OPINION_WRITER,	jdbcType=VARCHAR},
+			#{OPINION,  		jdbcType=VARCHAR},
+			#{CRE_USR,  		jdbcType=VARCHAR},
+			SYSDATE,
+			#{MOD_USR,	 		jdbcType=VARCHAR},
+			SYSDATE,
+			#{MEASURE_DT,		jdbcType=VARCHAR}
+	       ) 
+		
+	</insert>
+
+	<update id="updateEcrOpinInfo" >
+	
+    UPDATE TB_CHECKUP_OPINION
+       SET USER_ID = #{USER_ID,    		jdbcType=VARCHAR},
+		   CHECKUP_TYPE = #{CHECKUP_TYPE,  	jdbcType=VARCHAR},
+		   HOSP_NM = #{HOSP_NM, 			jdbcType=VARCHAR},
+		   DOCTOR_NM = #{DOCTOR_NM,  		jdbcType=VARCHAR},
+		   CHECKUP_DT = #{CHECKUP_DT,  		jdbcType=VARCHAR},
+		   OPINION_WRITER = #{OPINION_WRITER,	jdbcType=VARCHAR},
+		   OPINION = #{OPINION,  		jdbcType=VARCHAR},
+		   MOD_USR = #{MOD_USR,	 		jdbcType=VARCHAR},
+		   MOD_DT = SYSDATE,
+		   MEASURE_DT = #{MEASURE_DT,		jdbcType=VARCHAR}
+     WHERE USER_ID = #{USER_ID}
+       AND CHECKUP_SEQ = #{CHECKUP_SEQ}
+	</update>
+	
+	
+    <update id="deleteEcrOpinInfo" >
+	    DELETE FROM TB_CHECKUP_OPINION
+		 WHERE USER_ID = #{USER_ID}
+		   AND CHECKUP_SEQ = #{CHECKUP_SEQ}
+    </update>
+	    
+
+    
+<!--     <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectEcrOpinInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

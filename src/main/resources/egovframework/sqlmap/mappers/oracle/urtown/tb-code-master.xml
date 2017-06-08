@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.SystemMngCodeMapper">
+
+
+    <select id="selectMngCodeMasterInfo" parameterType="hashMap" resultType="hashMap">
+		<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DECODE(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_CODE_MASTER
+		 WHERE LEVEL <= 2
+		 ]]>
+		 <if test='CATGR_NM != null'>
+		   AND CD_NM LIKE '%' || #{CATGR_NM} || '%'
+		 </if>
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+		 ORDER SIBLINGS BY TO_NUMBER(CATGR), TO_NUMBER(CD)
+    	
+    </select>
+
+
+	
+    
+    <select id="selectMngCodeInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT  CD        , 
+								CATGR     , 
+								CD_NM     , 
+								CD_ID     , 
+								SORT_NO   , 
+								DECODE(USE_YN,'0','false','true')  USE_YN  , 
+								REMARK    ,
+								CRE_USR   , 
+								CRE_DT    , 
+								MOD_USR   , 
+								MOD_DT    
+	                      FROM TB_CODE_MASTER 
+	                     WHERE 1=1
+	                     <if test='CATGR != null'>
+	                       AND CATGR = #{CATGR}
+	                     </if>  
+	                     ORDER BY SORT_NO
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select>
+    
+
+    
+    <insert id="insertMngCodeInfo" >
+	    INSERT INTO TB_CODE_MASTER
+	      (CD, CATGR, CD_NM, CD_ID, SORT_NO, USE_YN, REMARK, CRE_USR, CRE_DT, MOD_USR, MOD_DT)
+	    VALUES
+	      (#{CD, jdbcType=VARCHAR},
+	       #{CATGR, jdbcType=VARCHAR},
+	       #{CD_NM, jdbcType=VARCHAR},
+	       #{CD_ID, jdbcType=VARCHAR},
+	       #{SORT_NO, jdbcType=INTEGER},
+	       #{USE_YN, jdbcType=VARCHAR},
+	       #{REMARK, jdbcType=VARCHAR},
+	       #{CRE_USR, jdbcType=VARCHAR},
+	       SYSDATE,
+	       #{MOD_USR, jdbcType=VARCHAR},
+	       SYSDATE
+	       ) 
+		
+	</insert>
+
+	<update id="updateMngCodeInfo" >
+	
+    UPDATE TB_CODE_MASTER
+       SET CD_NM = #{CD_NM, jdbcType=VARCHAR}
+          ,CD_ID = #{CD_ID, jdbcType=VARCHAR}
+          ,SORT_NO = #{SORT_NO, jdbcType=INTEGER}
+          ,USE_YN = #{USE_YN, jdbcType=VARCHAR}
+          ,REMARK = #{REMARK, jdbcType=VARCHAR}
+          ,MOD_USR = #{MOD_USR, jdbcType=VARCHAR}
+          ,MOD_DT = SYSDATE
+     WHERE CD = #{CD}
+       AND CATGR = #{CATGR}
+	</update>
+	
+	
+    <update id="deleteMngCodeInfo" >
+	    DELETE FROM TB_CODE_MASTER
+		 WHERE CD = #{CD}
+       	   AND CATGR = #{CATGR}
+    </update>
+	    
+    
+    
+    
+    
+    
+    <select id="selectMngCodeInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_CODE_MASTER
+	     WHERE 1 = 1
+		<if test='CATGR != null'>
+		 AND CATGR = #{CATGR}
+		</if>  
+
+    </select>
+    
+    <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DECODE(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_CODE_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngCodeInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_CODE_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select>
+    
+    
+    
+<!-- 	<select id="retrieveUser" parameterType="egovframework.com.user.service.UserInfoVo" resultType="egovframework.com.user.service.UserInfoVo">
+	    <![CDATA[
+	        SELECT * FROM TB_USER_INFO
+		     WHERE USER_ID = #{userId}
+		]]>
+	</select> -->
+
+<!--     <select id="retrieveUserInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        <![CDATA[
+			SELECT USER_SEQ,
+			       AREA_ID,
+			       USER_NM,
+			       MOBILE_NO,
+			       LOGIN_PWD,
+			       SEX,
+			       BIRTHDAY,
+			       ADDR_CIDO,
+			       USER_TYPE,
+			       USER_ID,
+			       USE_YN
+			  FROM TB_USER_INFO
+			 WHERE USER_ID = #{USER_ID}
+        ]]>
+    </select> -->
+    
+
+    
+    
+</mapper>

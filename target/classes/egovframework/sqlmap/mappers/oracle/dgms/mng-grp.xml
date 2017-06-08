@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.MngGrpMapper">
+
+
+	
+    
+    <select id="selectMngGrpInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT 
+							USER_ID, 
+							GRPMBR_ID,
+							GRPMBR_NM, 
+							PAT_RELATION, 
+							AGE, 
+							MOBILE_NO, 
+							ADDR_CIGUNGU_SEQ, 
+							APP_RGST_ID, 
+							CRE_USR, 
+							CRE_DT, 
+							MOD_USR, 
+							MOD_DT
+	                      FROM TB_GROUP_MNG
+	                     WHERE 1=1
+
+	                       AND USER_ID = #{USER_ID}
+
+	                     ORDER BY GRPMBR_NM
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select>
+    
+    
+    <select id="selectMngGrpInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_GROUP_MNG
+	     WHERE 1 = 1
+        <if test='USER_ID != null'>
+          AND USER_ID = #{USER_ID}
+        </if>  
+<!--         <if test='USER_NM != null'>
+          AND USER_NM = #{USER_NM}
+        </if>   -->
+    </select>
+    
+    
+    
+    <insert id="insertMngGrpInfo" >
+	    INSERT INTO TB_GROUP_MNG
+	      (
+			USER_ID, 
+			GRPMBR_ID,
+			GRPMBR_NM, 
+			PAT_RELATION, 
+			AGE, 
+			MOBILE_NO, 
+			ADDR_CIGUNGU_SEQ, 
+			APP_RGST_ID, 
+			CRE_USR, 
+			CRE_DT, 
+			MOD_USR, 
+			MOD_DT
+	      )
+	    VALUES
+	      (
+	      	#{USER_ID,     jdbcType=VARCHAR},
+	      	#{GRPMBR_ID,   jdbcType=VARCHAR},
+			#{GRPMBR_NM,  	jdbcType=VARCHAR},
+			#{PAT_RELATION, jdbcType=VARCHAR},
+			#{AGE,  		jdbcType=VARCHAR},
+			#{MOBILE_NO,  	jdbcType=VARCHAR},
+			#{ADDR_CIGUNGU_SEQ, jdbcType=VARCHAR},
+			#{APP_RGST_ID,  jdbcType=VARCHAR},
+			#{CRE_USR,  	jdbcType=VARCHAR},
+			SYSDATE,
+			#{MOD_USR,	 	jdbcType=VARCHAR},
+			SYSDATE
+	       ) 
+		
+	</insert>
+
+	<update id="updateMngGrpInfo" >
+	
+    UPDATE TB_GROUP_MNG
+       SET USER_ID = #{USER_ID, jdbcType=VARCHAR}
+			,GRPMBR_NM = #{GRPMBR_NM, jdbcType=VARCHAR}
+			,PAT_RELATION = #{PAT_RELATION, jdbcType=VARCHAR}
+			,AGE = #{AGE, jdbcType=VARCHAR}
+			,MOBILE_NO = #{MOBILE_NO,  	jdbcType=VARCHAR}
+			,ADDR_CIGUNGU_SEQ = #{ADDR_CIGUNGU_SEQ, jdbcType=VARCHAR}
+			,APP_RGST_ID = #{APP_RGST_ID, jdbcType=VARCHAR}
+			,MOD_USR = #{MOD_USR, jdbcType=VARCHAR}
+			,MOD_DT = SYSDATE
+     WHERE USER_ID = #{USER_ID}
+       AND GRPMBR_ID = #{GRPMBR_ID} 
+	</update>
+	
+	
+    <update id="deleteMngGrpInfo" >
+	    DELETE FROM TB_GROUP_MNG
+		 WHERE USER_ID = #{USER_ID}
+		   AND GRPMBR_ID = #{GRPMBR_ID}
+    </update>
+	    
+
+    
+<!--     <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngGrpInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

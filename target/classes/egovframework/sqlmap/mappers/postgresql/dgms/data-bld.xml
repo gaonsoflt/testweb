@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.DataBldMapper">
+
+
+	
+    
+    <select id="selectDataBldInfo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+		WITH highbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100771') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+
+        ),lowbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100773') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+        )       
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (
+			        SELECT MEASURE_DT action_date,TO_CHAR(MEASURE_DT,'YYYY-MM-DD HH24:MI:SS') SMEASURE_DT,MIN_BLDPRS,MAX_BLDPRS,HEART_RATE
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN 1 ELSE 0 END state
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN '이상혈압' ELSE '정상혈압' END dsc,BLDPRS_SEQ SEQ FROM TB_BLDPRS_MEASURE_IF A        
+			        WHERE 1=1
+			        AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id}))
+		]]>
+					<if test="mdate != null and mdate != ''">
+							<![CDATA[
+						       AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') = #{mdate}
+					    	]]>
+					</if>
+			        <if test="fromdate != null and fromdate != ''">
+							<![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') >= #{fromdate} ]]>
+					</if>
+					<if test="todate != null and todate != ''">
+						 <![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') <= #{todate} ]]>
+					</if>
+		<![CDATA[
+	           ) A ) A
+	     WHERE 1 = 1
+	    
+	    ]]>
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+		ORDER BY SMEASURE_DT DESC
+    </select>
+    
+    
+    <select id="selectDataBldInfoTot" parameterType="hashMap" resultType="int">
+
+	    SELECT COUNT(*)
+	      FROM TB_BLDPRS_MEASURE_IF
+	     WHERE 1 = 1 AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id}))
+	     <if test="mdate != null and mdate != ''">
+				<![CDATA[
+			       AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') = #{mdate}
+		    	]]>
+		</if>
+	     <if test="fromdate != null and fromdate != ''">
+				<![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') >= #{fromdate} ]]>
+		</if>
+		<if test="todate != null and todate != ''">
+			 <![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') <= #{todate} ]]>
+		</if>
+    </select>
+    
+    <select id="selectChartDataBldDetailInfo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+		WITH highbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100771') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+
+        ),lowbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100773') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+        )       
+	    SELECT SMEASURE_DT,MAX(MAX_BLDPRS) MAX_BLDPRS,MIN(MIN_BLDPRS) MIN_BLDPRS,MAX(HEART_RATE) HEART_RATE,SUM(STATE) STATE 
+	              FROM (
+			        SELECT MEASURE_DT action_date,TO_CHAR(MEASURE_DT,'YYYY-MM-DD') SMEASURE_DT,MIN_BLDPRS,MAX_BLDPRS,HEART_RATE
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN 1 ELSE 0 END state
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN '이상혈압' ELSE '정상혈압' END dsc,BLDPRS_SEQ SEQ FROM TB_BLDPRS_MEASURE_IF A        
+			        WHERE 1 = 1  AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id}))
+		]]>
+				     <if test="fromdate != null and fromdate != ''">
+							<![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') >= #{fromdate} ]]>
+					</if>
+					<if test="todate != null and todate != ''">
+						 <![CDATA[ AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') <= #{todate} ]]>
+					</if>
+		<![CDATA[
+	           ) A
+	     GROUP BY SMEASURE_DT
+	     ORDER BY SMEASURE_DT DESC
+	    ]]>
+		
+    </select>
+    
+    <select id="selectmobiledaybldData" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+		WITH highbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100771') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+
+        ),lowbldperiod AS
+        (
+             SELECT MAXV,MINV FROM (
+                 SELECT distinct regexp_substr(A.REMARK, '[^,]+', 1, LEVEL) REMARK,ROWNUM ROWNM
+                 FROM (select REMARK FROM TB_CODE_MASTER WHERE CD='100773') A
+                 CONNECT BY LEVEL <= length(regexp_replace(A.REMARK, '[^,]+',''))+1 
+             )
+             PIVOT
+            (
+
+             MAX(REMARK)
+             FOR  ROWNM IN ('1' AS MAXV,'2' AS MINV)
+            )
+            ORDER BY ROWNUM
+        )       
+	    SELECT SMEASURE_DT,MAX_BLDPRS,MIN_BLDPRS,HEART_RATE,STATE,DSC,action_hour,action_minute
+	              FROM (
+			        SELECT MEASURE_DT action_date,TO_CHAR(MEASURE_DT,'YYYY-MM-DD') SMEASURE_DT,MIN_BLDPRS,MAX_BLDPRS,HEART_RATE
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN 1 ELSE 0 END state
+			        ,CASE WHEN MAX_BLDPRS >TO_NUMBER((SELECT MAXV FROM highbldperiod)) OR MIN_BLDPRS >TO_NUMBER((SELECT MINV FROM highbldperiod)) 
+			        OR MAX_BLDPRS <TO_NUMBER((SELECT MAXV FROM lowbldperiod)) OR MIN_BLDPRS <TO_NUMBER((SELECT MINV FROM lowbldperiod)) THEN '이상혈압' ELSE '정상혈압' END dsc,BLDPRS_SEQ SEQ
+			        ,TO_CHAR(MEASURE_DT,'HH24') action_hour, TO_CHAR(MEASURE_DT,'MI') action_minute FROM TB_BLDPRS_MEASURE_IF A        
+			        WHERE 1 = 1  AND (USER_ID=#{user_id} OR USER_ID IN(SELECT USER_ID FROM TB_GROUP_MNG WHERE PAT_RELATION='100777' AND TRIM(GRPMBR_ID)=#{user_id}))
+		]]>
+				   <if test="mdate != null and mdate != ''">
+						<![CDATA[
+					       AND TO_CHAR(MEASURE_DT,'YYYY-MM-DD') = #{mdate}
+				    	]]>
+					</if>
+		<![CDATA[
+	           ) A
+	     ORDER BY SMEASURE_DT DESC
+	    ]]>
+		
+    </select>
+    
+    
+</mapper>

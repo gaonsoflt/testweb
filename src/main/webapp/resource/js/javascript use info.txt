@@ -1,0 +1,19 @@
+http://www.w3schools.com
+http://devdocs.io/javascript/
+http://www.javascripting.com/ -- 자바스크립트 모음
+
+
+jquery --> http://jquery.com/
+UI Layout --> http://layout.jquery-dev.com/
+              http://w2ui.com/web/home -- 업무용 최적화(web개발)
+jqgrid --> http://www.trirand.com/blog/  
+chart --> http://www.highcharts.com
+
+keyfilter --> https://code.google.com/archive/p/jquery-keyfilter/downloads
+form -->http://malsup.com/jquery/form/
+
+반응형 프레임워크 --> 부트스트랩 
+                      http://foundation.zurb.com/
+                      http://getskeleton.com/
+반응형 UI --> http://materializecss.com 구글 : 모바일 최적화  --> 모바일 app
+                      

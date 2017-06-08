@@ -1,0 +1,183 @@
+
+/* ---------------------------------------------------------------------------------------------------------------------------
+    
+                                    2016.04.19   가온소프트(주) 신기술개발팀 대리 이희웅 작성 
+									        경우에 따라 소스의 수정은 자유롭게 사용 가능 하나
+									                       무단복제 및 배포를 금지합니다.
+
+--------------------------------------------------------------------------------------------------------------------------- */
+
+@charset "utf-8";
+
+
+.wrap{position:relative; width:100%;}
+
+.container{
+	margin:3%;
+	padding:20px 20px 0 20px;
+	-webkit-border-radius:10px; 
+	-moz-border-radius:10px; 
+	border-radius:10px; 
+	border:solid 1px #96d8d6;
+	}
+
+.container2{
+	margin:3%;
+	padding:0;
+	-webkit-border-radius:10px; 
+	-moz-border-radius:10px; 
+	border-radius:10px; 
+	border:solid 1px #96d8d6;
+	}
+
+.container4{
+	text-align:center;
+	margin:3%;
+	padding:0;
+	-webkit-border-radius:10px; 
+	-moz-border-radius:10px; 
+	border-radius:10px; 
+	border:solid 1px #96d8d6;
+	}
+
+.container4>a{
+	display:block; 
+	width:100%; 
+	padding:20px 0; 
+	font-size:18px; 
+	-webkit-border-radius:10px; 
+	-moz-border-radius:10px; 
+	border-radius:10px; 
+	}
+.container4>a:hover{display:block; width:100%; padding:20px 0; font-size:18px; background:#8bc0cb; color:#ffffff; font-weight:bold; text-decoration:none;}
+
+ul.dt_ch01{}
+ul.dt_ch01 li{margin:0 0 20px 0; overflow:hidden; }
+ul.dt_ch01 li span{display:inline-block; float:left;}
+ul.dt_ch01 li span.mo{	
+	padding:22px 22px; 
+	background:url('../images/icon_ch_01.png') no-repeat 0 3px;
+	background-size:100%;
+	}
+
+ul.dt_ch01 li span.af{	
+	padding:22px 22px; 
+	background:url('../images/icon_ch_02.png') no-repeat;
+	background-size:100%;
+	}
+
+ul.dt_ch01 li span.ni{	
+	padding:22px 22px; 
+	background:url('../images/icon_ch_03.png') no-repeat;
+	background-size:80%;
+	}
+
+ul.dt_ch01 li span.co{
+	float:right; 
+	padding:13px 22px; 
+	text-indent:-99999px;
+	background:url('../images/icon_okay.png') no-repeat;
+	background-size:80%;
+	}
+ul.dt_ch01 li span.cn{
+	float:right; 
+	padding:13px 22px; 
+	text-indent:-99999px;
+	background:url('../images/icon_none.png') no-repeat;
+	background-size:80%;
+	}
+
+ul.dt_ch01 li span.dt{padding:10px 0 10px 20px; font-size:16px; font-weight:bold;}
+
+ul.dt_ch02{padding:10px 0 0 20px;}
+ul.dt_ch02 li{margin:0 0 10px 0; overflow:hidden; }
+ul.dt_ch02 li span{display:inline-block; float:left;}
+ul.dt_ch02 li span.bl{	
+	padding:35px 22px; 
+	background:url('../images/icon_bl_01.png') no-repeat 0 0;
+	background-size:100%;
+	}
+
+ul.dt_ch02 li span.sm{	
+	padding:35px 22px; 
+	background:url('../images/icon_bl_02.png') no-repeat 0 17px;
+	background-size:100%;
+	}
+
+ul.dt_ch02 li span.dt{padding:20px 0 20px 20px; font-size:20px; font-weight:bold; vertical-align:bottom;}
+ul.dt_ch02 li span.st{float:right; font-size:14px; font-weight:normal; padding:0 0 0 5px;} 
+
+p.ctitle{
+	background:#5bb0ad; 
+	color:#ffffff; 
+	font-weight:bold; 
+	padding:5px 0 5px 10px;
+	-webkit-border-radius:10px 10px 0 0; 
+	-moz-border-radius:10px 10px 0 0; 
+	border-radius:10px 10px 0 0; 
+	font-size:14px;
+	}
+
+p.ctitle2{
+	background:#5bb0ad; 
+	color:#ffffff; 
+	font-weight:bold; 
+	padding:10px 10px;
+	-webkit-border-radius:10px 10px 0 0; 
+	-moz-border-radius:10px 10px 0 0; 
+	border-radius:10px 10px 0 0; 
+	font-size:14px;
+	}
+
+ul.dt_ch03{padding:0 0 20px 20px;}
+ul.dt_ch03 li{font-size:18px; width:55%;}
+ul.dt_ch03 li span.gt{padding:0 0 0 30px;}
+.rcc{color:#ab1307;}
+
+.tab_btn{width:100%; overflow:hidden; border-bottom:solid 1px #96d8d6;}
+.tab_btn ul li{float:left; width:33.3333%;}
+.tab_btn ul li a{display:block; text-align:center; padding:15px 0; font-size:14px;}
+.tab_btn ul li a:hover{border-bottom:solid 5px #5bb0ad; color:#4f817f; text-decoration:none;}
+.tab_btn ul li a.on{border-bottom:solid 5px #5bb0ad; color:#4f817f; text-decoration:none; font-weight:bold;}
+
+.acon{padding:15px; line-height:160%;}
+
+
+table{width:100%; border-top:solid 3px #434343; margin:20px 0 0 0;}
+table th{background:#f7f7f7; padding:10px 0; border-bottom:solid  1px #d5d5d5;} 
+table>tbody>tr>td{padding:14px 7px; border-bottom:solid  1px #d5d5d5;}
+table>tbody>tr>td.title_cell{
+	width:50px;
+	font-size:14px; 
+	overflow:hidden; 
+	white-space:; 
+	text-overflow:ellipsis; 
+	-o-text-overflow:ellipsis; 
+	-ms-text-overflow:ellipsis;
+	}
+
+
+.table_page{width:100%; text-align:center; margin:20px 0 0 0;}
+.table_page a{display:inline-block; border:solid 1px #7f7f7f; padding:7px 12px;}
+.table_page a.on{background:#55555b; color:#ffffff;}
+.table_page a:hover{background:#55555b; color:#ffffff; text-decoration:none;}
+
+.cont-title{
+	border-top:solid 2px #434343;
+	border-bottom:solid 1px #d5d5d5;
+	background:#f7f7f7;
+	padding:20px;
+	}
+
+.cont-title>span{display:block;}
+.cont-title>span.title_text{font-size:26px; color:#111111; letter-spacing:-1px;}
+.cont-title>span.title_data{overflow:hidden; padding:20px 0 0 0;}
+.cont-title>span.title_data>span.cont_v{float:left;}
+.cont-title>span.title_data>span.cont_data{float:right;}
+
+button.btn_list{clear:both; border:solid 1px #c1c1c1; font-size:16px; width:100%; width:100%; padding:10px 0;}
+.mgw{padding:20px 20px;}
+.tcb{padding:40px 20px; font-size:14px; border-bottom:solid 1px #d5d5d5;}
+
+
+

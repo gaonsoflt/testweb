@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<!--
+		- The controllers are autodetected POJOs labeled with the @Controller annotation.
+	-->
+	<context:component-scan base-package="egovframework">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+	</context:component-scan>
+	
+	<!--
+        - This bean resolves specific types of exceptions to corresponding logical view names for error views. 
+        - The default behaviour of DispatcherServlet is to propagate all exceptions to the servlet container: 
+        - this will happen here with all other types of exceptions.
+    -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView" value="/egovframework/cmmn/bizError" />
+		<property name="exceptionMappings">
+			<props>
+                <prop key="org.springframework.dao.DataAccessException">/egovframework/cmmn/dataAccessFailure</prop>
+                <prop key="org.springframework.transaction.TransactionException">/egovframework/cmmn/transactionFailure</prop>
+                <prop key="egovframework.rte.fdl.cmmn.exception.EgovBizException">/egovframework/cmmn/bizError</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+        - This bean configures the 'prefix' and 'suffix' properties of InternalResourceViewResolver, which resolves logical view names returned by Controllers. 
+        - For example, a logical view name of "vets" will be mapped to "/WEB-INF/jsp/vets.jsp".
+    -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:viewClass="org.springframework.web.servlet.view.JstlView"  
+	    p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" p:order="1" />
+	
+	<!-- Pagination Tag -->
+    <bean id="imageRenderer" class="egovframework.sample.common.EgovImgPaginationRenderer" />
+
+    <bean id="paginationManager" class="egovframework.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
+        <property name="rendererType">
+            <map>
+                <entry key="image" value-ref="imageRenderer"/> 
+            </map>
+        </property>
+    </bean>
+	<!-- Pagination Tag -->
+	
+	
+	<!-- 멀티파일업로드컴포넌트 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>50000000</value>
+		</property>
+	</bean>
+	
+	
+	<!-- 이하 아래 추가 khd 2016.08.29 -->
+	
+	<!-- ViewResolver 설정 시작 --> 
+	<bean id="bnViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"
+	p:order="0"/>
+	
+	
+	<!-- MappingJacksonJsonView 설정 --> <!-- 한글을 인코딩, 디코딩 확인 필요 -->
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+
+ 
+   <mvc:annotation-driven>
+       <!-- 컨트롤러에서 넘어온 데이터(JSON 같은)를 messageConverter로 사용할 수 있는 방법 1 -->
+       <!--<mvc:message-converters>-->
+           <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+               <!--<property name="supportedMediaTypes" value="application/json" />-->
+           <!--</bean>-->
+       <!--</mvc:message-converters>-->
+   </mvc:annotation-driven>
+
+   <!-- 컨트롤러에서 넘어온 데이터(JSON 같은)를 messageConverter로 사용할 수 있는 방법 2 --> <!-- spring 3.2이상 -->
+   <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+       <property name="messageConverters">
+           <util:list list-class="java.util.ArrayList">
+               <ref bean="mappingJackson2HttpMessageConverter"/>
+           </util:list>
+       </property>
+   </bean>
+   <bean id="mappingJackson2HttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+       <property name="supportedMediaTypes">
+           <list>
+               <value>text/html;charset=UTF-8</value>
+               <value>application/json;charset=UTF-8</value>
+           </list>
+       </property>
+   </bean>
+   
+   <!-- 접속이력 관리 -->
+	<mvc:interceptors>
+		<bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
+	</mvc:interceptors>
+	
+</beans>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.MediFAQMapper">
+
+	<select id="selectMediFAQ" parameterType="hashMap" resultType="hashMap">
+	   SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT
+	              			FAQ_SQ				,
+							AREA_GB				,
+							QUESTION			,
+							ANSWER				,
+							ORDER_NO			,
+							REG_DT				,
+							REG_USER			,
+							MOD_DT				,
+							MOD_USER		
+						FROM TB_MEDI_FAQ
+                 		WHERE AREA_GB = #{AREA_GB}
+                 		<if test='SEARCH != null'> 
+				       		<if test="SEARCH.equals('TITLE')">
+				         		AND QUESTION like '%'||#{KEYWORD}||'%'
+				       		</if> 
+				       		<if test="SEARCH.equals('USER_NM')">
+				         		AND REG_USER like '%'||#{KEYWORD}||'%'
+				       		</if> 
+				       		<if test="SEARCH.equals('CONTENT')">
+				         		AND ANSWER like '%'||#{KEYWORD}||'%'
+				       		</if> 
+					        <if test='SEARCH != ALL'>
+				         		AND (QUESTION like '%'||#{KEYWORD}||'%'
+				         			OR REG_USER like '%'||#{KEYWORD}||'%'
+				         			OR ANSWER like '%'||#{KEYWORD}||'%')
+					        </if>
+				        </if> 
+                  		ORDER BY ORDER_NO
+					) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+
+    <insert id="createMediFAQ" >
+		INSERT INTO TB_MEDI_FAQ (
+			FAQ_SQ				,
+			AREA_GB				,
+			QUESTION			,
+			ANSWER				,
+			ORDER_NO			,
+			REG_USER			,
+			REG_DT				,
+			MOD_USER			,	
+			MOD_DT				
+		) VALUES (
+			#{FAQ_SQ			, jdbcType=NUMERIC},
+			#{AREA_GB			, jdbcType=VARCHAR},
+			#{QUESTION			, jdbcType=VARCHAR},
+			#{ANSWER			, jdbcType=VARCHAR},
+			#{ORDER_NO			, jdbcType=NUMERIC},
+			#{REG_USER			, jdbcType=VARCHAR},
+			SYSDATE								   ,
+			#{MOD_USER			, jdbcType=VARCHAR},
+			SYSDATE
+		) 
+	</insert>
+
+	<update id="updateMediFAQ" >
+		UPDATE TB_MEDI_FAQ 
+			SET 
+				QUESTION			= #{QUESTION		, jdbcType=VARCHAR},
+				ANSWER				= #{ANSWER			, jdbcType=VARCHAR},
+				ORDER_NO			= #{ORDER_NO		, jdbcType=NUMERIC},
+				MOD_DT				= SYSDATE							   ,
+				MOD_USER			= #{MOD_USER		, jdbcType=VARCHAR}
+     	WHERE FAQ_SQ = #{FAQ_SQ}
+	</update>
+	
+    <delete id="deleteMediFAQ" >
+		DELETE FROM TB_MEDI_FAQ
+			WHERE FAQ_SQ = #{FAQ_SQ}
+    </delete>
+
+</mapper>

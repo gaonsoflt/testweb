@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.CheckupResMapper">
+
+	<select id="selectCheckupResByMap" parameterType="hashMap" resultType="hashMap">
+	   SELECT ROWNUM RNUM, A.*
+	      FROM (SELECT  
+                CASE WHEN B.NOTICE_SQ IS NULL THEN 1 ELSE ROW_NUMBER() OVER(PARTITION BY B.NOTICE_SQ ORDER BY B.REG_DT DESC) END AS RN, 
+                A.*, 
+                CASE WHEN FILE_SNM IS NULL THEN NULL ELSE FILE_PATH || B.FILE_SNM END AS FILE_PATH
+	              FROM (SELECT 
+	              			T.CHECKUP_SQ		,
+							T.AREA_GB			,
+							T.CHECKUP_NO		,
+							T.USER_NO			,
+							U.USER_NM AS USER_NM,
+							U.BIRTHDAY			,
+							T.CHECKUP_DT		,
+							T.BLOOD_PRES_MIN	,
+							T.BLOOD_PRES_MAX	,
+							T.BLOOD_PRES_PULSE	,
+							T.BLOOD_SUGAR		,
+							T.CHOLESTEROL		,
+							T.HDLCHOLESTEROL	,
+							T.LDLCHOLESTEROL	,
+							T.NEUTRAL			,
+							T.URIC_ACID			,
+							T.OXGEN				,
+							T.ECG_AVG_HEARTBT	,
+							T.ECG_MIN_HEARTBT	,
+							T.ECG_MAX_HEARTBT	,
+							T.ECG_UNUSUAL_CNT	,
+							T.ECG_BRADY_CNT		,
+							T.ECG_FREQ_CNT		,
+							T.REG_DT			,
+							T.REG_USER			,
+							T.MOD_DT			,
+							T.MOD_USER			,
+							M.STATUS_CD			,
+							M.MEDI_CONSULT_SQ	,
+							T.CHECK_TIME
+						FROM TB_CHECKUP_RES T, TB_USER_INFO U, TB_MEDI_CONSULT M
+	                    WHERE U.USER_SEQ = T.USER_NO AND T.AREA_GB = #{AREA_GB}
+	                    AND T.CHECKUP_NO = M.CHECKUP_NO
+	                    <if test='TOWN_ID != null and TOWN_ID != ""'> 
+				       		AND U.TOWN_ID = #{TOWN_ID}
+			       		</if>
+	                    <if test='CHECKUP_DT != null and CHECKUP_DT != ""'>
+			       		<![CDATA[
+							AND T.CHECKUP_DT >= TO_DATE(#{CHECKUP_DT}, 'YYYY-MM-DD') AND T.CHECKUP_DT < TO_DATE(#{CHECKUP_DT}, 'YYYY-MM-DD')+1
+						]]>
+						</if>
+	                    <if test='SEARCH != null'> 
+				       		<if test="SEARCH.equals('USER_NO') and KEYWORD != null">
+				       			AND T.USER_NO = #{KEYWORD}
+				     		</if> 
+				     		<if test="SEARCH.equals('USER_NM') and KEYWORD != null">
+				       			AND U.USER_NM LIKE '%'||#{KEYWORD}||'%'
+				     		</if>
+			        	</if> 
+	                    ORDER BY CHECKUP_SQ DESC
+					) A
+                    LEFT OUTER JOIN TB_FILE_INFO B
+                    ON A.CHECKUP_SQ = B.NOTICE_SQ
+	           ) A
+	     WHERE 1 = 1
+	     AND RN = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+
+	<select id="getCheckupResByUserNo" parameterType="hashMap" resultType="hashMap">
+	    SELECT CHECKUP_NO 
+			FROM TB_CHECKUP_RES
+			WHERE USER_NO = #{USER_NO} AND AREA_GB = #{AREA_GB}
+			ORDER BY CHECKUP_SQ DESC
+    </select>
+    
+    <select id="selectCheckupResByUserNo" parameterType="hashMap" resultType="hashMap">
+	   SELECT *
+			FROM (SELECT ROWNUM RNUM, A.*
+				FROM (SELECT 
+					CHECKUP_NO			,
+					CHECKUP_DT			,
+					USER_NO				,
+					DECODE(BLOOD_PRES_MIN,0,'',BLOOD_PRES_MIN)     AS BLOOD_PRES_MIN	,
+					DECODE(BLOOD_PRES_MAX,0,'',BLOOD_PRES_MAX)     AS BLOOD_PRES_MAX	,
+					DECODE(BLOOD_PRES_PULSE,0,'',BLOOD_PRES_PULSE) AS BLOOD_PRES_PULSE	,
+					DECODE(BLOOD_SUGAR,0,'',BLOOD_SUGAR)           AS BLOOD_SUGAR	,
+					DECODE(CHOLESTEROL,0,'',CHOLESTEROL)           AS CHOLESTEROL	,
+					DECODE(HDLCHOLESTEROL,0,'',HDLCHOLESTEROL)     AS HDLCHOLESTEROL	,
+					DECODE(LDLCHOLESTEROL,0,'',LDLCHOLESTEROL)     AS LDLCHOLESTEROL	,
+					DECODE(NEUTRAL,0,'',NEUTRAL)                   AS NEUTRAL	,
+					DECODE(URIC_ACID,0,'',URIC_ACID)               AS URIC_ACID	,
+					DECODE(OXGEN,0,'',OXGEN)                       AS OXGEN	,
+					DECODE(ECG_AVG_HEARTBT,0,'',ECG_AVG_HEARTBT)   AS ECG_AVG_HEARTBT	,
+					DECODE(ECG_MIN_HEARTBT,0,'',ECG_MIN_HEARTBT)   AS ECG_MIN_HEARTBT	,
+					DECODE(ECG_MAX_HEARTBT,0,'',ECG_MAX_HEARTBT)   AS ECG_MAX_HEARTBT	,
+					DECODE(ECG_UNUSUAL_CNT,0,'',ECG_UNUSUAL_CNT)   AS ECG_UNUSUAL_CNT	,
+					DECODE(ECG_BRADY_CNT,0,'',ECG_BRADY_CNT)       AS ECG_BRADY_CNT	,
+					DECODE(ECG_FREQ_CNT,0,'',ECG_FREQ_CNT)         AS ECG_FREQ_CNT
+				FROM TB_CHECKUP_RES
+					WHERE AREA_GB = #{AREA_GB}
+					AND USER_NO = #{USER_NO}
+					<if test="CHART_GBN != null">
+						<if test="CHART_GBN == 0">
+	                         AND NOT(    NVL(BLOOD_PRES_MIN,0)   = 0 
+		                             AND NVL(BLOOD_PRES_MAX,0)   = 0
+		                             AND NVL(BLOOD_PRES_PULSE,0) = 0 )
+		                </if>
+		                <if test="CHART_GBN == 1">
+		                     AND NOT(    NVL(BLOOD_SUGAR,0)      = 0
+		                             AND NVL(URIC_ACID,0)        = 0
+		                             AND NVL(OXGEN,0)            = 0 )
+		                </if>
+		                <if test="CHART_GBN == 2">
+		                     AND NOT(     NVL(CHOLESTEROL,0)      = 0
+		                              AND NVL(HDLCHOLESTEROL,0)   = 0
+		                              AND NVL(LDLCHOLESTEROL,0)   = 0
+		                              AND NVL(NEUTRAL,0)          = 0 )
+		                </if>
+		             </if>
+					ORDER BY CHECKUP_NO
+				) A
+			) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+    
+    <!-- insert id="createCheckupRes" >
+		INSERT INTO TB_CHECKUP_RES (
+			CHECKUP_SQ			,
+			AREA_GB				,
+			CHECKUP_NO			,
+			USER_NO				,
+			CHECKUP_DT			,
+			BLOOD_PRES_MIN		,
+			BLOOD_PRES_MAX		,
+			BLOOD_PRES_PULSE	,
+			BLOOD_SUGAR			,
+			CHOLESTEROL			,
+			URIC_ACID			,
+			OXGEN				,
+			ECG_AVG_HEARTBT		,
+			ECG_MIN_HEARTBT		,
+			ECG_MAX_HEARTBT		,
+			ECG_UNUSUAL_CNT		,
+			ECG_BRADY_CNT		,
+			ECG_FREQ_CNT		,
+			REG_USER			,
+			REG_DT				,
+			MOD_USER			,
+			MOD_DT
+		) VALUES (
+			#{CHECKUP_SQ			, jdbcType=NUMERIC},
+			#{AREA_GB				, jdbcType=VARCHAR},
+			#{CHECKUP_NO			, jdbcType=VARCHAR},
+			#{USER_NO				, jdbcType=VARCHAR},
+			TO_DATE(#{CHECKUP_DT}, 'YYYY-MM-DD'),
+			#{BLOOD_PRES_MIN		, jdbcType=NUMERIC},
+			#{BLOOD_PRES_MAX		, jdbcType=NUMERIC},
+			#{BLOOD_PRES_PULSE		, jdbcType=NUMERIC},
+			#{BLOOD_SUGAR			, jdbcType=NUMERIC},
+			#{CHOLESTEROL			, jdbcType=NUMERIC},
+			#{URIC_ACID				, jdbcType=NUMERIC},
+			#{OXGEN					, jdbcType=NUMERIC},
+			#{ECG_AVG_HEARTBT		, jdbcType=NUMERIC},
+			#{ECG_MIN_HEARTBT		, jdbcType=NUMERIC},
+			#{ECG_MAX_HEARTBT		, jdbcType=NUMERIC},
+			#{ECG_UNUSUAL_CNT		, jdbcType=NUMERIC},
+			#{ECG_BRADY_CNT			, jdbcType=NUMERIC},
+			#{ECG_FREQ_CNT			, jdbcType=NUMERIC},
+			#{REG_USER				, jdbcType=VARCHAR},
+			SYSDATE					,									   
+			#{MOD_USER				, jdbcType=VARCHAR},
+			SYSDATE					,				   
+		) 
+	</insert-->
+	
+	<insert id="createCheckupRes" >
+		INSERT INTO TB_CHECKUP_RES (
+			CHECKUP_SQ			,
+			AREA_GB				,
+			CHECKUP_NO			,
+			USER_NO				,
+			CHECKUP_DT			,
+			REG_USER			,
+			REG_DT				,				
+			MOD_USER			,
+			MOD_DT
+		) VALUES (
+			#{CHECKUP_SQ			, jdbcType=NUMERIC},
+			#{AREA_GB				, jdbcType=VARCHAR},
+			#{CHECKUP_NO			, jdbcType=VARCHAR},
+			#{USER_NO				, jdbcType=VARCHAR},
+			TO_DATE(#{CHECKUP_DT2}, 'YYYY-MM-DD'),
+			#{REG_USER				, jdbcType=VARCHAR},
+			SYSDATE,
+			#{MOD_USER				, jdbcType=VARCHAR},
+			SYSDATE
+		) 
+	</insert>
+
+	<update id="updateCheckupRes" >
+		UPDATE TB_CHECKUP_RES 
+			SET
+				USER_NO				= #{USER_NO				, jdbcType=NUMERIC},
+				BLOOD_PRES_MIN		= #{BLOOD_PRES_MIN		, jdbcType=NUMERIC},
+				BLOOD_PRES_MAX		= #{BLOOD_PRES_MAX		, jdbcType=NUMERIC},
+				BLOOD_PRES_PULSE	= #{BLOOD_PRES_PULSE	, jdbcType=NUMERIC},
+				BLOOD_SUGAR			= #{BLOOD_SUGAR			, jdbcType=NUMERIC},
+				CHOLESTEROL			= #{CHOLESTEROL			, jdbcType=NUMERIC}, 
+				HDLCHOLESTEROL		= #{HDLCHOLESTEROL		, jdbcType=NUMERIC},
+				LDLCHOLESTEROL		= #{LDLCHOLESTEROL		, jdbcType=NUMERIC},
+				NEUTRAL				= #{NEUTRAL				, jdbcType=NUMERIC},
+				URIC_ACID			= #{URIC_ACID			, jdbcType=NUMERIC},
+				OXGEN				= #{OXGEN				, jdbcType=NUMERIC},
+				ECG_AVG_HEARTBT		= #{ECG_AVG_HEARTBT		, jdbcType=NUMERIC},
+				ECG_MIN_HEARTBT		= #{ECG_MIN_HEARTBT		, jdbcType=NUMERIC},
+				ECG_MAX_HEARTBT		= #{ECG_MAX_HEARTBT		, jdbcType=NUMERIC},
+				ECG_UNUSUAL_CNT		= #{ECG_UNUSUAL_CNT		, jdbcType=NUMERIC},
+				ECG_BRADY_CNT		= #{ECG_BRADY_CNT		, jdbcType=NUMERIC},
+				ECG_FREQ_CNT		= #{ECG_FREQ_CNT		, jdbcType=NUMERIC},
+				MOD_USER			= #{MOD_USER			, jdbcType=VARCHAR},
+				MOD_DT				= SYSDATE								   ,
+				CHECK_TIME			= #{CHECK_TIME			, jdbcType=VARCHAR}
+     	WHERE CHECKUP_SQ = #{CHECKUP_SQ}
+	</update>
+	
+	
+	<update id="updateCheckupResDt" >
+		UPDATE TB_CHECKUP_RES 
+			SET
+				CHECKUP_DT = TO_DATE(REPLACE(#{CHECKUP_REQ_DT}, '-', ''), 'YYYY/MM/DD') 
+     	WHERE CHECKUP_NO = #{CHECKUP_NO}
+	</update>
+	
+    <delete id="deleteCheckupRes" >
+		DELETE FROM TB_CHECKUP_RES
+			WHERE CHECKUP_SQ = #{CHECKUP_SQ}
+    </delete>
+
+	<select id="getNextCheckupNo" parameterType="hashMap" resultType="Long">
+		SELECT MAX(CHECKUP_NO)+1 AS CHECKUP_NO
+			FROM TB_CHECKUP_RES 
+			WHERE CHECKUP_NO LIKE #{CHECKUP_NO}||'%'
+    </select>
+    <!-- 	CHECKUP_DT			= TO_DATE(REPLACE(#{CHECKUP_DT}, '-', ''), 'YYYY/MM/DD')		   , -->
+
+</mapper>

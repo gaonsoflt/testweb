@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.MediConsultMapper">
+
+	<select id="selectMediConsultByMap" parameterType="hashMap" resultType="hashMap">
+	   SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT
+	              			T.MEDI_CONSULT_SQ	,
+							T.AREA_GB			,
+							T.REQUEST_NO		,
+							T.USER_NO			,
+							T.STATUS_CD,
+							C.CD_NM AS STATUS_NM,
+              				U.USER_NM AS USER_NM,
+              				U.BIRTHDAY			,
+							T.CONSULT_REQ_DT	,
+							T.CHECKUP_REQ_DT	,
+							T.CHECKUP_NO		,
+							T.ISSUE_NOTE		,
+							T.REG_DT			,
+							T.REG_USER			,
+							T.MOD_DT			,
+							T.MOD_USER		
+						FROM TB_MEDI_CONSULT T, TB_CODE_MASTER C, TB_USER_INFO U
+                 		WHERE C.CD_ID = T.STATUS_CD AND U.USER_SEQ = T.USER_NO AND T.AREA_GB = #{AREA_GB}
+                 		<if test='TOWN_ID != null and TOWN_ID != ""'>
+                 			AND TOWN_ID = #{TOWN_ID}
+                 		</if>
+                 		<if test='CONSULT_REQ_DT != null'>
+						<![CDATA[
+							AND T.CONSULT_REQ_DT >= TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD') AND T.CONSULT_REQ_DT < TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD')+1
+						]]> 
+						</if>
+						<if test='SEARCH != null'> 
+				       		<if test="SEARCH.equals('USER_NO') and KEYWORD != null">
+				       			AND T.USER_NO = #{KEYWORD}
+				     		</if> 
+				     		<if test="SEARCH.equals('USER_NM') and KEYWORD != null">
+				       			AND U.USER_NM LIKE '%'||#{KEYWORD}||'%'
+				     		</if>
+				       		<if test="SEARCH.equals('STATUS_CD') and KEYWORD != null">
+				         		AND T.STATUS_CD LIKE '%'||#{KEYWORD}||'%'
+				       		</if> 
+			        	</if> 
+                  		ORDER BY MEDI_CONSULT_SQ DESC
+					) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+
+	<select id="selectMediConsultByVo" parameterType="egovframework.urtown.service.MediConsultVO" resultType="egovframework.urtown.service.MediConsultVO">
+	    <![CDATA[
+	        SELECT * FROM TB_MEDI_CONSULT
+		     WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+		]]>
+	</select>
+
+    <select id="selectMediConsult" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        <![CDATA[
+			SELECT
+				AREA_GB,
+				REQUEST_NO,
+				STATUS_CD,
+				USER_NO,
+				CONSULT_REQ_DT,
+				CHECKUP_REQ_DT,
+				CHECKUP_SQ,
+				ISSUE_NOTE,
+				REG_DT,
+				REG_USER,
+				MOD_DT,
+				MOD_USER
+			 FROM TB_MEDI_CONSULT
+			 WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+        ]]>
+    </select>
+    
+    <select id="selectMediConsultWaitingList" parameterType="hashMap" resultType="hashMap">
+		 SELECT
+			T.MEDI_CONSULT_SQ	,
+			T.AREA_GB			,
+			T.REQUEST_NO		,
+			T.USER_NO			,
+			T.STATUS_CD			,
+			C.CD_NM AS STATUS_NM,
+			U.USER_NM AS USER_NM,
+			U.BIRTHDAY			,
+			T.CONSULT_REQ_DT	,
+			T.CHECKUP_REQ_DT	,
+			T.CHECKUP_NO		,
+			T.ISSUE_NOTE		,
+			T.REG_DT			,
+			T.REG_USER			,
+			T.MOD_DT			,
+			T.MOD_USER		
+		FROM TB_MEDI_CONSULT T, TB_CODE_MASTER C, TB_USER_INFO U, TB_CHECKUP_RES R
+			WHERE C.CD_ID = T.STATUS_CD AND U.USER_SEQ = T.USER_NO AND T.AREA_GB = #{AREA_GB}
+			AND T.STATUS_CD NOT IN('500001') 
+			<if test='TOWN_ID != null and TOWN_ID != ""'>
+				AND TOWN_ID = #{TOWN_ID}
+			</if>
+           	AND R.CHECKUP_NO IN(T.CHECKUP_NO)
+           	<if test='CONSULT_REQ_DT != null'>
+			<![CDATA[
+				AND T.CONSULT_REQ_DT >= TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD') AND T.CONSULT_REQ_DT < TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD')+1
+			]]> 
+			</if>
+			<if test='SEARCH != null'> 
+	     		<if test="SEARCH.equals('USER_NO') and KEYWORD != null">
+	       			AND T.USER_NO = #{KEYWORD}
+	     		</if> 
+	     		<if test="SEARCH.equals('USER_NM') and KEYWORD != null">
+	       			AND U.USER_NM LIKE '%'||#{KEYWORD}||'%'
+	     		</if>
+     		</if> 
+			ORDER BY MEDI_CONSULT_SQ DESC
+    </select>
+    
+    <select id="selectMediConsultHisPatientList" parameterType="hashMap" resultType="hashMap">
+		 SELECT 
+			USER_SEQ    ,
+			AREA_ID     ,
+			TOWN_ID		,
+			USER_NM     ,
+			USER_ID     ,
+			SEX         ,
+			BIRTHDAY    ,
+			USER_TYPE   ,
+			AUTH_TYPE  
+		FROM TB_USER_INFO T, 
+			(SELECT
+				T.MEDI_CONSULT_SQ				,
+                T.AREA_GB						,
+                T.USER_NO						,
+                T.STATUS_CD						,
+                C.CD_NM 		AS STATUS_NM	,
+                T.CONSULT_REQ_DT				,
+                T.CHECKUP_REQ_DT				,
+                T.CHECKUP_NO					
+			FROM TB_MEDI_CONSULT T, TB_CODE_MASTER C
+				WHERE C.CD_ID = T.STATUS_CD 
+				AND T.AREA_GB = #{AREA_GB}
+				AND T.STATUS_CD = #{STATUS_CD}) U
+		WHERE AREA_ID = #{AREA_GB}
+			AND USER_TYPE = ${USER_TYPE}
+			AND T.USER_SEQ = U.USER_NO
+			<if test="G_UserNmVal != null">
+         		AND USER_NM LIKE '%'||#{USER_NM}||'%' 
+       		</if>
+       	GROUP BY USER_SEQ,
+         AREA_ID,
+         TOWN_ID,
+         USER_NM,
+         USER_ID,
+         SEX,
+         BIRTHDAY,
+         USER_TYPE,
+         AUTH_TYPE 
+		ORDER BY AREA_ID, USER_NM
+    </select>
+    
+    <select id="selectMediConsultDetailInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   SELECT 
+	      ROWNUM RNUM, 
+	      A.*
+	      FROM (SELECT  
+                CASE WHEN B.NOTICE_SQ IS NULL THEN 1 ELSE ROW_NUMBER() OVER(PARTITION BY B.NOTICE_SQ ORDER BY B.REG_DT DESC) END AS RN, 
+                A.*, 
+                CASE WHEN FILE_SNM IS NULL THEN 'NOFILE' ELSE FILE_PATH || B.FILE_SNM END AS FILE_PATH
+	              FROM (SELECT
+	              			T.MEDI_CONSULT_SQ	,
+							T.AREA_GB			,
+							T.REQUEST_NO		,
+							T.USER_NO			,
+							T.STATUS_CD,
+							C.CD_NM AS STATUS_NM,
+              				U.USER_NM AS USER_NM,
+              				U.BIRTHDAY			,
+							T.CONSULT_REQ_DT	,
+							T.CHECKUP_REQ_DT	,
+							T.CHECKUP_NO		,
+							T.ISSUE_NOTE		,
+							T.REG_DT			,
+							T.REG_USER			,
+							T.MOD_DT			,
+							T.MOD_USER			,
+							R.CHECKUP_SQ       ,
+							R.CHECKUP_DT       ,
+							R.BLOOD_PRES_MIN   ,
+							R.BLOOD_PRES_MAX   ,
+							R.BLOOD_PRES_PULSE ,
+							R.BLOOD_SUGAR      ,
+							NVL(R.CHOLESTEROL, 0) AS CHOLESTEROL,
+							NVL(R.HDLCHOLESTEROL, 0) AS HDLCHOLESTEROL,
+							NVL(R.LDLCHOLESTEROL, 0) AS LDLCHOLESTEROL,
+							NVL(R.NEUTRAL, 0) AS NEUTRAL,
+							NVL(R.URIC_ACID, 0) AS URIC_ACID,
+							NVL(R.OXGEN, 0) AS OXGEN,
+							R.ECG_AVG_HEARTBT  ,
+							R.ECG_MIN_HEARTBT  ,
+							R.ECG_MAX_HEARTBT  ,
+							R.ECG_UNUSUAL_CNT  ,
+							R.ECG_BRADY_CNT    ,
+							R.ECG_FREQ_CNT	   ,
+							R.CHECK_TIME
+						FROM TB_MEDI_CONSULT T, TB_CODE_MASTER C, TB_USER_INFO U, TB_CHECKUP_RES R
+                 			WHERE C.CD_ID = T.STATUS_CD 
+                 				AND U.USER_SEQ = T.USER_NO 
+                 				AND T.AREA_GB = #{AREA_GB}
+								AND T.CHECKUP_NO = R.CHECKUP_NO
+								AND MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+                  		ORDER BY MEDI_CONSULT_SQ DESC
+					) A
+                    LEFT OUTER JOIN TB_FILE_INFO B
+                    ON A.CHECKUP_SQ = B.NOTICE_SQ
+	           ) A
+	     WHERE 1 = 1
+	     AND RN = 1
+    </select>
+    
+    <select id="selectMediConsultListByUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    	SELECT ROWNUM RNUM, A.*
+	      FROM (SELECT
+					CASE WHEN B.NOTICE_SQ IS NULL THEN 1 ELSE ROW_NUMBER() OVER(PARTITION BY B.NOTICE_SQ ORDER BY B.REG_DT DESC) END AS RN, 
+					A.*, 
+					CASE WHEN FILE_SNM IS NULL THEN 'NOFILE' ELSE FILE_PATH || B.FILE_SNM END AS FILE_PATH
+	              FROM (SELECT
+	              			T.MEDI_CONSULT_SQ				,
+							T.AREA_GB						,
+							T.REQUEST_NO					,
+							T.USER_NO						,
+							T.STATUS_CD						,
+							C.CD_NM 		AS STATUS_NM	,
+              				U.USER_NM 		AS USER_NM		,
+              				U.BIRTHDAY						,
+							T.CONSULT_REQ_DT				,
+							T.CHECKUP_REQ_DT				,
+							T.CHECKUP_NO					,
+							T.ISSUE_NOTE					,
+							T.REG_DT						,
+							T.REG_USER						,
+							T.MOD_DT						,
+							T.MOD_USER						,
+							R.CHECKUP_SQ       				,
+							R.CHECKUP_DT      				,
+							R.BLOOD_PRES_MIN   				,
+							R.BLOOD_PRES_MAX   				,
+							R.BLOOD_PRES_PULSE 				,
+							R.BLOOD_SUGAR     				,
+							R.CHOLESTEROL      				,
+							R.HDLCHOLESTEROL   				,
+							R.LDLCHOLESTEROL   				,
+							R.NEUTRAL        				,
+							R.URIC_ACID        				,
+							R.OXGEN            				,
+							R.ECG_AVG_HEARTBT  				,
+							R.ECG_MIN_HEARTBT  				,
+							R.ECG_MAX_HEARTBT  				,	
+							R.ECG_UNUSUAL_CNT  				,
+							R.ECG_BRADY_CNT    				,
+							R.ECG_FREQ_CNT					,
+							N.NOTE_SQ						,
+							R.CHECK_TIME					,
+							N.CONSULT_NOTE					,
+							N.REG_DT		AS REG_DT_NOTE	,           
+							N.REG_USER		AS REG_USER_NOTE,   
+							N.MOD_DT		AS MOD_DT_NOTE	,           
+							N.MOD_USER  	AS MOD_USER_NOTE
+						FROM TB_MEDI_CONSULT T, TB_CODE_MASTER C, TB_USER_INFO U, TB_CHECKUP_RES R, TB_MEDI_CONSULT_NOTE N
+                 			WHERE C.CD_ID = T.STATUS_CD 
+                 				AND T.AREA_GB = #{AREA_GB}
+                 				AND U.USER_SEQ = T.USER_NO 
+								AND T.CHECKUP_NO = R.CHECKUP_NO
+								AND T.MEDI_CONSULT_SQ = N.MEDI_CONSULT_SQ
+				       			AND T.USER_NO = #{KEYWORD}
+				         		AND T.STATUS_CD = #{STATUS_CD}
+                  		ORDER BY MEDI_CONSULT_SQ DESC
+					) A
+                    LEFT OUTER JOIN TB_FILE_INFO B
+                    ON A.CHECKUP_SQ = B.NOTICE_SQ
+	           ) A
+	     WHERE 1 = 1
+	     AND RN = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+    
+    <insert id="createMediConsultReq" >
+		INSERT INTO TB_MEDI_CONSULT (
+			MEDI_CONSULT_SQ		,
+			AREA_GB				,
+			REQUEST_NO			,
+			STATUS_CD			,
+			USER_NO				,
+			CONSULT_REQ_DT		,
+			CHECKUP_REQ_DT		,
+			CHECKUP_NO			,
+			ISSUE_NOTE			,
+			REG_USER			,
+			REG_DT				,
+			MOD_USER			,
+			MOD_DT
+		) VALUES (
+			#{MEDI_CONSULT_SQ	, jdbcType=NUMERIC},
+			#{AREA_GB			, jdbcType=VARCHAR},
+			#{REQUEST_NO		, jdbcType=VARCHAR},
+			#{STATUS_CD			, jdbcType=VARCHAR},
+			#{USER_NO			, jdbcType=NUMERIC},
+			TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD HH24:MI'),
+			TO_DATE(#{CHECKUP_REQ_DT}, 'YYYY-MM-DD HH24:MI'),
+			#{CHECKUP_NO		, jdbcType=NUMERIC},
+			#{ISSUE_NOTE		, jdbcType=VARCHAR},
+			#{REG_USER			, jdbcType=VARCHAR},
+			SYSDATE								   ,
+			#{MOD_USER			, jdbcType=VARCHAR},
+			SYSDATE
+		) 
+	</insert>
+
+	<update id="updateMediConsultReq" >
+		UPDATE TB_MEDI_CONSULT 
+			SET 
+				STATUS_CD			= #{STATUS_CD		, jdbcType=VARCHAR},
+				USER_NO				= #{USER_NO			, jdbcType=NUMERIC},
+				CONSULT_REQ_DT		= TO_DATE(#{CONSULT_REQ_DT}, 'YYYY-MM-DD HH24:MI'),
+				CHECKUP_REQ_DT		= TO_DATE(#{CHECKUP_REQ_DT}, 'YYYY-MM-DD HH24:MI'),
+				CHECKUP_NO			= #{CHECKUP_NO		, jdbcType=NUMERIC},
+				ISSUE_NOTE			= #{ISSUE_NOTE		, jdbcType=VARCHAR},
+				MOD_DT				= SYSDATE							   ,
+				MOD_USER			= #{MOD_USER		, jdbcType=VARCHAR}
+     	WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+	</update>
+	
+	<update id="updateMediConsultStatus" >
+		UPDATE TB_MEDI_CONSULT 
+			SET 
+				STATUS_CD			= #{STATUS_CD		, jdbcType=VARCHAR},
+				MOD_DT				= SYSDATE							   ,
+				MOD_USER			= #{MOD_USER		, jdbcType=VARCHAR}
+     	WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+	</update>
+	
+    <delete id="deleteMediConsultReq" >
+		DELETE FROM TB_MEDI_CONSULT
+			WHERE MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+    </delete>
+
+	<select id="getNextRequestNo" parameterType="hashMap" resultType="Long">
+		SELECT MAX(REQUEST_NO)+1 AS REQUEST_NO
+			FROM TB_MEDI_CONSULT 
+			WHERE REQUEST_NO LIKE #{REQUEST_NO}||'%'
+    </select>
+    
+    <select id="getDelSeq" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    	SELECT 
+			T.MEDI_CONSULT_SQ, 
+			C.CHECKUP_SQ,
+			N.NOTE_SQ,
+			N.CONSULT_NOTE
+		FROM TB_MEDI_CONSULT T, TB_MEDI_CONSULT_NOTE N, TB_CHECKUP_RES C
+  			WHERE T.MEDI_CONSULT_SQ = #{MEDI_CONSULT_SQ}
+  			AND C.CHECKUP_NO = T.CHECKUP_NO
+  			AND N.MEDI_CONSULT_SQ = T.MEDI_CONSULT_SQ
+    </select>
+
+</mapper>

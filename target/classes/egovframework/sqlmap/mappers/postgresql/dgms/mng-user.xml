@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.dgms.service.impl.MngUserMapper">
+
+
+	
+    
+    <select id="selectMngUserInfo" parameterType="hashMap" resultType="hashMap">
+
+	    SELECT *
+	      FROM (SELECT ROWNUM RNUM, A.*
+	              FROM (SELECT 
+							USER_SEQ    ,
+							AREA_ID     ,
+							USER_NM     ,
+							MOBILE_NO   ,
+							NOTE		,
+							USER_ID     ,
+							'' AS LOGIN_PWD   ,
+							SEX         ,
+							BIRTHDAY    ,
+							ADDR_CIDO   ,
+							ADDR_CIGUNGU,
+							USER_TYPE   ,
+							DECODE(USE_YN,'0','false','true')  USE_YN  , 
+							PATIENT_YN ,
+							AUTH_TYPE   ,
+							CRE_USR     ,
+							CRE_DT      ,
+							MOD_USR     ,
+							MOD_DT      ,
+							ADDR_DETAIL
+	                      FROM TB_USER_INFO 
+	                     WHERE 1=1
+					        <if test="G_AreaIdVal != null">
+					          AND REPLACE(AREA_ID, 0, '') LIKE '%'||REPLACE(#{G_AreaIdVal}, 0, '')||'%'
+					        </if> 
+				       		<if test="G_UserNmVal != null">
+				         		AND USER_NM LIKE '%'||#{G_UserNmVal}||'%' 
+				       		</if> 
+	                     ORDER BY AREA_ID, USER_NM
+	                     ) A
+	           ) A
+	     WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+
+    </select>
+    
+    
+    <select id="selectMngUserInfoTot" parameterType="hashMap" resultType="int">
+	    SELECT COUNT(*)
+		FROM TB_USER_INFO 
+		WHERE 1=1
+		<if test="G_AreaIdVal != null">
+			AND REPLACE(AREA_ID, 0, '') LIKE '%'||REPLACE(#{G_AreaIdVal}, 0, '')||'%'
+		</if> 
+		<if test="G_UserNmVal != null">
+			AND USER_NM LIKE '%'||#{G_UserNmVal}||'%' 
+		</if> 
+		ORDER BY USER_NM
+    </select>
+    
+    
+    
+    <insert id="insertMngUserInfo" >
+	    INSERT INTO TB_USER_INFO
+	      (
+	      	USER_SEQ			, 
+			AREA_ID				, 
+			USER_NM				, 
+			MOBILE_NO			, 
+			USER_ID				, 
+			LOGIN_PWD			, 
+			SEX					, 
+			BIRTHDAY			, 
+			ADDR_CIDO			, 
+			ADDR_CIGUNGU		, 
+			USER_TYPE			, 
+			USE_YN				, 
+			PATIENT_YN			, 
+			AUTH_TYPE			, 
+			CRE_USR				, 
+			CRE_DT				, 
+			MOD_USR				, 
+			MOD_DT				,
+			ADDR_DETAIL			,
+			NOTE
+	      )
+	    VALUES
+	      (
+	      	#{USER_SEQ      ,  jdbcType=VARCHAR},
+			#{AREA_ID       ,  jdbcType=VARCHAR},
+			#{USER_NM       ,  jdbcType=VARCHAR},
+			#{MOBILE_NO     ,  jdbcType=VARCHAR},
+			#{USER_ID       ,  jdbcType=VARCHAR},
+			#{LOGIN_PWD     ,  jdbcType=VARCHAR},
+			#{SEX           ,  jdbcType=VARCHAR},
+			#{BIRTHDAY      ,  jdbcType=VARCHAR},
+			#{ADDR_CIDO     ,  jdbcType=VARCHAR},
+			#{ADDR_CIGUNGU  ,  jdbcType=VARCHAR},
+			#{USER_TYPE     ,  jdbcType=VARCHAR},
+			#{USE_YN        ,  jdbcType=VARCHAR},
+			#{PATIENT_YN   ,  jdbcType=VARCHAR},
+			#{AUTH_TYPE     ,  jdbcType=VARCHAR},
+			#{CRE_USR       ,  jdbcType=VARCHAR},
+			SYSDATE                             ,
+			#{MOD_USR       ,  jdbcType=VARCHAR},
+			SYSDATE			,
+			#{ADDR_DETAIL   ,  jdbcType=VARCHAR},
+			#{NOTE		    ,  jdbcType=VARCHAR}
+	       ) 
+		
+	</insert>
+
+	<update id="updateMngUserInfo" >
+    UPDATE TB_USER_INFO
+       SET 
+			AREA_ID     = #{AREA_ID       ,  jdbcType=VARCHAR},
+			USER_NM     = #{USER_NM       ,  jdbcType=VARCHAR},
+			MOBILE_NO   = #{MOBILE_NO     ,  jdbcType=VARCHAR},
+			<!-- USER_ID     = #{USER_ID       ,  jdbcType=VARCHAR},-->
+			SEX         = #{SEX           ,  jdbcType=VARCHAR},
+			BIRTHDAY    = #{BIRTHDAY      ,  jdbcType=VARCHAR},
+			ADDR_CIDO   = #{ADDR_CIDO     ,  jdbcType=VARCHAR},
+			ADDR_CIGUNGU= #{ADDR_CIGUNGU  ,  jdbcType=VARCHAR},
+			USER_TYPE   = #{USER_TYPE     ,  jdbcType=VARCHAR},
+			USE_YN      = #{USE_YN        ,  jdbcType=VARCHAR},
+			PATIENT_YN = #{PATIENT_YN   ,  jdbcType=VARCHAR},
+			AUTH_TYPE   = #{AUTH_TYPE     ,  jdbcType=VARCHAR},
+			MOD_USR     = #{MOD_USR       ,  jdbcType=VARCHAR},
+			MOD_DT      = SYSDATE		,
+			ADDR_DETAIL	= #{ADDR_DETAIL   ,  jdbcType=VARCHAR},
+			NOTE		= #{NOTE		  ,  jdbcType=VARCHAR}
+     WHERE USER_SEQ = #{USER_SEQ}
+	</update>
+	
+	<update id="updateMngPassInfo" >
+    UPDATE TB_USER_INFO
+       SET 
+			LOGIN_PWD   = #{LOGIN_PWD     ,  jdbcType=VARCHAR}
+     WHERE USER_SEQ = #{USER_SEQ}
+	</update>
+	
+    <update id="deleteMngUserInfo" >
+	    DELETE FROM TB_USER_INFO
+		 WHERE USER_SEQ = #{USER_SEQ}
+    </update>
+	    
+
+<!--     <select id="selectCdNmCombo" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		SELECT CATGR,
+		       CD,
+		       LPAD(' ', 2 * (LEVEL - 1), '>') || CD_NM  AS CD_NM_PATH,
+		       CD_NM,
+		       SORT_NO,
+		       DEUser(USE_YN,'0','false','true')  USE_YN  , 
+		       LEVEL
+		  FROM TB_User_MASTER
+		 WHERE LEVEL <= 2
+		 START WITH CATGR = 0
+		CONNECT BY CATGR = PRIOR CD
+	]]>
+    </select>
+    
+    <select id="selectMngUserInfoCombo" parameterType="hashMap" resultType="hashMap">
+    	<![CDATA[
+	    SELECT * 
+        FROM TB_User_MASTER 
+       ORDER BY SORT_NO
+    	]]>
+    </select> -->
+    
+    
+    
+</mapper>

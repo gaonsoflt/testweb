@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.urtown.service.impl.MenuInfoMapper">
+
+	<select id="selectMenuInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			MENU_SQ,
+			MENU_NM,
+			MENU_URL,
+			MENU_DESC,
+			MENU_CONTENT,
+			MENU_ORDER,
+			DECODE(USE_YN, '1', 'true', 'false') AS USE_YN,
+			AREA_GB,
+			PARENT_SQ,
+			MENU_ID
+		FROM TB_MENU_INFO
+			WHERE AREA_GB = #{AREA_GB}
+		<if test="TYPE == 'PARENT'">
+   			AND PARENT_SQ IS NULL
+		</if>
+		<if test="TYPE == 'CHILD'">
+   			AND PARENT_SQ = #{MENU_SQ}
+		</if>
+		ORDER BY MENU_ORDER
+    </select>
+
+	<select id="getMenuInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT * 
+			FROM (
+				SELECT
+		  			T.MENU_SQ,
+		  			T.PARENT_SQ,
+		  			T.MENU_ORDER,
+					T.MENU_NM,
+					T.MENU_ID,
+					T.MENU_URL,
+					T.MENU_DESC,
+					T.MENU_CONTENT,
+					DECODE(T.USE_YN, '1', 'true', 'false') AS USE_YN,
+					T.AREA_GB,
+					M.MENU_SQ 		AS MAIN_SQ,
+				  	M.MENU_ORDER 	AS MAIN_ORDER,
+					M.MENU_NM 		AS MAIN_NM,
+					M.MENU_ID 		AS MAIN_ID,
+					M.MENU_URL 		AS MAIN_URL,
+					M.MENU_DESC 	AS MAIN_DESC,
+					M.MENU_CONTENT 	AS MAIN_CONTENT,
+					DECODE(M.USE_YN, '1', 'true', 'false') AS MAIN_USE_YN
+				FROM TB_MENU_INFO T, TB_MENU_INFO M
+					WHERE T.AREA_GB = #{AREA_GB}
+		  			AND T.AREA_GB = M.AREA_GB
+		  			AND T.PARENT_SQ = M.MENU_SQ
+		  			AND T.USE_YN = 1 AND M.USE_YN = 1
+				ORDER BY M.MENU_ORDER, T.MENU_ORDER
+			) A, (
+				SELECT 
+					DISTINCT(MENU_SQ)
+				FROM TB_USER_AUTH
+	  				WHERE AUTH_R = 1
+	            AND (USER_TYPE = (SELECT USER_TYPE FROM TB_USER_INFO WHERE USER_SEQ = #{USER_NO}) OR USER_NO = #{USER_NO})
+			) B
+			WHERE A.MENU_SQ = B.MENU_SQ
+    </select>
+    
+	<insert id="createMenuInfo" >
+		INSERT INTO TB_MENU_INFO (
+			MENU_SQ			,
+			MENU_NM			,
+			MENU_URL		,
+			MENU_DESC		,
+			MENU_CONTENT	,
+			MENU_ORDER		,
+			USE_YN			,
+			AREA_GB			,
+			PARENT_SQ		,
+			MENU_ID
+		) VALUES (
+			#{MENU_SQ		, jdbcType=NUMERIC},
+			#{MENU_NM		, jdbcType=VARCHAR},
+			#{MENU_URL		, jdbcType=VARCHAR},
+			#{MENU_DESC		, jdbcType=VARCHAR},
+			#{MENU_CONTENT	, jdbcType=VARCHAR},
+			#{MENU_ORDER	, jdbcType=NUMERIC},
+			#{USE_YN		, jdbcType=VARCHAR},
+			#{AREA_GB		, jdbcType=VARCHAR},
+			#{PARENT_SQ		, jdbcType=NUMERIC},
+			#{MENU_ID		, jdbcType=VARCHAR}
+		) 
+	</insert>
+
+	<update id="updateMenuInfo" >
+		UPDATE TB_MENU_INFO 
+			SET 
+				MENU_NM			= #{MENU_NM			, jdbcType=VARCHAR},
+				MENU_URL		= #{MENU_URL		, jdbcType=VARCHAR},
+				MENU_DESC		= #{MENU_DESC		, jdbcType=VARCHAR},
+				MENU_CONTENT	= #{MENU_CONTENT	, jdbcType=VARCHAR},
+				MENU_ORDER		= #{MENU_ORDER		, jdbcType=NUMERIC},
+				USE_YN			= #{USE_YN			, jdbcType=VARCHAR},
+				PARENT_SQ		= #{PARENT_SQ		, jdbcType=NUMERIC},
+				MENU_ID			= #{MENU_ID			, jdbcType=VARCHAR}
+     	WHERE MENU_SQ = #{MENU_SQ}
+	</update>
+	
+    <delete id="deleteMenuInfo" >
+		DELETE FROM TB_MENU_INFO
+			WHERE MENU_SQ = #{MENU_SQ}
+    </delete>
+</mapper>

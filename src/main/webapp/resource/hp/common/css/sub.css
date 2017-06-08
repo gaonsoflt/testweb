@@ -1,0 +1,53 @@
+
+/* ---------------------------------------------------------------------------------------------------------------------------
+    
+                                    2016.04.19   가온소프트(주) 신기술개발팀 대리 이희웅 작성 
+									        경우에 따라 소스의 수정은 자유롭게 사용 가능 하나
+									                       무단복제 및 배포를 금지합니다.
+
+--------------------------------------------------------------------------------------------------------------------------- */
+
+@charset "utf-8";
+
+dl.cl01{background:url('../images/sub/img_cont01.jpg') no-repeat; padding:0 0 0 430px;}
+dl.cl01 dt{
+	font-size:32px; 
+	letter-spacing:-3px; 
+	line-height:130%; 
+	background:url('../images/sub/img_cont05.gif') no-repeat top right; 
+	font-weight:bold;
+	padding:50px 0;
+	}
+dl.cl01 dt span{display:block; font-weight:normal; color:#a0a0a0;}
+dl.cl01 dd{font-size:16px; letter-spacing:-1px; padding:20px 0 80px 0; color:#696969;}
+
+h4.title01{padding:100px 0 20px 0; font-size:43px; color:#005eb6; letter-spacing:-3px;}
+.crow{overflow:hidden; letter-spacing:-2px;}
+.crow>ul>li{width:32%; float:left;  height:700px;}
+.crow>ul>li.cbg01{background:url('../images/sub/img_cont02.png') no-repeat bottom center; }
+.crow>ul>li.cbg02{background:url('../images/sub/img_cont03.png') no-repeat bottom center; }
+.crow>ul>li.cbg03{background:url('../images/sub/img_cont04.png') no-repeat bottom center; }
+.crow>ul>li>dl{padding:30px; height:520px;}
+.crow>ul>li>dl>dt{color:#185593; font-size:25px; border-bottom:solid 1px #000000; padding:0 0 30px 0; margin:0 0 30px 0;}
+.crow>ul>li>dl>dd{overflow:hidden;}
+.crow>ul>li>dl>dd>ul>li{padding:0 0 20px 0; font-size:16px; color:#696969;}
+
+
+dl.cl02{overflow:hidden; position:relative;}
+dl.cl02>dt{float:left; text-indent:-99999px; width:237px; height:472px; background:url('../images/sub/title_img01.jpg') no-repeat; }
+dl.cl02>dd{
+	float:left; 
+	border-top:solid 1px #bebebe; 
+	border-bottom:solid 1px #bebebe;
+	border-right:solid 1px #bebebe;
+	width:435px; 
+	height:440px;
+	padding:30px 0 0 30px;
+	}
+dl.cl02>dd>p{font-size:26px; color:#185593; font-weight:bold; padding:0 0 30px 0;}
+dl.cl02>dd>ul{}
+dl.cl02>dd>ul>li{padding:0 0 20px 0; font-size:16px; color:#696969;}
+.cdbg01{background:url('../images/sub/cdbg01.gif') no-repeat 230px 280px;}
+.cdbg02{background:url('../images/sub/cdbg02.gif') no-repeat 280px 280px;}
+
+.btndw{position:absolute; padding:15px 30px; font-size:16px; color:#ffffff; background:#4086c8; bottom:30px;}

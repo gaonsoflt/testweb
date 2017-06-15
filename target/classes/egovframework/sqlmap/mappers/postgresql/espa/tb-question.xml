@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.espa.service.impl.QuestionMapper">
+
+	<select id="selectQuestionList" parameterType="hashMap" resultType="hashMap">
+		SELECT *
+			FROM (
+				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+				FROM (
+					SELECT
+						question_seq, 
+						title, 
+						reg_dt, 
+						reg_usr, 
+						mod_dt, 
+						mod_usr
+					FROM tb_question
+					WHERE 1=1
+		       		<if test="CONDITION eq 'TITLE'">
+		       			AND title LIKE '%'||#{KEYWORD}||'%'
+		       		</if>
+				ORDER BY question_seq DESC
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+	</select>
+	
+	<select id="selectQuestion" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			question_seq, 
+			title, 
+			reg_dt, 
+			reg_usr, 
+			mod_dt, 
+			mod_usr, 
+			con_question,
+			con_io,
+			con_example,
+			con_condition,
+			con_hint,
+			con_etc
+		FROM tb_question
+		WHERE question_seq = cast(#{question_seq} as integer)
+	</select>
+	
+	<select id="selectQuestionAllCount" parameterType="hashMap" resultType="integer">
+		SELECT count(*)
+		FROM tb_question
+	</select>
+	
+	<insert id="insertQuestion">
+		INSERT INTO tb_question (
+			question_seq, 
+			title, 
+			reg_dt, 
+			reg_usr, 
+			mod_dt, 
+			mod_usr, 
+			con_question,
+			con_io,
+			con_example,
+			con_condition,
+			con_hint,
+			con_etc
+		) VALUES (
+			nextval('sq_tb_question'), 
+			#{title}, 
+			now(), 
+			#{reg_usr}, 
+			now(), 
+			#{mod_usr}, 
+			#{con_question},
+			#{con_io},
+			#{con_example},
+			#{con_condition},
+			#{con_hint},
+			#{con_etc}
+		)
+	</insert>
+	
+	<update id="updateQuestion">
+		UPDATE tb_question
+		SET 
+			title = #{title},
+			con_question = #{con_question},
+			con_io = #{con_io},
+			con_example = #{con_example},
+			con_condition = #{con_condition},
+			con_hint = #{con_hint},
+			con_etc = #{con_etc},
+			mod_usr = #{mod_usr}, 
+			mod_dt = now()
+		WHERE question_seq = cast(#{question_seq} as integer)
+	</update>
+	
+	<delete id="deleteQuestion">
+		DELETE FROM tb_question 
+		WHERE 1 = 1
+		AND question_seq = CAST(#{question_seq} as integer) 
+	</delete>
+</mapper>

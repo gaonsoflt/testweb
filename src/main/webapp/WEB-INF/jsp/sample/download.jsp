@@ -3,7 +3,7 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.io.FileInputStream"%>  
 <%@ page import="egovframework.com.cmm.service.Globals" %> 
-<%@ page import="egovframework.dgms.service.CommonService" %>
+<!-- %@ page import="egovframework..service.Comm" %-->
 <%
      String rName = request.getParameter("RN");
 	 String sName = request.getParameter("SN");

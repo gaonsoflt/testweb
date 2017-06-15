@@ -27,8 +27,16 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	 * BBS
 	 */
 	@RequestMapping(value = "/bbs/notice.do")
-	public String systemMngUser(Model model) throws Exception {
+	public String bbsNotice(Model model) throws Exception {
 		return "bbs/notice";
+	}
+	
+	/*
+	 * ESPA
+	 */
+	@RequestMapping(value = "/mgr/question.do")
+	public String mgrQuestion(Model model) throws Exception {
+		return "espa/mgr/question";
 	}
 	
 	/*

@@ -48,7 +48,6 @@
 			expose_to 
 		FROM tb_bbs_notice
 		WHERE notice_seq = cast(#{notice_seq} as integer)
-		ORDER BY notice_seq
 	</select>
 	
 	<select id="selectNoticeAllCount" parameterType="hashMap" resultType="integer">

@@ -1,17 +1,17 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ include file="../inc/header.jsp"%>
-<%@ include file="../inc/aside.jsp"%>
+<%@ include file="../../inc/header.jsp"%>
+<%@ include file="../../inc/aside.jsp"%>
 <!-- 내용 -->
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i>공지사항 <small>공지사항</small>
+			<i class="fa fa-caret-right"></i>문제관리 <small>테스트에 사용할 문제를 관리합니다.</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 게시판</a></li>
-			<li class="active">공지사항</li>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ESPA관리</a></li>
+			<li class="active">문제관리</li>
 		</ol>
 	</section>
 	<!-- Main content -->
@@ -57,17 +57,23 @@
 		</colgroup>
 		<tbody>
 			<tr><th colspan="2">제목</th></tr>
-			<tr><td colspan="2"><input id="title" class="bind_input" name="title" data-bind="value:selected.title" style="width:100%;" required/></td></tr>
-			<tr>
-				<th>게시시작</th>
-				<th>게시종료</th>
+			<tr><td colspan="2"><input id="title" name="title" data-bind="value:selected.title" style="width:100%;" required/></td></tr>
+			<tr class="modify">
+				<th>등록자</th>
+				<th>수정일</th>
 			</tr>
-			<tr>
-				<td><input id="expose-from" class="bind_input" name="expose-from" data-bind="value:selected.expose_from" style="width:100%;"/></td>
-				<td><input id="expose-to" class="bind_input" name="expose-to" data-bind="value:selected.expose_to" style="width:100%;"/></td>
+			<tr class="modify">
+				<td><input id="reg-usr" name="reg-usr" data-bind="value:selected.reg_usr" style="width:100%;" readonly/></td>
+				<td><input id="mod-dt" name="mod-dt" data-bind="value:selected.mod_dt" style="width:100%;" readonly/></td>
 			</tr>
-			<tr><th colspan="2">내용</th>	</tr>
-			<tr><td colspan="2"><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></td></tr>
+			<tr><th colspan="2">문제</th></tr>
+			<tr><td colspan="2"><textarea id="con-question" name="con-question" data-bind="value:selected.con_question" placeholder="문제를 입력하세요." style="width:100%;height:200px;"></textarea></td></tr>
+			<tr><th colspan="2">입출력</th></tr>
+			<tr><td colspan="2"><textarea id="con-io" name="con-io" data-bind="value:selected.con_io" placeholder="입출력 내용을 입력하세요." style="width:100%;height:200px;"></textarea></td></tr>
+			<tr><th colspan="2">예제</th></tr>
+			<tr><td colspan="2"><textarea id="con-example" name="con-example" data-bind="value:selected.con_example" placeholder="예제를 입력하세요." style="width:100%;height:200px;"></textarea></td></tr>
+			<tr><th colspan="2">힌트</th></tr>
+			<tr><td colspan="2"><textarea id="con-hint" name="con-hint" data-bind="value:selected.con_hint" placeholder="힌트를 입력하세요." style="width:100%;height:200px;"></textarea></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -82,8 +88,8 @@
 	/* DropDownList Template */
 	var codelist = "_USER_TYPE_";
 	var codeModles = "";
-	var noticeViewModel;
-	var noticeModel;
+	var questionViewModel;
+	var questionModel;
 	var wnd;
 	
 	var today = kendo.date.today();
@@ -128,7 +134,7 @@
 
 	var G_Condition = "ALL";
 	var G_Keyword = ""; 
-	var G_NoticeSeq = 0;
+	var G_Seq = 0;
 	
 	$(function() {
 		var searchData = [ 
@@ -227,17 +233,15 @@
 	});
 	
 	function addNew(e) {
-		// invisible delete button
+		// invisible elements(delete button, reg_usr, mod_dt)
 		$("#delete-btn").css("display", "none");
-		
-		// init data
-		$("#expose-from").data("kendoDateTimePicker").value();
-		$("#expose-to").data("kendoDateTimePicker").value();
+		document.getElementsByClassName("modify")[0].style.display = "none";
+		document.getElementsByClassName("modify")[1].style.display = "none";
 		
 		// open window
 		wnd.center().open();		
-		noticeViewModel.set("selected", new noticeModel());
-		noticeViewModel.dataSource.insert(0, noticeViewModel.selected);
+		questionViewModel.set("selected", new questionModel());
+		questionViewModel.dataSource.insert(0, questionViewModel.selected);
 		return false;
 	}
 	
@@ -245,14 +249,14 @@
 		var id = e.id;
 		console.log(id + " is clicked");
 		if(id == 'add-btn') {
-			console.log("add noticeViewModel");
+			console.log("add questionViewModel");
 			addNew(e);
 		} 
     }
 	
 	function closeWindow(e) {
 		wnd.close();
-		G_NoticeSeq = 0;
+		G_Seq = 0;
 		$("#gridList").data("kendoGrid").dataSource.read();
 	}
 	
@@ -277,7 +281,7 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/bbs/notice",
+		var crudServiceBaseUrl = "${contextPath}/mgr/question",
 		/*** dataSource ***/
 		dataSourceDetail = new kendo.data.DataSource({
 			transport : {
@@ -353,14 +357,12 @@
 					return response;
 				},
 				model : {//가져온 값이 있음...
-					id : "notice_seq",
+					id : "question_seq",
 					fields : {
-						notice_seq : { type : "number", editable : false }, //data type of the field {Number|String|Boolean|Date} default is String
+						question_seq : { type : "number", editable : false }, //data type of the field {Number|String|Boolean|Date} default is String
 						title : { type : "string", editable : false },
 						reg_dt : { type : "string", editable : false },
-						reg_usr : { type : "string", editable : false },
-						expose_from : { type : "string", editable : false },
-						expose_to : { type : "string", editable : false }
+						reg_usr : { type : "string", editable : false }
 					}
 				}
 			},
@@ -400,32 +402,25 @@
 			height : 710,
             toolbar: kendo.template($("#toolbar-template").html()),
 			columns : [
-				{ field : "notice_seq", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
+				{ field : "question_seq", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: center;" } },
 				{ field : "reg_usr", title : "글쓴이", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "reg_dt", title : "등록일", width : 150, attributes : {	style : "text-align: center;" },
 					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd') #" }
-				// Todo: 조회수 필드 추가 예정 
-				/* 
-				{ field : "expose_from", title : "게시시작", attributes : {	style : "text-align: center;" },
-					template : "#= (expose_from == '') ? '' : kendo.toString(new Date(Number(expose_from)), 'yyyy-MM-dd HH:mm') #" },
-				{ field : "expose_to", title : "게시종료", attributes : {	style : "text-align: center;" },
-					template : "#= (expose_to == '') ? '' : kendo.toString(new Date(Number(expose_to)), 'yyyy-MM-dd HH:mm') #" },
-				{ command: { 
-					text : " ", click: showDetails, className: "fa fa-folder" }, title: "", width: "100px", attributes : {	style : "text-align: center;" } }
-				*/
 			],
 			change: function(e) {
-        		// find notice_seq value in selected row  	
+        		// find seq value in selected row  	
 				var selectedItem = this.dataItem(this.select());
-				G_NoticeSeq = selectedItem.notice_seq;
-				console.log("selected item: " + G_NoticeSeq + "(seq)");
+				G_Seq = selectedItem.question_seq;
+				console.log("selected item: " + G_Seq + "(seq)");
                 console.log(selectedItem);
                 console.log("showDetails");
-        		// read noticeViewModel by G_NoticeSeq 
-        		noticeViewModel.dataSource.read();
+        		// read questionViewModel by G_Seq 
+        		questionViewModel.dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
+        		document.getElementsByClassName("modify")[0].style.display = "";
+        		document.getElementsByClassName("modify")[1].style.display = "";
                 // open window
         		wnd.center().open();
 			},
@@ -459,23 +454,26 @@
 		/*
 		 * view model for window data 
 		 */
-		noticeModel = kendo.data.Model.define({
-			id: "notice_seq",
+		questionModel = kendo.data.Model.define({
+			id: "question_seq",
 			fields: {
-				notice_seq	:{ type: "number" },
-				title		:{ type: "string" },
-				content		:{ type: "string" },
-				mod_dt		:{ type: "string" },
-				mod_usr		:{ type: "string" },           
-				reg_dt		:{ type: "string" },
-				reg_usr		:{ type: "string" },           
-				expose_from	:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm") },           
-				expose_to	:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm") }
+				question_seq	:{ type: "number" },
+				title			:{ type: "string" },
+				con_question	:{ type: "string" },
+				con_io			:{ type: "string" },
+				con_example		:{ type: "string" },
+				con_condition	:{ type: "string" },
+				con_hint		:{ type: "string" },
+				con_etc			:{ type: "string" },
+				mod_dt			:{ type: "string" },
+				mod_usr			:{ type: "string" },           
+				reg_dt			:{ type: "string" },
+				reg_usr			:{ type: "string" }           
 			}
 		});
 		
 	    /*** dataSource ***/
-		noticeViewModel = kendo.observable({
+		questionViewModel = kendo.observable({
 			dataSource: new kendo.data.DataSource({
 				transport: {
 					read: {
@@ -491,22 +489,19 @@
 					parameterMap: function(data, type) {//type =  read, create, update, destroy
 						if (type == "read"){
 		                   	var result = {
-								notice_seq: G_NoticeSeq
+								question_seq: G_Seq
 							};
 							return { params: kendo.stringify(result) }; 
 						}
 		               
 						if (type !== "read" && data.models) {
-							// if using kendo.stringify, converte datetime from UTC timezone
-							data.models[0].expose_from = kendo.toString(data.models[0].expose_from, "yyyy-MM-dd HH:mm");
-							data.models[0].expose_to= kendo.toString(data.models[0].expose_to, "yyyy-MM-dd HH:mm");
 							return { models: kendo.stringify(data.models) };
 						}
 					}
 				},
 				batch: true,
 				schema: {
-					model: noticeModel,
+					model: questionModel,
 					data: function(response) {
 						console.log("viewmodel data: ");
 						console.log(response.rtnList);
@@ -522,6 +517,13 @@
 					},
 					parse: function(response) {
 						console.log("viewmodel parse: ");
+                    	var rtn = response.rtnList;
+						if(typeof rtn != "undefined"){
+                            $.each(rtn, function(idx, elem) {
+                            	elem.reg_dt = kendo.toString(new Date(Number(elem.reg_dt)), 'yyyy-MM-dd');
+                            	elem.mod_dt = kendo.toString(new Date(Number(elem.mod_dt)), 'yyyy-MM-dd HH:mm');
+                            });
+                    	}
                     	return response;
 					}
 				},
@@ -534,12 +536,11 @@
 		            var _data = this.data()[0];
 					console.log(_data);
 					if(typeof _data != "undefined") {
-						_data.expose_from = new Date(Number(_data.expose_from));
-						_data.expose_to = new Date(Number(_data.expose_to));
+						
 					} else {
 						
 					}
-					noticeViewModel.set("selected", _data);
+					questionViewModel.set("selected", _data);
 		        },
 		        sync: function(e) { 
 		        	console.log("viewmodel save data: ");
@@ -562,18 +563,31 @@
             hasChanges: false,
             save: function (e) {
 				console.log("kendo.observable:save");
-				noticeViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-	        	noticeViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
+				questionViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
+	        	questionViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
 	        	// convert tag for editor
-	        	if( typeof $("#content").val() != "undefined" ){
-	        		var inData = $("#content").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
+	        	if(typeof $("#con-question").val() != "undefined"
+	        			&& typeof $("#con-io").val() != "undefined"
+	        			&& typeof $("#con-example").val() != "undefined"){
+	        		$("#con-hint").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
+	        		var inData = $("#con-example").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
 		        	if(inData.length < 1 || inData == null){
-							alert("내용을 입력해주세요.");
-				    	   	e.preventDefault();	
+						alert("예제를 입력해주세요.");
+			    	   	e.preventDefault();	
+			        } 
+		        	inData = $("#con-io").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
+		        	if(inData.length < 1 || inData == null){
+						alert("입출력을 입력해주세요.");
+			    	   	e.preventDefault();	
+			        } 
+		        	inData = $("#con-question").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
+		        	if(inData.length < 1 || inData == null){
+						alert("문제를 입력해주세요.");
+			    	   	e.preventDefault();	
 			        } else {
 		            	this.dataSource.sync();
-			        }//if
-	        	}//undefined
+			        }
+	        	}
             },
             remove: function(e) {
             	console.log("kendo.observable:remove");
@@ -592,37 +606,34 @@
 		});
 	    
 	    // binding data to window
-		kendo.bind($("#window"), noticeViewModel);
+		kendo.bind($("#window"), questionViewModel);
 	    		
 	    $("#cancel-btn").kendoButton({ icon: "cancel" });
 	    $("#save-btn").kendoButton({ icon: "pencil" });
 	    $("#delete-btn").kendoButton({ icon: "close" });
 	    
-	    $("#expose-from").kendoDateTimePicker({
-			culture: "ko-KR",
-	    	mask: "0000-00-00 00:00",
-	    	format: 'yyyy-MM-dd HH:mm',
-	    	parseFormats: ["yyyy-MM-dd HH:mm"],
-			change: function(e) {
-				var dt = kendo.toString(this.value(), "yyyy-MM-dd HH:mm");
-				console.log("expose-from change: " + dt);
-				noticeViewModel.dataSource.at(0).set("expose_from", this.value());
-			}
-	    });
-	    
-	    $("#expose-to").kendoDateTimePicker({
-	    	culture: "ko-KR",
-	    	mask: "0000-00-00 00:00",
-	    	format: 'yyyy-MM-dd HH:mm',
-	    	parseFormats: ["yyyy-MM-dd HH:mm"],
-			change: function(e) {
-				var dt = kendo.toString(this.value(), "yyyy-MM-dd HH:mm");
-				console.log("expose-to change: " + dt);
-				noticeViewModel.dataSource.at(0).set("expose_to", this.value());
-			}
-	    });
-	    
-		$("#content").kendoEditor({
+		$("#con-question").kendoEditor({
+			resizable: {
+	        	content: true,
+	        	toolbar: true
+	        },
+	        encoded: false
+		});
+		$("#con-io").kendoEditor({
+			resizable: {
+	        	content: true,
+	        	toolbar: true
+	        },
+	        encoded: false
+		});
+		$("#con-hint").kendoEditor({
+			resizable: {
+	        	content: true,
+	        	toolbar: true
+	        },
+	        encoded: false
+		});
+		$("#con-example").kendoEditor({
 			resizable: {
 	        	content: true,
 	        	toolbar: true
@@ -631,7 +642,6 @@
 		});
 
 		invokeUserAuth($("#add-btn"), 'kendoButton', 'C');
-
 		invokeUserAuth($("#save-btn"), 'kendoButton', 'U');
 		invokeUserAuth($("#delete-btn"), 'kendoButton', 'U');
 
@@ -646,10 +656,9 @@
 #in_keyword, .k-datepicker, #searchBtn {
 	margin-left: 9px;
 }
-
 .k-grid td {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 </style>
-<%@ include file="../inc/footer.jsp"%>
+<%@ include file="../../inc/footer.jsp"%>

@@ -65,6 +65,9 @@
     </select>
     
 	<insert id="createMenuInfo" >
+		<selectKey keyProperty="SQ" resultType="Integer" order="BEFORE"> 
+			SELECT SQ_TB_MENU_INFO.nextval FROM dual 
+		</selectKey>
 		INSERT INTO TB_MENU_INFO (
 			MENU_SQ			,
 			MENU_NM			,
@@ -77,7 +80,7 @@
 			PARENT_SQ		,
 			MENU_ID
 		) VALUES (
-			#{MENU_SQ		, jdbcType=NUMERIC},
+			#{SQ			, jdbcType=NUMERIC},
 			#{MENU_NM		, jdbcType=VARCHAR},
 			#{MENU_URL		, jdbcType=VARCHAR},
 			#{MENU_DESC		, jdbcType=VARCHAR},
@@ -87,7 +90,8 @@
 			#{AREA_GB		, jdbcType=VARCHAR},
 			#{PARENT_SQ		, jdbcType=NUMERIC},
 			#{MENU_ID		, jdbcType=VARCHAR}
-		) 
+		)
+		
 	</insert>
 
 	<update id="updateMenuInfo" >

@@ -58,6 +58,9 @@
     
     
     <insert id="insertSystemMngUserInfo" >
+    	<selectKey keyProperty="SQ" resultType="Integer" order="BEFORE"> 
+			SELECT SQ_TB_USER_INFO.nextval FROM dual 
+		</selectKey>
 	    INSERT INTO TB_USER_INFO
 	      (
 	      	USER_SEQ			, 
@@ -84,7 +87,7 @@
 	      )
 	    VALUES
 	      (
-	      	#{USER_SEQ      ,  jdbcType=VARCHAR},
+	      	#{SQ		    ,  jdbcType=VARCHAR},
 			#{AREA_ID       ,  jdbcType=VARCHAR},
 			#{TOWN_ID       ,  jdbcType=VARCHAR},
 			#{USER_NM       ,  jdbcType=VARCHAR},

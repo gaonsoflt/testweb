@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="egovframework.espa.service.impl.SystemMgrMenuMapper">
+<mapper namespace="egovframework.systemmgr.service.impl.SystemMgrMenuMapper">
 
 	<select id="selectMenuInfo" parameterType="hashMap" resultType="hashMap">
 		SELECT
@@ -74,34 +74,41 @@
 			PARENT_SQ		,
 			MENU_ID
 		) VALUES (
-			#{MENU_SQ		, jdbcType=NUMERIC},
-			#{MENU_NM		, jdbcType=VARCHAR},
-			#{MENU_URL		, jdbcType=VARCHAR},
-			#{MENU_DESC		, jdbcType=VARCHAR},
-			#{MENU_CONTENT	, jdbcType=VARCHAR},
-			#{MENU_ORDER	, jdbcType=NUMERIC},
-			#{USE_YN		, jdbcType=VARCHAR},
-			#{PARENT_SQ		, jdbcType=NUMERIC},
-			#{MENU_ID		, jdbcType=VARCHAR}
+			nextval('sq_tb_menu_info'),
+			#{menu_nm},
+			#{menu_url},
+			#{menu_desc},
+			#{menu_content},
+			cast(#{menu_order} as integer),
+			CASE WHEN #{use_yn} = true THEN '1' ELSE '0' end,
+			<choose>
+    			<when test="parent_sq != null and parent_sq != ''">
+					cast(#{parent_sq} as integer),
+    			</when>
+    			<otherwise>
+      				null,
+    			</otherwise>
+			</choose>
+			#{menu_id}
 		) 
 	</insert>
 
 	<update id="updateMenuInfo" >
 		UPDATE TB_MENU_INFO 
 			SET 
-				MENU_NM			= #{MENU_NM			, jdbcType=VARCHAR},
-				MENU_URL		= #{MENU_URL		, jdbcType=VARCHAR},
-				MENU_DESC		= #{MENU_DESC		, jdbcType=VARCHAR},
-				MENU_CONTENT	= #{MENU_CONTENT	, jdbcType=VARCHAR},
-				MENU_ORDER		= #{MENU_ORDER		, jdbcType=NUMERIC},
-				USE_YN			= #{USE_YN			, jdbcType=VARCHAR},
-				PARENT_SQ		= #{PARENT_SQ		, jdbcType=NUMERIC},
-				MENU_ID			= #{MENU_ID			, jdbcType=VARCHAR}
-     	WHERE MENU_SQ = #{MENU_SQ}
+				MENU_NM			= #{menu_nm},
+				MENU_URL		= #{menu_url},
+				MENU_DESC		= #{menu_desc},
+				MENU_CONTENT	= #{menu_content},
+				MENU_ORDER		= cast(#{menu_order} as integer),
+				USE_YN			= CASE WHEN #{use_yn} = true THEN '1' ELSE '0' end,
+				PARENT_SQ		= cast(#{parent_sq} as integer),
+				MENU_ID			= #{menu_id			, jdbcType=VARCHAR}
+     	WHERE MENU_SQ = cast(#{menu_sq} as integer)
 	</update>
 	
     <delete id="deleteMenuInfo" >
 		DELETE FROM TB_MENU_INFO
-			WHERE MENU_SQ = #{MENU_SQ}
+			WHERE MENU_SQ = cast(#{menu_sq} as integer)
     </delete>
 </mapper>

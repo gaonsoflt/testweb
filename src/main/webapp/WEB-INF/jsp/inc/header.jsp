@@ -7,6 +7,7 @@
 <%@ taglib prefix="ui"     uri="http://egovframework.gov/ctl/ui"%>
 
 <sec:authentication property="principal" var="userStore"/>
+<c:set var="contextPath" value="<%= request.getContextPath()%>"></c:set>  
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -14,9 +15,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="mobile-web-app-capable" content="yes">
+ 	<meta name="mobile-web-app-capable" content="yes">
     
-	<title>의령창조마을</title>
+	<title>ESPA</title>
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 	<!-- Bootstrap 3.3.2 -->
     <link href="<c:url value='/resource/bootstrap/css/bootstrap.min.css'/>" rel="stylesheet" type="text/css" />
@@ -59,8 +60,7 @@
     <script src="<c:url value='/resource/js/comm/dgms.js'/>" type="text/javascript"></script>
     
     <script src="<c:url value='/resource/js/comm/jquery.modal.js'/>" type="text/javascript"></script>
-  	<link rel="stylesheet" href="/resource/css/jquery.modal.css" type="text/css" media="screen" />
-  
+  	<link rel="stylesheet" href="<c:url value='/resource/css/jquery.modal.css'/>" type="text/css" media="screen" />
     
     <!-- Common Kendo UI CSS for web widgets and widgets for data visualization. -->
     <link href="<c:url value='/resource/kendoui/styles/kendo.common.min.css'/>" rel="stylesheet" />
@@ -85,9 +85,6 @@
 		text-align: center;
 	}
 	</style>      
-
-
-
 </head>
 
 <!--

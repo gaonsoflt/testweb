@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
-import egovframework.dgms.util.PwdEncryptor;
-import egovframework.espa.service.SystemMgrUserService;
+import egovframework.common.util.PwdEncryptor;
+import egovframework.systemmgr.service.SystemMgrUserService;
 
 @Controller
 public class SystemMngUserController {

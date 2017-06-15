@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.bbs.service.impl.NoticeMapper">
+
+	<select id="selectNoticeList" parameterType="hashMap" resultType="hashMap">
+		SELECT *
+			FROM (
+				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+				FROM (
+					SELECT
+						notice_seq,
+						title,
+						content ,
+						reg_dt,
+						reg_usr,
+						mod_dt,
+						mod_usr,
+						expose_from, 
+						expose_to 
+					FROM tb_bbs_notice
+					WHERE 1=1
+		       		<if test="CONDITION eq 'TITLE'">
+		       			AND title LIKE '%'||#{KEYWORD}||'%'
+		       		</if>
+				ORDER BY notice_seq DESC
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+	</select>
+	
+	<select id="selectNotice" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			notice_seq,
+			title,
+			content ,
+			reg_dt,
+			reg_usr,
+			mod_dt,
+			mod_usr,
+			expose_from, 
+			expose_to 
+		FROM tb_bbs_notice
+		WHERE notice_seq = cast(#{notice_seq} as integer)
+		ORDER BY notice_seq
+	</select>
+	
+	<select id="selectNoticeAllCount" parameterType="hashMap" resultType="integer">
+		SELECT count(*)
+		FROM tb_bbs_notice
+	</select>
+	
+	<insert id="insertNotice">
+		INSERT INTO tb_bbs_notice (
+			notice_seq, 
+			title, 
+			reg_dt, 
+			reg_usr, 
+			mod_dt, 
+			mod_usr, 
+			content, 
+			expose_from, 
+			expose_to
+		) VALUES (
+			nextval('sq_tb_bbs_notice'), 
+			#{title}, 
+			now(), 
+			#{reg_usr}, 
+			now(), 
+			#{mod_usr}, 
+			#{content}, 
+			to_timestamp(#{expose_from}, 'YYYY-MM-DD HH24:MI'),
+			to_timestamp(#{expose_to}, 'YYYY-MM-DD HH24:MI')
+		)
+	</insert>
+	
+	<update id="updateNotice">
+		UPDATE tb_bbs_notice
+		SET 
+			title = #{title},
+			mod_dt = now(), 
+			mod_usr = #{mod_usr}, 
+			content = #{content},
+			expose_from = to_timestamp(#{expose_from}, 'YYYY-MM-DD HH24:MI'),
+			expose_to = to_timestamp(#{expose_to}, 'YYYY-MM-DD HH24:MI')
+		WHERE notice_seq = cast(#{notice_seq} as integer)
+	</update>
+	
+	<delete id="deleteNotice">
+		DELETE FROM tb_bbs_notice 
+		WHERE 1 = 1
+		AND notice_seq = CAST(#{notice_seq} as integer) 
+	</delete>
+</mapper>

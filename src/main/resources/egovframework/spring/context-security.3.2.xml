@@ -55,7 +55,8 @@
         <beans:property name="postOnly" value="false" />
     </beans:bean>	
 
-    <beans:bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+    <!--beans:bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"-->
+    <beans:bean id="authenticationSuccessHandler" class="egovframework.com.login.security.CustomLoginSuccessHandler">
         <beans:property name="defaultTargetUrl" value="/com/login/login_success.do"/>
         <beans:property name="alwaysUseDefaultTargetUrl" value="true" />
     </beans:bean>

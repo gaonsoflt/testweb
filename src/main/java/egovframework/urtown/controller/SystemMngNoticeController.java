@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.cmm.service.Globals;
-import egovframework.dgms.service.CommonService;
+import egovframework.common.service.CommonService;
 import egovframework.urtown.service.EditorBrowserService;
 import egovframework.urtown.service.SystemMngNoticeService;
 

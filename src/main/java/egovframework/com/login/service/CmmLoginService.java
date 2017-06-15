@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import egovframework.com.user.service.UserInfoService;
-import egovframework.dgms.util.PwdEncryptor;
+import egovframework.common.util.PwdEncryptor;
 
 public class CmmLoginService implements UserDetailsService {
 

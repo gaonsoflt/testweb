@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.systemmgr.service.impl.SystemMgrLoginHistoryMapper"> 
+
+	<!-- AND REPLACE(B.AREA_ID, 0, '') LIKE '%'||REPLACE(#{AREA_ID}, 0, '')||'%' -->
+    <select id="selectLoginHistory" parameterType="hashMap" resultType="hashMap">
+		SELECT *
+    	FROM (
+      		SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+				FROM (
+					SELECT
+						A.*,
+	              		B.user_name,
+	              		B.user_id
+						FROM tb_login_history A
+							 LEFT OUTER JOIN TB_USER_INFO B
+							 ON A.USER_SEQ = B.USER_SEQ
+	                    WHERE 1=1 
+			       		<if test="CONDITION eq 'ACCESS_DT'">
+			       			AND TO_CHAR(A.ACCESS_DT, 'YYYYMMDD') = REPLACE(#{KEYWORD}, '-', '')
+			       		</if>
+			       		<if test="CONDITION eq 'USER_ID'">
+			       			AND LOWER(B.USER_ID) LIKE '%'||LOWER(#{KEYWORD})||'%'
+			       		</if>
+			       		<if test="CONDITION eq 'USER_NAME'">
+			       			AND LOWER(B.USER_NAME) LIKE '%'||LOWER(#{KEYWORD})||'%'
+			       		</if>
+			       		<if test="CONDITION eq 'REQ_IP'">
+			       			AND A.REQ_IP LIKE '%'||#{KEYWORD}||'%'
+			       		</if>
+			       		<if test="CONDITION eq 'REQ_DEVICE'">
+			       			AND LOWER(A.REQ_DEVICE) LIKE '%'||LOWER(#{KEYWORD})||'%'
+			       		</if> 	       
+                    ORDER BY access_dt DESC
+				) A
+           ) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+    </select>
+    
+    <select id="selectSystemMngLoginLogTot" parameterType="hashMap" resultType="int">
+	    SELECT COUNT(*) 
+		FROM tb_login_history A
+		 	 LEFT OUTER JOIN TB_USER_INFO B
+		 	 ON A.USER_SEQ = B.USER_SEQ
+		WHERE 1=1
+		<if test="CONDITION eq 'ACCESS_DT'">
+  			AND TO_CHAR(A.ACCESS_DT, 'YYYYMMDD') = REPLACE(#{KEYWORD}, '-', '')
+  		</if>
+  		<if test="CONDITION eq 'USER_ID'">
+  			AND LOWER(B.USER_ID) LIKE '%'||LOWER(#{KEYWORD})||'%'
+  		</if>
+  		<if test="CONDITION eq 'USER_NAME'">
+  			AND LOWER(B.USER_NAME) LIKE '%'||LOWER(#{KEYWORD})||'%'
+  		</if>
+  		<if test="CONDITION eq 'REQ_IP'">
+  			AND A.REQ_IP LIKE '%'||#{KEYWORD}||'%'
+  		</if>
+  		<if test="CONDITION eq 'REQ_DEVICE'">
+  			AND LOWER(A.REQ_DEVICE) LIKE '%'||LOWER(#{KEYWORD})||'%'
+  		</if> 	
+    </select>
+    
+    <insert id="insertLoginHistory" >
+		INSERT INTO tb_login_history (
+			seq,
+	      	access_dt,
+	      	user_seq,
+	      	log_type,
+	      	req_ip,
+	      	req_device
+		) VALUES (
+			nextval('sq_tb_login_history'),
+			now(),
+			CAST(#{user_seq} as integer),
+			#{log_type},
+			#{req_ip},
+			#{req_device}
+		) 
+	</insert> 
+</mapper>

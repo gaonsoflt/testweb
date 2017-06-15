@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import egovframework.dgms.service.CommonService;
+import egovframework.common.service.CommonService;
 import egovframework.dgms.service.MoniteringService;
 
 @Service("moniteringService")

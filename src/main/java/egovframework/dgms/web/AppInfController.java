@@ -24,8 +24,9 @@ import com.google.gson.JsonArray;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.windowsazure.messaging.service.*;
+import egovframework.common.service.CommonService;
+import egovframework.common.util.PwdEncryptor;
 import egovframework.dgms.service.*;
-import egovframework.dgms.util.PwdEncryptor;
 
 @Controller
 public class AppInfController {

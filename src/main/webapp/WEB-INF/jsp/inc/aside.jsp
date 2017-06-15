@@ -31,77 +31,81 @@ function fnCodeNameByCdID(code){
 	document.getElementById("area-id").innerHTML = rtnVal;
 }
 </script>
-  <body class="skin-blue">
-    <div class="wrapper">
-      <!-- Main Header -->
-      <header class="main-header">
-        <!-- Logo -->
-        <a href="<c:url value='#'/>" class="logo"><!-- <b>의령창조마을</b> --><img src="<c:url value='/resource/images/dalogo.gif'/>" alt="로고 이미지" /></a>
 
-        	<!-- Header Navbar -->
-        	<nav class="navbar navbar-static-top" role="navigation">
+<body class="skin-blue">
+    <div class="wrapper">
+      	<!-- Main Header -->
+      	<header class="main-header">
+	        <!-- Logo -->
+	        <a href="<c:url value='/main.do'/>" class="logo">
+	        	<img src="${contextPath}/resource/images/dalogo.gif"/>' alt="로고 이미지" />
+	        </a>
+	       	<!-- Header Navbar -->
+	       	<nav class="navbar navbar-static-top" role="navigation">
 	        <!-- Sidebar toggle button-->
 	        <!-- 사이드 메뉴바 토글 -->
-          		<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-		            <span class="sr-only">Toggle navigation</span>
-		            <span class="icon-bar"></span>
-		            <span class="icon-bar"></span>
-		            <span class="icon-bar"></span>
-          		</a>
-          		<!-- Navbar Right Menu -->
-          		<div class="navbar-custom-menu">
-            		<ul class="nav navbar-nav">
-              			<!-- User Account Menu -->
-              			<li class="dropdown user user-menu">
-                			<!-- Menu Toggle Button -->
-                			<a href="#" class="" data-toggle="">
-                			<!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown"> -->
-                  				<!-- The user image in the navbar-->
-                  				<%-- <img src="<c:url value='/resource/dist/img/user2-160x160.jpg'/>" class="user-image" alt="User Image"/> --%>
-                  				<!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  				<span class="hidden-xs"><c:out value="${userStore.fullname}"/>님 &lt;<c:out value="${userStore.username}"/>&gt; 반갑습니다.</span>
-                  				&nbsp;<a href="/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">로그아웃</a>
-                			</a>
-                			<ul class="dropdown-menu">
-                  			<!-- Menu Footer-->
-                  				<li class="user-footer">
-                    				<div class="pull-right">
-                      					<a href="/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">로그아웃</a>
-                    				</div>
-                  				</li>
-                			</ul>
-              			</li>
-            		</ul>
-				</div>
-			</nav>
-		</header>
-      
-		<!-- Left side column. contains the logo and sidebar -->
-		<aside class="main-sidebar">
-			<!-- sidebar: style can be found in sidebar.less -->
-			<section class="sidebar">
-          		<div class="user-panel">
-		            <div class="pull-left" style="width:100%;padding:20px 0px;">
-						<div><!-- <img class="img" style="display:block;margin:auto;" src="<c:url value='/resource/images/main_logo.png'/>" width="135px" height="112px" alt="로고 이미지" /> --></div>
-						<div>
-							<p id="area-id" style="font-size:150%;text-align:center;">
-								<script>/*fnCodeNameByCdID("${userStore.areaId}");*/</script>${userStore.areaNm}
-							</p>
-						</div>
-		            </div>
-		        </div>
-          		<ul id="menu-body" class="sidebar-menu"></ul>
-        	</section>
-      	</aside>
-      	
+	        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	      	</a>
+	   		<!-- Navbar Right Menu -->
+	   		<div class="navbar-custom-menu">
+	     		<ul class="nav navbar-nav">
+	        		<!-- User Account Menu -->
+	        		<li class="dropdown user user-menu">
+		          		<!-- Menu Toggle Button -->
+		          		<a href="#" class="" data-toggle="">
+			          		<!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown"> -->
+			   				<!-- The user image in the navbar-->
+			   				<%-- <img src="<c:url value='/resource/dist/img/user2-160x160.jpg'/>" class="user-image" alt="User Image"/> --%>
+			   				<!-- hidden-xs hides the username on small devices so only the image appears. -->
+			   				<span class="hidden-xs">
+			   					<c:out value="${userStore.fullname}"/>님 &lt;<c:out value="${userStore.username}"/>&gt; 반갑습니다.
+			   				</span>
+			   				&nbsp;
+			   				<a href="${contextPath}/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">
+			   					로그아웃
+			   				</a>
+		       			</a>
+		       			<ul class="dropdown-menu">
+		         			<!-- Menu Footer-->
+		       				<li class="user-footer">
+		           				<div class="pull-right"><a href="/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">로그아웃</a></div>
+		         			</li>
+		       			</ul>
+	       			</li>
+	       		</ul>
+			</div>
+		</nav>
+	</header>
+     
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar">
+		<!-- sidebar: style can be found in sidebar.less -->
+		<section class="sidebar">
+         		<div class="user-panel">
+	            <div class="pull-left" style="width:100%;padding:20px 0px;">
+					<div><!-- <img class="img" style="display:block;margin:auto;" src="<c:url value='/resource/images/main_logo.png'/>" width="135px" height="112px" alt="로고 이미지" /> --></div>
+					<div>
+						<p id="area-id" style="font-size:150%;text-align:center;">
+							<script>/*fnCodeNameByCdID("${userStore.areaId}");*/</script>${userStore.areaNm}
+						</p>
+					</div>
+	            </div>
+	        </div>
+       		<ul id="menu-body" class="sidebar-menu"></ul>
+       	</section>
+     </aside>
       	
 <style>
 #area-id{display:block; margin-top:132px;}
-.user-panel{background:url("/resource/images/main_logo.png") center 15px no-repeat; width:230px; height:214px;}
+.user-panel{background:url("${contextPath}/resource/images/main_logo.png") center 15px no-repeat; width:230px; height:214px;}
 .user-panel .pull-left{width:100%; height:100%;}
-
 #gridDetail table th{text-align:center;}
 </style>
+
 <script>
 //alert("${userStore.userType}")
 var userType = "${userStore.userType}";
@@ -114,7 +118,10 @@ var temp;
 function setMenuId(e) {
 	//var menuId = e.closest('li').id; // dose not support closest in explorer
 	var menuId = e.name;
-	$.get("<c:url value='/urtown/session/setMenuId.do'/>", { menuId: menuId } );
+	$.get(
+		"<c:url value='/session/setMenuId.do'/>", 
+		{ menuId: menuId }
+	);
 };
 
 function logout() {
@@ -122,11 +129,11 @@ function logout() {
 }
 
 function invokeUserAuth(e, eType, authType) {
-	console.log('auth: ' + authMap);
+	console.log('auth: ');
+	console.log(authMap);
 	console.log('menuId: ' + "${menuId}");
 	console.log('etype: ' + eType);
 	console.log('authType: ' + authType);
-	
 	
 	switch(eType) {
 		case 'kendoEditor':
@@ -165,9 +172,7 @@ function invokeUserAuth(e, eType, authType) {
 					e.find(".k-grid-delete").remove();
 				}
 			}, 500);
-
 			break;
-				
 	}
 };
 
@@ -180,8 +185,6 @@ $(document).ready(function() {
 	
 	function drawMenu() {
 		console.log('drawMenu');
-		//console.log(menuList);
-		
 		var menuList;
 		$.ajax({
 			type: "post",
@@ -219,25 +222,18 @@ $(document).ready(function() {
 			}
 			// old
 			temp += '<li id="' + menuList[i].menu_id + '">' +
-				'<a name="' + menuList[i].menu_id + '" href="<c:url value="' + menuList[i].menu_url + '"/>" onclick="setMenuId(this);"><i class="fa fa-circle-o"></i>' + menuList[i].menu_nm + '</a></li>';
+				'<a name="' + menuList[i].menu_id + '" href="${contextPath}' + menuList[i].menu_url + '" onclick="setMenuId(this);"><i class="fa fa-circle-o"></i>' + menuList[i].menu_nm + '</a></li>';
+//				'<a name="' + menuList[i].menu_id + '" href="<c:url value="' + menuList[i].menu_url + '"/>" onclick="setMenuId(this);"><i class="fa fa-circle-o"></i>' + menuList[i].menu_nm + '</a></li>';
 			parentIdx = menuList[i].parent_sq;
 		}
 		temp += '</ul></li>';
 		var body = document.getElementById("menu-body");
 		body.innerHTML = temp;
-		
-		elderUrl = $("#checkAloneElder").find("a").attr("href"); 
-		$("#checkAloneElder").find("a").removeAttr("href"); 
-
-		mulitCctvUrl = $("#checkMultiCctv").find("a").attr("href");
-		$("#checkMultiCctv").find("a").removeAttr("href"); 
-
-		//$("#connectSkype").find("a").removeAttr("href");
 	};
 	
 	drawMenu();
 	
-	// active menu
+	// active menu(change css style)
 	var menu = document.getElementById("${menuId}");
 	if(menu != null) {
 		menu.parentElement.parentElement.className += ' active';

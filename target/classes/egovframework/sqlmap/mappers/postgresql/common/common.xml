@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.common.service.impl.CommonMapper">
+	<select id="getSequence" parameterType="hashMap" resultType="integer">
+		SELECT nextval('${SEQ_NM}')
+	</select>
+
+
+	<select id="getCodeListByCdID" parameterType="hashMap" resultType="hashMap">
+		SELECT *
+		FROM TB_CODE_MASTER
+		WHERE 1=1
+		<if test='CD_ID != null'>
+			AND CATGR = ( SELECT CD FROM TB_CODE_MASTER WHERE CD_ID = #{CD_ID})
+		</if>
+		<if test='CD_ID2 != null'>
+			AND CD_ID = #{CD_ID2}
+		</if>
+		<if test='USER_ID != null'>
+			AND REPLACE(CD_ID, 0, '') LIKE
+			REPLACE((
+				SELECT AREA_ID FROM TB_USER_INFO WHERE USER_ID = #{USER_ID} AND ROWNUM = 1), 0, '') || '%'
+		</if>
+		<if test='USE_YN != null'>
+			AND USE_YN = #{USE_YN}
+		</if>
+		ORDER BY SORT_NO
+	</select>
+
+
+
+	<select id="getAutoComplete" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		DISTINCT ${COLUNM} AS CD_NM
+		<if test='TABLE == TB_USER_INFO'>
+   		    	<![CDATA[  
+					, USER_ID, BIRTHDAY
+				]]>
+		</if>
+		FROM ${TABLE}
+		WHERE 1=1
+		<if test='USER_ID != null'>
+			AND USER_ID = #{USER_ID}
+		</if>
+		<if test='USER_TYPE != null'>
+			AND USER_TYPE = #{USER_TYPE}
+		</if>
+	</select>
+
+	<select id="getDuplicateCount" parameterType="hashMap" resultType="int">
+		SELECT COUNT(*)
+		FROM ${TABLE}
+		WHERE 1 = 1
+		<if test='COLUMN1 != null'>
+			AND ${COLUMN1} = #{DATA1}
+		</if>
+		<if test='COLUMN2 != null'>
+			AND ${COLUMN2} = #{DATA2}
+		</if>
+	</select>
+
+
+	<select id="getAutoCompleteNew" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		DISTINCT ${TEXT} AS TEXT, ${VALUE} AS VALUE
+		FROM ${TABLE}
+		WHERE 1=1
+		<if test='USER_TYPE != null'>
+			AND USER_TYPE = #{USER_TYPE}
+		</if>
+		<if test="TABLE.equals('TB_CODE_MASTER')">
+			<if test="TYPE.equals('_STATUS_')">
+				AND CATGR = (SELECT CD FROM TB_CODE_MASTER WHERE CD_ID =
+				#{TYPE})
+			</if>
+		</if>
+	</select>
+
+
+	<select id="getUserAutoComplete" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		DISTINCT USER_SEQ, USER_ID, USER_NAME, BIRTHDAY
+		FROM TB_USER_INFO
+		WHERE 1 = 1
+		<if test='USER_ID != null'>
+			AND USER_ID = #{USER_ID}
+		</if>
+		<if test='USER_NAME != null'>
+			AND USER_NAME = #{USER_NAME}
+		</if>
+		<if test='USER_TYPE != null'>
+			AND USER_TYPE = #{USER_TYPE}
+		</if>
+	</select>
+</mapper>

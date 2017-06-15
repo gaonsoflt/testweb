@@ -43,8 +43,8 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 
 import egovframework.com.cmm.service.Globals;
-import egovframework.dgms.service.CommonService;
-import egovframework.dgms.web.CommonController;
+import egovframework.common.controller.CommonController;
+import egovframework.common.service.CommonService;
 import egovframework.urtown.service.EditorBrowserService;
 import egovframework.urtown.service.MediFAQService;
 

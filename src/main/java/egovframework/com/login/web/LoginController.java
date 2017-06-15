@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.com.login.service.CmmLoginUser;
 import egovframework.com.user.service.UserInfoService;
-import egovframework.dgms.service.CommonService;
+import egovframework.common.service.CommonService;
 
 @Controller
 public class LoginController {
@@ -120,7 +120,9 @@ public class LoginController {
         
         session.setAttribute("userLoginInfo", userDetails);
         
-        return "redirect:/sm/user/view.do";
+//        return "redirect:/sm/user/view.do";
+//        return "redirect:/main/dashboard/view.do";
+        return "redirect:/main.do";
     }
 }
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
-import egovframework.espa.service.SystemMgrUserService;
+import egovframework.systemmgr.service.SystemMgrUserService;
 import egovframework.urtown.service.MediConsultService;
 
 @Controller

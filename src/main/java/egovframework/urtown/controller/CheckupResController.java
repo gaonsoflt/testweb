@@ -33,7 +33,7 @@ import com.google.gson.JsonObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.cmm.service.Globals;
 import egovframework.com.login.service.CmmLoginUser;
-import egovframework.dgms.service.CommonService;
+import egovframework.common.service.CommonService;
 import egovframework.urtown.service.CheckupResService;
 import egovframework.urtown.service.MediConsultService;
 

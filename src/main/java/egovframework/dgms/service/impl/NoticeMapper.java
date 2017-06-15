@@ -6,7 +6,7 @@ import java.util.List;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 
-@Mapper("noticeMapper")
+@Mapper("noticeMapper1")
 public interface NoticeMapper {
 
 	/**

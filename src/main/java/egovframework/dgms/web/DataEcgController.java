@@ -32,8 +32,8 @@ import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.cmm.service.Globals;
 import egovframework.com.login.service.CmmLoginUser;
 import egovframework.com.user.service.UserInfoVo;
+import egovframework.common.util.AnalyECGdata;
 import egovframework.dgms.service.DataEcgService;
-import egovframework.dgms.util.AnalyECGdata;
 
 @Controller
 public class DataEcgController {

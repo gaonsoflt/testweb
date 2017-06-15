@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.login.service.CmmLoginUser;
-import egovframework.dgms.service.CommonService;
+import egovframework.common.service.CommonService;
 import egovframework.urtown.service.CheckupResService;
 
 @Controller

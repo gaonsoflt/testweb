@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import egovframework.dgms.service.NoticeService;
 
 
-@Service("noticeService")
+@Service("noticeService1")
 public class NoticeServiceImpl implements NoticeService { 
 	
-	@Resource(name = "noticeMapper")
+	@Resource(name = "noticeMapper1")
 	private NoticeMapper noticeMapper;
 	
 	@Override

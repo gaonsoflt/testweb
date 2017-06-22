@@ -59,13 +59,15 @@ public class CommonController {
 	public ModelAndView getCodeListByCdIDModel(@RequestParam Map<String,Object> paramMap) throws Exception { 
 		//List<HashMap<String, Object>> rtnList = (List<HashMap<String, Object>>)commonService.getCodeListByCdID((HashMap<String, Object>)paramMap);
 		String list = paramMap.get("list") != null ? paramMap.get("list").toString() : null;
-		List rtnList = new ArrayList<HashMap<String, Object>>();
+		logger.debug("[BBAEK] params: " + list);
+		List<HashMap<String, Object>> rtnList = new ArrayList<HashMap<String, Object>>();
 		ModelAndView model = new ModelAndView(); 
 		
 		if(list != null){
 			String[] cdIdList = paramMap.get("list").toString().split(","); 
 			
-			for(int i=0; i<cdIdList.length; i++){ 
+			for(int i=0; i<cdIdList.length; i++){
+				logger.debug("param: " + cdIdList[i]);
 				HashMap<String, Object> paramMap2 = new HashMap<String, Object>(); 
 				paramMap2.put("CD_ID", cdIdList[i]);
 				
@@ -137,5 +139,16 @@ public class CommonController {
 		model.addObject("cnt", cnt);
 		model.setViewName("jsonView");
 		return model;
+	}
+	
+	@RequestMapping(value = "/readCodeListForCombo.do")
+	public @ResponseBody JSONPObject readCodeListForCombo(@RequestParam("callback") String c,@RequestParam("params") String params) throws Exception {
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
+		paramMap.put("TEXT", "CD_NM");
+		paramMap.put("VALUE", "CD_ID");
+		paramMap.put("TABLE", "TB_CODE_MASTER");
+		List<HashMap<String, Object>> rtnList = commonService.getAutoCompleteNew(paramMap);
+		return new JSONPObject(c,rtnList);
 	}
 }

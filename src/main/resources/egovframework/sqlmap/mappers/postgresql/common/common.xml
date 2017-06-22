@@ -70,10 +70,7 @@
 			AND USER_TYPE = #{USER_TYPE}
 		</if>
 		<if test="TABLE.equals('TB_CODE_MASTER')">
-			<if test="TYPE.equals('_STATUS_')">
-				AND CATGR = (SELECT CD FROM TB_CODE_MASTER WHERE CD_ID =
-				#{TYPE})
-			</if>
+			AND CATGR = (SELECT CD FROM TB_CODE_MASTER WHERE CD_ID = #{CATGR})
 		</if>
 	</select>
 

@@ -22,7 +22,7 @@ import egovframework.espa.service.QuestionService;
 @RequestMapping("/mgr/question")
 @Controller
 public class QuestionController {
-Logger logger = LoggerFactory.getLogger(QuestionController.class.getName());
+	Logger logger = LoggerFactory.getLogger(QuestionController.class.getName());
     
 	@Resource(name = "questionService")
 	private QuestionService questionService;
@@ -87,8 +87,7 @@ Logger logger = LoggerFactory.getLogger(QuestionController.class.getName());
 		}
 		System.out.println("result size: " + rtnList.size());
 		System.out.println("result: " + rtnList);
-//		System.out.println("result: " + rtnMap);
-		return new JSONPObject(c,rtnMap);
+		return new JSONPObject(c, rtnMap);
 	}
 
 	/**
@@ -166,6 +165,7 @@ Logger logger = LoggerFactory.getLogger(QuestionController.class.getName());
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
 				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
+				logger.debug("[BBAEK] delete question:" + paramMap.get("question_seq"));
 				questionService.deleteQuestion(paramMap);
 			}
 		} catch (Exception e) {

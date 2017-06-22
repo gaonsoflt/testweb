@@ -39,6 +39,11 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		return "espa/mgr/question";
 	}
 	
+	@RequestMapping(value = "/mgr/config.do")
+	public String mgrConfig(Model model) throws Exception {
+		return "espa/mgr/config";
+	}
+	
 	/*
 	 * Systemmgr
 	 */

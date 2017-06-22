@@ -80,6 +80,11 @@
     <script src="<c:url value='/resource/kendoui/js/cultures/kendo.culture.ko-KR.min.js'/>"></script>
 	       
 	<!-- Column Header alignment  -->
+	<!-- code mirror -->
+	<script src="<c:url value='/resource/js/codemirror/codemirror.js'/>" type="text/javascript"></script>
+	<script src="<c:url value='/resource/js/codemirror/javascript.js'/>" type="text/javascript"></script>
+	<link href="<c:url value='/resource/css/codemirror/codemirror.css'/>" rel="stylesheet" />
+	
 	<style>
 	.k-header .k-link{
 		text-align: center;

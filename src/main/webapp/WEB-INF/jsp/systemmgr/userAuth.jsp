@@ -65,7 +65,7 @@
 		$("#horizontal").kendoSplitter({
 			orientation: "horizontal",
 			panes: [
-				{ collapsible: true, resizable: true, scrollable: false, min: "150px",	size: "20%"	}, 
+				{ collapsible: true, resizable: true, scrollable: false, min: "150px",	size: "30%"	}, 
 				{ collapsible: false, resizable: true, scrollable: false, min: "150px" }      
 			]
 		});
@@ -230,9 +230,10 @@
 			mobile: true,
 			toolbar: [ ],
 			columns: [
-				{ field: "user_no", title: "신청자번호", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
-				{ field: "user_name", title: "신청자", width: 80, attributes: {style: "text-align: center;"} },
-				{ field: "birthday", title: "생년월일", width: 100, attributes: {style: "text-align: center;"},
+				{ field: "user_no", title: "신청자번호", width: 80, attributes : { style : "text-align: center;" }, hidden: true },
+				{ field: "user_id", title: "신청자", width: 80, attributes : { style : "text-align: center;" } },
+				{ field: "user_name", title: "신청자", width: 80, attributes : { style : "text-align: center;" } },
+				{ field: "birthday", title: "생년월일", width: 100, attributes : { style : "text-align: center;" },
 					template: "#= (birthday == '') ? '' : kendo.toString(kendo.parseDate(birthday, 'yyyyMMdd'), 'yyyy-MM-dd') #" 
 				}
 			],
@@ -362,7 +363,7 @@
 				{ field: "user_type", title: "사용자구분", width: 100, attributes: {style: "text-align: center;"}, hidden: true },
 				{ field: "user_no", title: "사용자번호", width: 100, attributes: {style: "text-align: center;"}, hidden: true },
 				{ field: "auth_r", title: "조회", width: 50, attributes: {style: "text-align: center;" },
-					template: '<input type="checkbox" #= (auth_r) ? "checked=checked" : "" # disabled="disabled" ></input>' },
+					template: '<input type="checkbox" #= (auth_r) ? "checked=checked" : "" # disabled="disabled" onclick="btnIsClicked(this);"></input>' },
 				{ field: "auth_c", title: "생성", width: 50, attributes: {style: "text-align: center;" },
 					template: '<input type="checkbox" #= (auth_c) ? "checked=checked" : "" # disabled="disabled" ></input>' },
 				{ field: "auth_u", title: "수정", width: 50, attributes: {style: "text-align: center;" },
@@ -372,6 +373,7 @@
 			],
 			editable: true,
 			edit: function(e) {//Fired when the user edits or creates a data item
+				console.log("authGrid edit");
 				/*if(e.model.isNew()) {
 					console.log("authGrid new");
 					var parentGrid = $("#parent-grid").data("kendoGrid");
@@ -407,8 +409,16 @@
 				template: "검색된 결과가 없습니다."
             },
 		});
-		
 	});	
+
+	function btnIsClicked(e) {
+		console.log("btnIsclicked: " + e.checked);
+		if(e.checked) {
+			
+		} else {
+			
+		}
+	}
 </script>	
 
 <%@ include file="../inc/footer.jsp"%>

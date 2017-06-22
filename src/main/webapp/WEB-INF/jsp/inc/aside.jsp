@@ -129,11 +129,11 @@ function logout() {
 }
 
 function invokeUserAuth(e, eType, authType) {
-	console.log('auth: ');
-	console.log(authMap);
-	console.log('menuId: ' + "${menuId}");
-	console.log('etype: ' + eType);
-	console.log('authType: ' + authType);
+	console.log('invokeUserAuth: ');
+// 	console.log(authMap);
+// 	console.log('menuId: ' + "${menuId}");
+// 	console.log('etype: ' + eType);
+// 	console.log('authType: ' + authType);
 	
 	switch(eType) {
 		case 'kendoEditor':

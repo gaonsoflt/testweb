@@ -5,23 +5,36 @@
 
 	<select id="selectQuestionList" parameterType="hashMap" resultType="hashMap">
 		SELECT *
+		FROM (
+			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*, B.user_name, C.cd_nm as lang_name
 			FROM (
-				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
-				FROM (
-					SELECT
-						question_seq, 
-						title, 
-						reg_dt, 
-						reg_usr, 
-						mod_dt, 
-						mod_usr
-					FROM tb_question
-					WHERE 1=1
+				SELECT
+					question_seq, 
+					title, 
+					reg_dt, 
+					reg_usr, 
+					mod_dt, 
+					mod_usr,
+					lang_type
+				FROM tb_question
+				<where>
 		       		<if test="CONDITION eq 'TITLE'">
-		       			AND title LIKE '%'||#{KEYWORD}||'%'
+		       			title LIKE '%'||#{KEYWORD}||'%'
 		       		</if>
-				ORDER BY question_seq DESC
-			) A
+		       		<if test="CONDITION eq 'USER_NAME'">
+		       			AND reg_usr LIKE '%'||#{KEYWORD}||'%'
+		       		</if>
+		       		<if test="CONDITION eq 'REG_DT'">
+		       			<![CDATA[
+		       			AND reg_dt >= TO_DATE(#{KEYWORD}, 'YYYY-MM-DD') AND reg_dt < TO_DATE(#{KEYWORD}, 'YYYY-MM-DD')+1
+						]]>
+		       		</if>
+		       		<if test="CONDITION eq 'LANG_TYPE'">
+		       			AND lang_type LIKE '%'||#{KEYWORD}||'%'
+		       		</if>
+				</where>
+			) A LEFT JOIN TB_USER_INFO B ON B.USER_ID = A.REG_USR 
+			LEFT JOIN TB_CODE_MASTER C ON C.CD_ID = A.LANG_TYPE
 		) A
 		WHERE 1 = 1
 		<if test='PAGE != null'>
@@ -30,24 +43,31 @@
 			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
     	]]>
 		</if>
+		ORDER BY question_seq DESC
 	</select>
 	
 	<select id="selectQuestion" parameterType="hashMap" resultType="hashMap">
-		SELECT
-			question_seq, 
-			title, 
-			reg_dt, 
-			reg_usr, 
-			mod_dt, 
-			mod_usr, 
-			con_question,
-			con_io,
-			con_example,
-			con_condition,
-			con_hint,
-			con_etc
-		FROM tb_question
-		WHERE question_seq = cast(#{question_seq} as integer)
+		SELECT A.*, B.USER_NAME, C.cd_nm as lang_name 
+		FROM (
+			SELECT
+				question_seq, 
+				title, 
+				reg_dt, 
+				reg_usr,
+				mod_dt, 
+				mod_usr, 
+				con_question,
+				con_io,
+				con_example,
+				con_condition,
+				con_hint,
+				con_etc,
+				test_code,
+				lang_type
+			FROM tb_question
+			WHERE question_seq = cast(#{question_seq} as integer)
+		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
+		LEFT JOIN TB_CODE_MASTER C ON C.CD_ID = A.LANG_TYPE
 	</select>
 	
 	<select id="selectQuestionAllCount" parameterType="hashMap" resultType="integer">
@@ -56,6 +76,9 @@
 	</select>
 	
 	<insert id="insertQuestion">
+		<selectKey keyProperty="question_seq" resultType="integer" order="AFTER">
+			select currval('sq_tb_question') as question_seq
+		</selectKey>
 		INSERT INTO tb_question (
 			question_seq, 
 			title, 
@@ -68,7 +91,9 @@
 			con_example,
 			con_condition,
 			con_hint,
-			con_etc
+			con_etc,
+			test_code,
+			lang_type
 		) VALUES (
 			nextval('sq_tb_question'), 
 			#{title}, 
@@ -81,7 +106,9 @@
 			#{con_example},
 			#{con_condition},
 			#{con_hint},
-			#{con_etc}
+			#{con_etc},
+			#{test_code},
+			#{lang_type}
 		)
 	</insert>
 	
@@ -95,8 +122,10 @@
 			con_condition = #{con_condition},
 			con_hint = #{con_hint},
 			con_etc = #{con_etc},
+			test_code = #{test_code},
 			mod_usr = #{mod_usr}, 
-			mod_dt = now()
+			mod_dt = now(),
+			lang_type = #{lang_type}
 		WHERE question_seq = cast(#{question_seq} as integer)
 	</update>
 	

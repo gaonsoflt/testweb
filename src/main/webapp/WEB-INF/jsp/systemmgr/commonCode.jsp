@@ -294,7 +294,7 @@
 						dataSource: dataSourceDetail,
 						navigatable: true,
 						pageable: true,
-						height: 715,
+						height: 650,
 						toolbar: [
 							{ name: "create", text: "추가" },
 							{ name: "save", text: "저장" },

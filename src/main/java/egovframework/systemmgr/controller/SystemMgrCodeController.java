@@ -323,7 +323,6 @@ public class SystemMgrCodeController {
 				systemMngCodeService.updateMngCodeInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -343,7 +342,6 @@ public class SystemMgrCodeController {
 				systemMngCodeService.insertMngCodeInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

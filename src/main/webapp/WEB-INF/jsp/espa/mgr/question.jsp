@@ -19,12 +19,8 @@
 		<div class="row">
 			<!-- 내용 -->
 			<div class="col-xs-12">
-
 				<!-- table 하나 -->
 				<div class="box">
-					<!-- <div class="box-header">
-                  <h3 class="box-title"><i class="fa fa-tag"></i>사용자관리</h3>
-                </div> -->
 					<div class="box-body">
 						<!-- jQuery Plug-Ins Widget Initialization -->
 						<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
@@ -36,7 +32,6 @@
 							<button id="searchBtn" type="button">조회</button>
 						</p>
 						<div id="gridList"></div>
-			            <div id="details"></div>
 					</div>
 				</div> <!-- box -->
 			</div> <!-- col-xs-12 -->
@@ -52,20 +47,54 @@
 	</div>
 	<table style="width:100%;">
 		<colgroup>
-			<col width="50%">
+			<col width="25%">
+			<col width="25%">
 			<col width="50%">
 		</colgroup>
 		<tbody>
-			<tr><th colspan="2">제목</th></tr>
-			<tr><td colspan="2"><input id="title" name="title" data-bind="value:selected.title" style="width:100%;" required/></td></tr>
 			<tr class="modify">
 				<th>등록자</th>
 				<th>수정일</th>
 			</tr>
 			<tr class="modify">
-				<td><input id="reg-usr" name="reg-usr" data-bind="value:selected.reg_usr" style="width:100%;" readonly/></td>
+				<td><input id="reg-usr" name="reg-usr" data-bind="value:selected.user_name" style="width:100%;" readonly/></td>
 				<td><input id="mod-dt" name="mod-dt" data-bind="value:selected.mod_dt" style="width:100%;" readonly/></td>
+				<td>
 			</tr>
+			<tr>
+				<th colspan="2">제목</th>
+				<td rowspan="10" style="vertical-align:top;height:100%;">
+					<div id="tabstrip" style="height:100%;">
+						<ul>
+							<li class='k-state-active'>기본설정</li>
+							<li>채점데이터</li>
+							<li>테스트코드</li>
+						</ul>
+						<div>
+							<div id="baseconfig">
+								<table style="width:100%;">
+									<tr><th>사용언어</th></tr>
+									<tr><td><input id="lang-type" name="lang-type" style="width:100%;" required/></td></tr>
+									<tr><th>제약조건</th></tr>
+									<tr><td><div id="gridCondition" style="width:100%;height:100%"></div></td></tr>
+								</table>
+							</div>
+						</div>
+						<div>
+							<div id="gradedata">
+								<div id="gridGrading"></div>
+							</div>
+						</div>
+						<div>
+							<div id="testcode">
+								<button id="test-btn" type="button" onclick="startTest()">테스트시작</button>
+								<textarea id="test-code" name="test-code" placeholder="테스트에 사용할 코드를 입력하세요."></textarea>
+							</div>
+						</div>
+					</div>
+				</td>	
+			</tr>
+			<tr><td colspan="2"><input id="title" name="title" data-bind="value:selected.title" style="width:100%;" required/></td></tr>
 			<tr><th colspan="2">문제</th></tr>
 			<tr><td colspan="2"><textarea id="con-question" name="con-question" data-bind="value:selected.con_question" placeholder="문제를 입력하세요." style="width:100%;height:200px;"></textarea></td></tr>
 			<tr><th colspan="2">입출력</th></tr>
@@ -83,16 +112,46 @@
 		<a href="\\#" class="k-pager-refresh k-link k-button" id="add-btn" title="Create" onclick="return onClick(this);">추가</a>
 	</div>
 </script>                
-            
+
+<!-- grading popup editor template -->
+<script id="popup_editor" type="text/x-kendo-template">
+	<div>
+	    <p>채점데이터</p>
+	    <table style="width:100%;">
+        	<colgroup>
+	            <col width="50%">
+            	<col width="50%">
+        	</colgroup>
+        	<tr><th>문제번호</th></tr>
+        	<tr>
+	            <td colspan="2">
+                	<input name="grading_order" data-bind="value:grading_order" data-type="number" data-role="numerictextbox" data-format="n0" data-min="1" data-max="100" required/>
+            	</td>
+        	</tr>
+        	<tr>
+	            <th>입력값</th>
+            	<th>출력값</th>
+        	</tr>
+        	<tr>
+	            <td>
+					<textarea name="grading_input" data-bind="value:grading_input" placeholder="입력값을 입력하세요." style="width:100%;height:200px;"></textarea>
+            	</td>
+            	<td>
+					<textarea name="grading_output" data-bind="value:grading_output" placeholder="출력값을 입력하세요." style="width:100%;height:200px;"></textarea>
+            	</td>
+        	</tr>
+    	</table>
+	</div>
+</script>
+
 <script>
 	/* DropDownList Template */
-	var codelist = "_USER_TYPE_";
+	var codelist = "_USER_TYPE_,_CONDITION_";
 	var codeModles = "";
 	var questionViewModel;
 	var questionModel;
 	var wnd;
 	
-	var today = kendo.date.today();
 	var temp;
 	
 	$.ajax({
@@ -115,8 +174,8 @@
 	function fnCodeNameByCdID(code) {
 		var rtnVal = "";
 		for (var i = 0; i < codeModles.length; i++) {
-			if (codeModles[i].CD_ID == code) {
-				rtnVal = codeModles[i].CD_NM;
+			if (codeModles[i].cd_id == code) {
+				rtnVal = codeModles[i].cd_nm;
 			}
 		}
 		return rtnVal;
@@ -125,8 +184,8 @@
 	function fnCodeNameByCd(code) {
 		var rtnVal = "";
 		for (var i = 0; i < codeModles.length; i++) {
-			if (codeModles[i].CD == code) {
-				rtnVal = codeModles[i].CD_NM;
+			if (codeModles[i].cd == code) {
+				rtnVal = codeModles[i].cd_nm;
 			}
 		}
 		return rtnVal;
@@ -135,13 +194,15 @@
 	var G_Condition = "ALL";
 	var G_Keyword = ""; 
 	var G_Seq = 0;
+	var editor;
 	
 	$(function() {
 		var searchData = [ 
 			{ text : "전체", value : "ALL" }, 
 			{ text : "제목", value : "TITLE" }, 
-			{ text : "글쓴이", value : "USER_NAME" }, 
-			{ text : "접속일", value : "ACCESS_DT" } 
+			{ text : "등록자", value : "USER_NAME" }, 
+			{ text : "등록일", value : "REG_DT" },
+			{ text : "언어", value : "LANG_TYPE" }
 		];
 	
 		$("#in_search").kendoComboBox({
@@ -155,7 +216,7 @@
 					$("#in_keyword").css({ "display" : "none" });
 					$("#searchArea .k-autocomplete").css({ "display" : "none" });
 					$("#searchArea .k-datepicker").css({ "display" : "none" });
-				} else if (G_Condition == "ACCESS_DT") {
+				} else if (G_Condition == "REG_DT") {
 					G_Keyword = "";
 					$("#in_searchDate").data("kendoDatePicker").value(new Date());
 					$("#searchArea .k-datepicker").css({ "display" : "inline-block" });
@@ -235,13 +296,23 @@
 	function addNew(e) {
 		// invisible elements(delete button, reg_usr, mod_dt)
 		$("#delete-btn").css("display", "none");
+		$("#test-btn").css("display", "none");
 		document.getElementsByClassName("modify")[0].style.display = "none";
 		document.getElementsByClassName("modify")[1].style.display = "none";
 		
 		// open window
+// 		wnd.center().maximize().open();		
 		wnd.center().open();		
 		questionViewModel.set("selected", new questionModel());
 		questionViewModel.dataSource.insert(0, questionViewModel.selected);
+		// read question condition
+		$("#gridCondition").data("kendoGrid").dataSource.read();
+		// read question condition
+		$("#gridGrading").data("kendoGrid").dataSource.read();
+		// clear test_code editor
+		initCodeEditor("");
+		// clear language(later)
+		
 		return false;
 	}
 	
@@ -254,19 +325,44 @@
 		} 
     }
 	
-	function closeWindow(e) {
-		wnd.close();
-		G_Seq = 0;
-		$("#gridList").data("kendoGrid").dataSource.read();
+	function getG_Seq() {
+		return G_Seq;	
+	}	
+	
+	function initCodeEditor(value) {
+		editor.getDoc().setValue(value);
+	}
+	
+	function startTest() {
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/question/execute/test.do'/>",
+			data : {
+				"question_seq" : getG_Seq
+			},
+			async : false, //동기 방식
+			success : function(data, status) {
+				console.log(data);
+// 				codeModles = data.rtnList;
+			},
+			fail : function(data) {
+			},
+			complete : function(data) {
+			}
+		});
 	}
 	
 	$(document).ready(function() {
+		editor = CodeMirror.fromTextArea(document.getElementById('test-code'), {
+			lineNumbers: false
+		});
+
 		/*************************/
 		/* deatils window
 		/*************************/
 		wnd = $("#window").kendoWindow({
             title: "글쓰기",
-            width: 600,
+            width: 1100,
             actions: [
 				"Pin",
 				"Minimize",
@@ -275,8 +371,31 @@
 			],
             modal: true,
             visible: false,
-            resizable: true
+            resizable: true,
+            close: function() {
+            	console.log("window.close");
+        		G_Seq = 0;
+        		$("#gridList").data("kendoGrid").dataSource.read();
+            }
         }).data("kendoWindow");
+
+		$("#tabstrip").kendoTabStrip({
+			height: 700,
+            animation:  {
+                open: {
+                    effects: "fadeIn"
+                }
+            },
+            show: function onSelect(e) {
+            	var showen = $(e.item).find("> .k-link").text();
+                console.log("Shown: " + showen);
+               	if(showen == '테스트코드') {
+               		setTimeout(function() {
+            			editor.refresh();
+            		}, 1);
+            	}
+            }
+        });
 		
 		/*************************/
 		/* dataSgridListDetail */
@@ -326,8 +445,7 @@
 						return { params : kendo.stringify(result) };
 					}
 
-					if (type !== "read"
-							&& data.models) {
+					if (type !== "read" && data.models) {
 						return {
 							models : kendo.stringify(data.models)
 						};
@@ -342,18 +460,6 @@
 				total : function(response) { return response.total; },
 				errors : function(response) { return response.error; },
 				parse : function(response) {
-					/*
-					var list = response.rtnList;
-					if (typeof list != "undefined") {
-						$.each(list, function(idx, elem) {
-							var loginDate = new Date(elem.LOGIN_DT);
-							var year = loginDate.getFullYear();
-							var month = (loginDate.getMonth() + 1);
-							var day = loginDate.getDate();
-							loginDate = year + "" + (month > 9 ? month : "0" + month) + "" + (day > 9 ? day : "0" + day);
-							elem.access_dt = loginDate;
-						});
-					}*/
 					return response;
 				},
 				model : {//가져온 값이 있음...
@@ -362,7 +468,8 @@
 						question_seq : { type : "number", editable : false }, //data type of the field {Number|String|Boolean|Date} default is String
 						title : { type : "string", editable : false },
 						reg_dt : { type : "string", editable : false },
-						reg_usr : { type : "string", editable : false }
+						lang_name : { type : "string", editable : false },
+						user_name : { type : "string", editable : false }
 					}
 				}
 			},
@@ -405,7 +512,8 @@
 				{ field : "question_seq", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: center;" } },
-				{ field : "reg_usr", title : "글쓴이", width : 150, attributes : { style : "text-align: center;" } },
+				{ field : "lang_name", title : "사용언어", width : 150, attributes : { style : "text-align: center;" } },
+				{ field : "user_name", title : "등록자", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "reg_dt", title : "등록일", width : 150, attributes : {	style : "text-align: center;" },
 					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd') #" }
 			],
@@ -418,10 +526,16 @@
                 console.log("showDetails");
         		// read questionViewModel by G_Seq 
         		questionViewModel.dataSource.read();
+        		// read question condition
+        		$("#gridCondition").data("kendoGrid").dataSource.read();
+        		// read question grading data
+        		$("#gridGrading").data("kendoGrid").dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
+        		$("#test-btn").css("display", "inline-block");
         		document.getElementsByClassName("modify")[0].style.display = "";
         		document.getElementsByClassName("modify")[1].style.display = "";
                 // open window
+//         		wnd.center().maximize().open();
         		wnd.center().open();
 			},
 			sortable : true,
@@ -468,7 +582,10 @@
 				mod_dt			:{ type: "string" },
 				mod_usr			:{ type: "string" },           
 				reg_dt			:{ type: "string" },
-				reg_usr			:{ type: "string" }           
+				reg_usr			:{ type: "string" },
+// 				test_code		:{ type: "string" },
+				lang_type		:{ type: "string" },
+				lang_name		:{ type: "string" }
 			}
 		});
 		
@@ -502,19 +619,6 @@
 				batch: true,
 				schema: {
 					model: questionModel,
-					data: function(response) {
-						console.log("viewmodel data: ");
-						console.log(response.rtnList);
-						return response.rtnList;
-					},
-					total: function(response) {
-						console.log("viewmodel total: " + response.total);
-						return response.total;
-					},
-					errors: function(response) {
-						console.log("viewmodel error: " + response.error);
-						return response.error;
-					},
 					parse: function(response) {
 						console.log("viewmodel parse: ");
                     	var rtn = response.rtnList;
@@ -522,9 +626,27 @@
                             $.each(rtn, function(idx, elem) {
                             	elem.reg_dt = kendo.toString(new Date(Number(elem.reg_dt)), 'yyyy-MM-dd');
                             	elem.mod_dt = kendo.toString(new Date(Number(elem.mod_dt)), 'yyyy-MM-dd HH:mm');
+                            	$("#lang-type").data("kendoDropDownList").value(elem.lang_type);
+        						$("#lang-type").data("kendoDropDownList").text(elem.lang_name);
                             });
                     	}
                     	return response;
+					},
+					errors: function(response) {
+						console.log("viewmodel error: ");
+						return response.error;
+					},
+					total: function(response) {
+						console.log("viewmodel total: " + response.total);
+						return response.total;
+					},
+					data: function(response) {
+						console.log("viewmodel data: ");
+						console.log(response.rtnList);
+						if(typeof response.rtnList != "undefined") {
+							initCodeEditor(response.rtnList[0].test_code);
+						} 
+						return response.rtnList;
 					}
 				},
 		        error : function(e) {
@@ -536,7 +658,7 @@
 		            var _data = this.data()[0];
 					console.log(_data);
 					if(typeof _data != "undefined") {
-						
+									
 					} else {
 						
 					}
@@ -546,14 +668,12 @@
 		        	console.log("viewmodel save data: ");
      			    console.log(this.data()[0]);
 					alert("정상적으로 처리되었습니다.");
-					closeWindow(e);
-				},
-				dataBound: function(e){ 
-					console.log("viewmodel dataBound");
+					wnd.close();
 				}
 			}),
 			error : function(e) {
-            	console.log("kendo.observable:error" + e.errors);
+            	console.log("kendo.observable:error");
+            	console.log(e);
             },
             change: function(e) {
             	console.log("kendo.observable:change");
@@ -563,8 +683,15 @@
             hasChanges: false,
             save: function (e) {
 				console.log("kendo.observable:save");
+				conditionList = $("#gridCondition").data("kendoGrid").dataSource.data();
+				questionViewModel.dataSource.data()[0].set("condition", conditionList);
+				gradingList = $("#gridGrading").data("kendoGrid").dataSource.data();
+				questionViewModel.dataSource.data()[0].set("grading", gradingList);
 				questionViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
 	        	questionViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
+	        	questionViewModel.dataSource.data()[0].set("lang_type", $("#lang-type").data("kendoDropDownList").value());
+	        	questionViewModel.dataSource.data()[0].set("lang_name", $("#lang-type").data("kendoDropDownList").text());
+	        	questionViewModel.dataSource.data()[0].set("test_code", editor.getDoc().getValue());
 	        	// convert tag for editor
 	        	if(typeof $("#con-question").val() != "undefined"
 	        			&& typeof $("#con-io").val() != "undefined"
@@ -574,14 +701,12 @@
 		        	if(inData.length < 1 || inData == null){
 						alert("예제를 입력해주세요.");
 			    	   	e.preventDefault();	
-			        } 
-		        	inData = $("#con-io").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-		        	if(inData.length < 1 || inData == null){
+			        } else if(inData.length < 1 || inData == null){
+		        		inData = $("#con-io").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
 						alert("입출력을 입력해주세요.");
 			    	   	e.preventDefault();	
-			        } 
-		        	inData = $("#con-question").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-		        	if(inData.length < 1 || inData == null){
+			        } else if(inData.length < 1 || inData == null){
+		        		inData = $("#con-question").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
 						alert("문제를 입력해주세요.");
 			    	   	e.preventDefault();	
 			        } else {
@@ -595,13 +720,13 @@
                 	console.log("remove");
                     this.dataSource.remove(this.dataSource.data()[0]);
                     this.dataSource.sync();
-					closeWindow();
+					wnd.close();
                 }
             },
             cancel: function(e) {
             	console.log("kendo.observable:cancel");
                 this.dataSource.cancelChanges();
-                closeWindow();
+                wnd.close();
             }
 		});
 	    
@@ -611,8 +736,43 @@
 	    $("#cancel-btn").kendoButton({ icon: "cancel" });
 	    $("#save-btn").kendoButton({ icon: "pencil" });
 	    $("#delete-btn").kendoButton({ icon: "close" });
-	    
-		$("#con-question").kendoEditor({
+
+	    $("#lang-type").kendoDropDownList({
+			dataTextField : "text",
+			dataValueField : "value",
+			dataSource : {
+				transport: {
+	                read: {
+	                    url: "<c:url value='/common/readCodeListForCombo.do'/>",
+	                    dataType: "jsonp"
+	                },
+		    		parameterMap : function(data, type) {
+						if (type == "read") {
+							var result = {
+								CATGR : "_LANGUAGE_" 
+							};
+							return { params : kendo.stringify(result) };
+						}
+		    		}
+	            }
+			},
+			parse: function(response) {
+    			console.log("lang-type:kendoDropDownList:parse");
+            	return response;
+			},
+    		success : function(data, status) {
+    			console.log("lang-type:kendoDropDownList:success");
+    			return data.rtnList;
+    		},
+			change : function() {
+            	console.log("lang-type:kendoDropDownList:change");
+// 				questionViewModel.dataSource.data()[0].set("lang_type", $("#lang-type").data("kendoDropDownList").value());
+// 	        	questionViewModel.dataSource.data()[0].set("lang_name", $("#lang-type").data("kendoDropDownList").text());
+			},
+			index : 0
+		});
+
+	    $("#con-question").kendoEditor({
 			resizable: {
 	        	content: true,
 	        	toolbar: true
@@ -640,25 +800,282 @@
 	        },
 	        encoded: false
 		});
-
+		
+		$("#gridCondition").kendoGrid({
+			autoBind : true,
+			dataSource : new kendo.data.DataSource({
+				transport: {
+					read:  { url: crudServiceBaseUrl + "/condition/readList.do", dataType: "jsonp",
+            			complete: function(e){ 
+            				console.log("readList...................");
+            			}
+					},
+// 					update: { url: crudServiceBaseUrl + "/condition/update.do", dataType: "jsonp" },
+// 					destroy: { url: crudServiceBaseUrl + "/condition/delete.do", dataType: "jsonp" },
+// 					create: { url: crudServiceBaseUrl + "/condition/create.do", dataType: "jsonp" },
+					parameterMap: function(data, type) {
+						if (type == "read"){
+                           	var result = {
+                           		question_seq: G_Seq
+							};
+							return { params: kendo.stringify(result) }; 
+						}
+// 						if (type !== "read" && data.models) {	
+// 							return { models: kendo.stringify(data.models) };
+// 						}
+					}
+				},//transport end...
+				schema: {
+					data: function(response) {
+						return response.rtnList;
+					},
+					total: function(response) {
+						return response.total;
+					},
+					errors: function(response) {
+						return response.error;
+					},
+					model:{//가져온 값이 있음...
+						id:"condition_seq",//id 로 insert할건지 update 할건지 판단함.
+						fields: {
+							condition_seq: { type: "number" },  
+							question_seq: { type: "number", defaultValue : getG_Seq },  
+							use_yn : { type : "boolean", defaultValue : true },
+							condition_type: { type: "string", validation: { required: true } },
+							condition_value: { type: "string", validation: { required: true } }
+						}   
+					}
+				},
+                error : function(e) {
+                	console.log(e);
+                },
+                change : function(e) {
+                },  	
+                sync: function(e) {
+					console.log("sync complete");
+					alert("정상적으로 처리되었습니다.");
+					console.log("save & refresh...............");
+				},  
+				autoSync: false,          //     자동 저장
+				batch: true               //     true: 쿼리를 한줄로,  false : row 단위로
+			}),
+			navigatable : true,
+            toolbar: [
+				{ name: "create", text: "추가" },
+				/*{ name: "save", text: "저장" },
+				{ name: "destroy", text: "삭제" },*/
+				{ name: "cancel", text: "취소" }
+            ],
+			columns : [
+				{
+					field : "use_yn",
+					title : "사용",
+					attributes : { style : "text-align: center;" },
+					width : "10%"
+				},
+				{
+					field : "condition_type",
+					title : "조건",
+					width : "20%",
+					attributes : { style : "text-align: center;" },
+					editor : function(container, options) {
+						$('<input required id = "' + options.field + '" name="' + options.field + '"/>')
+						.appendTo(container)
+						.kendoDropDownList({
+							dataTextField : "text",
+							dataValueField : "value",
+							dataSource : {
+								transport : {
+									read : {
+										url : "<c:url value='/common/readCodeListForCombo.do'/>",
+										dataType : "jsonp"
+									},
+									parameterMap : function(data, type) {
+										var result = {
+											CATGR : "_CONDITION_"
+										};
+										return { params : kendo.stringify(result) };
+									}
+								}
+							},
+							change : function() {
+							},
+							dataBound : function(e) {
+								$(".k-list-container").css("width", "100px");
+							},
+							index: 0
+						});
+					},
+					template : "#=fnCodeNameByCdID(condition_type)#"
+				},
+				{ field : "condition_value", title : "값", width : "60%", attributes : { style : "text-align: center;" } },
+				{
+					command: [
+						{ name: "destroy", text: "삭제" }
+					]
+				}
+			],
+			editable: {
+				mode:  "incell",
+				confirmation: "선택한 행을 삭제하시겠습니까?(저장 클릭시 적용됩니다.)"
+			},
+			change: function(e) {
+            	console.log("gridCondition:grid:change");
+			},
+			edit: function(e) {
+				console.log("gridCondition:grid:edit");
+            	if (!e.model.isNew()) {
+            		$("#condition_type").data("kendoDropDownList").readonly();
+				}
+            },  
+			sortable : true,
+			selectable : "row",
+			scrollable : false,
+			mobile : true,
+			noRecords : {
+				template: "제약 조건이 없습니다."
+			},
+			pageable : false,
+			resizable : true, //컬럼 크기 조절
+			reorderable : false //컬럼 위치 이동
+		});//gridList end...
+		
+		$("#gridGrading").kendoGrid({
+			dataSource : new kendo.data.DataSource({
+				transport: {
+					read:  { url: crudServiceBaseUrl + "/grading/readList.do", dataType: "jsonp",
+            			complete: function(e){ 
+            				console.log("gridGrading:grid:datasource:read:complete");
+            			}
+					},
+					update: { 
+// 						url: crudServiceBaseUrl + "/grading/update.do", dataType: "jsonp"
+					},
+					destroy: { 
+// 						url: crudServiceBaseUrl + "/grading/delete.do", dataType: "jsonp" 
+					},
+					create: { 
+// 						url: crudServiceBaseUrl + "/grading/create.do", dataType: "jsonp" 
+					},
+					parameterMap: function(data, type) {
+						if (type == "read"){
+                           	var result = {
+                           		question_seq: G_Seq
+							};
+							return { params: kendo.stringify(result) }; 
+						}
+						if (type !== "read" && data.models) {	
+							return { models: kendo.stringify(data.models) };
+						}
+					}
+				},//transport end...
+				schema: {
+					data: function(response) {
+						return response.rtnList;
+					},
+					total: function(response) {
+						return response.total;
+					},
+					errors: function(response) {
+						return response.error;
+					},
+					model:{//가져온 값이 있음...
+						id:"grading_seq",//id 로 insert할건지 update 할건지 판단함.
+						fields: {
+							grading_seq: { editable: false, nullable: true },
+							question_seq: { type: "number", defaultValue : getG_Seq },
+							grading_input: { type: "string", validation: { required: true } },
+							grading_output: { type: "string", validation: { required: true } },
+							grading_order: { type: "number" }
+						}   
+					}
+				},
+                error : function(e) {
+                	console.log(e);
+                },
+                change : function(e) {
+                },  	
+                sync: function(e) {
+					console.log("gridGrading:grid:dataSource:sync");
+				},  
+				batch: true               //     true: 쿼리를 한줄로,  false : row 단위로
+			}),
+			autoBind : true,
+			navigatable : true,
+            toolbar: [
+				{ name: "create", text: "추가" },
+				{ name: "cancel", text: "취소" }
+            ],
+			columns : [
+				{ field : "grading_order", title : "번호", width : "10%", attributes : { style : "text-align: center;" } },
+				{ field : "grading_input", title : "입력값", width : "30%", attributes : { style : "text-align: center;" }, },
+				{ field : "grading_output", title : "출력값", width : "30%", attributes : { style : "text-align: center;" } },
+				{
+					command: [
+						{ name: "destroy", text: "" }
+					]
+				}
+			],
+			editable: {
+				mode: "popup",
+	            template: kendo.template($("#popup_editor").html()),
+				confirmation: "선택한 행을 삭제하시겠습니까?(저장 클릭시 적용됩니다.)"
+			},
+			edit: function(e) {
+				console.log("gridGrading:grid:edit");
+				$(e.container).parent().css({
+					width: '900px',
+					height: '400px'
+				});
+            },  
+			change: function(e) {
+            	console.log("gridGrading:grid:change");
+			},
+			save: function(e) {
+            	console.log("gridGrading:grid:save");
+			},
+			sortable : true,
+			scrollable : false,
+			mobile : true,
+			noRecords : {
+				template: "채점 데이터가 없습니다."
+			},
+			dataBound: function(e) {
+				console.log("gridGrading:grid:dataBound");
+			}
+		});
+		
+		
+// 		 $("#gridGrading").delegate("tbody>tr", "dblclick", function () {
+		$("#gridGrading").delegate("tbody>tr", "click", function () {
+				if (!$(this).hasClass('k-grid-edit-row')) {
+				$("#gridGrading").data("kendoGrid").editRow($(this));
+			}
+		});
+		
 		invokeUserAuth($("#add-btn"), 'kendoButton', 'C');
 		invokeUserAuth($("#save-btn"), 'kendoButton', 'U');
-		invokeUserAuth($("#delete-btn"), 'kendoButton', 'U');
-
+		invokeUserAuth($("#delete-btn"), 'kendoButton', 'D');
 	});//document ready javascript end...
 </script>
 
 <style>
-#in_keyword, .k-datepicker, .k-autocomplete {
-	display: none;
-}
-
-#in_keyword, .k-datepicker, #searchBtn {
-	margin-left: 9px;
-}
-.k-grid td {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
+	.k-edit-form-container {
+		width: 100%;
+	}
+	#in_keyword, .k-datepicker, .k-autocomplete {
+		display: none;
+	}
+	#in_keyword, .k-datepicker, #searchBtn {
+		margin-left: 9px;
+	}
+	.k-grid table {
+		table-layout: fixed;
+	}
+	.k-grid td {
+	    overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
 </style>
 <%@ include file="../../inc/footer.jsp"%>

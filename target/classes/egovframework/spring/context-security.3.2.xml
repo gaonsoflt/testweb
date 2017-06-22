@@ -27,6 +27,14 @@
         <!--<form-login login-page="/login" default-target-url="/archive/documentinfo" authentication-failure-url="/login?error=1" always-use-default-target="true" />-->
     </http>
 
+    <!--beans:bean id="usernamePasswordAuthenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"-->
+    <beans:bean id="usernamePasswordAuthenticationFilter" class="egovframework.com.login.security.CustomUsernamePasswordAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
+        <beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
+        <beans:property name="postOnly" value="false" />
+    </beans:bean>	
+    
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="authenticationProvider" />
     </authentication-manager>
@@ -46,14 +54,6 @@
     <!--beans:bean id="loginUrlAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"-->
         <beans:property name="loginFormUrl" value="/com/login/login.do"/>
     </beans:bean>
-
-    <!--beans:bean id="usernamePasswordAuthenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"-->
-    <beans:bean id="usernamePasswordAuthenticationFilter" class="egovframework.com.login.security.CustomUsernamePasswordAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
-        <beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
-        <beans:property name="postOnly" value="false" />
-    </beans:bean>	
 
     <!--beans:bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"-->
     <beans:bean id="authenticationSuccessHandler" class="egovframework.com.login.security.CustomLoginSuccessHandler">

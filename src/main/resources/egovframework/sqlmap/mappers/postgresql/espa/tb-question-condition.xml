@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.espa.service.impl.QuestionConditionMapper">
+
+	<select id="selectConditionList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.*, C.cd_nm as lang_name 
+		FROM (
+			SELECT
+				condition_seq,
+				question_seq, 
+				condition_type,
+				condition_value,
+				CASE WHEN USE_YN = '1' THEN true ELSE false end USE_YN
+			FROM tb_question_condition
+			WHERE question_seq = cast(#{question_seq} as integer)
+		) A LEFT JOIN TB_CODE_MASTER C ON C.CD_ID = A.condition_type
+	</select>
+	
+	<insert id="insertCondition">
+		INSERT INTO tb_question_condition (
+			condition_seq,
+			question_seq, 
+			condition_type,
+			condition_value,
+			use_yn
+		) VALUES (
+			nextval('sq_tb_question_condition'),
+			cast(#{question_seq} as integer),
+			#{condition_type},
+			#{condition_value},
+			CASE WHEN #{use_yn} = true THEN '1' ELSE '0' end
+		)
+	</insert>
+	
+	<update id="updateCondition">
+		UPDATE tb_question_condition
+		SET 
+			condition_type = #{condition_type}, 
+			condition_value= #{condition_value},
+			USE_YN = CASE WHEN #{use_yn} = true THEN '1' ELSE '0' end
+		WHERE condition_seq = CAST(#{condition_seq} as integer) 
+	</update>
+	
+	<delete id="deleteCondition">
+		DELETE FROM tb_question_condition 
+		WHERE 1 = 1
+		AND question_seq = CAST(#{question_seq} as integer) 
+	</delete>
+</mapper>

@@ -5,27 +5,16 @@ import java.io.IOException;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import egovframework.espa.service.impl.QuestionExecuteServiceImpl;
 
 public class ExecuteUtil {
-//	public void byCommonsExec(String[] command) throws IOException, InterruptedException {
-//		byCommonsExec(command, null);
-//	}
-//
-//	public void byCommonsExec(String[] command, DefaultExecuteResultHandler handler)
-//			throws IOException, InterruptedException {
-//		DefaultExecutor executor = new DefaultExecutor();
-//		CommandLine cmdLine = CommandLine.parse(command[0]);
-//		for (int i = 1; i < command.length; i++) {
-//			cmdLine.addArgument(command[i]);
-//		}
-//		if (handler != null) {
-//			executor.execute(cmdLine, handler);
-//		} else {
-//			executor.execute(cmdLine);
-//		}
-//	}
-	
+
 	/**
 	 * 
 	 * @param String
@@ -33,11 +22,11 @@ public class ExecuteUtil {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String byCommonsExec(String cmd) throws IOException,InterruptedException {
+	public static String byCommonsExec(String cmd) throws IOException, InterruptedException {
 		CommandLine commandline = CommandLine.parse(cmd);
 		return ExecuteUtil.byCommonsExec(commandline);
 	}
-	
+
 	/**
 	 * 
 	 * @param CommandLine
@@ -45,12 +34,42 @@ public class ExecuteUtil {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String byCommonsExec(CommandLine cmd) throws IOException,InterruptedException {
+	public static String byCommonsExec(CommandLine cmd) throws IOException, InterruptedException {
+		return ExecuteUtil.byCommonsExec(cmd, -1);
+	}
+
+	/**
+	 * 
+	 * @param CommandLine,
+	 *            time
+	 * @param timeout
+	 * @return
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static String byCommonsExec(CommandLine cmd, long timeout) throws IOException, InterruptedException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		DefaultExecutor exec = new DefaultExecutor();
 		PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+		ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+		exec.setWatchdog(watchdog);
 		exec.setStreamHandler(streamHandler);
-		exec.execute(cmd);
+		long start = System.nanoTime();
+		int exitValue = 0;
+		try {
+			exitValue = exec.execute(cmd);
+		} catch (ExecuteException e) {
+			e.printStackTrace();
+			exitValue = e.getExitValue();
+		}
+		start = System.nanoTime() - start;
+		System.out.println("execute time: " + (start / 1000000) + "ms");
+		if (exec.isFailure(exitValue) && watchdog.killedProcess()) {
+			System.out.println("it was killed on purpose by the watchdog");
+			throw new ExecuteException("timeout", exitValue);
+		} else if (exec.isFailure(exitValue)){
+			throw new ExecuteException("execute error", exitValue);
+		}
 		return outputStream.toString();
 	}
 }

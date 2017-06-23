@@ -59,11 +59,12 @@
 				con_question,
 				con_io,
 				con_example,
-				con_condition,
 				con_hint,
 				con_etc,
 				test_code,
-				lang_type
+				lang_type,
+				timeout,
+				ban_keyword
 			FROM tb_question
 			WHERE question_seq = cast(#{question_seq} as integer)
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
@@ -89,11 +90,12 @@
 			con_question,
 			con_io,
 			con_example,
-			con_condition,
 			con_hint,
 			con_etc,
 			test_code,
-			lang_type
+			lang_type,
+			timeout,
+			ban_keyword
 		) VALUES (
 			nextval('sq_tb_question'), 
 			#{title}, 
@@ -104,11 +106,12 @@
 			#{con_question},
 			#{con_io},
 			#{con_example},
-			#{con_condition},
 			#{con_hint},
 			#{con_etc},
 			#{test_code},
-			#{lang_type}
+			#{lang_type},
+			cast(#{timeout} as integer),
+			#{ban_keyword}
 		)
 	</insert>
 	
@@ -119,13 +122,14 @@
 			con_question = #{con_question},
 			con_io = #{con_io},
 			con_example = #{con_example},
-			con_condition = #{con_condition},
 			con_hint = #{con_hint},
 			con_etc = #{con_etc},
 			test_code = #{test_code},
 			mod_usr = #{mod_usr}, 
 			mod_dt = now(),
-			lang_type = #{lang_type}
+			lang_type = #{lang_type},
+			timeout = cast(#{timeout} as integer),
+			ban_keyword = #{ban_keyword}
 		WHERE question_seq = cast(#{question_seq} as integer)
 	</update>
 	

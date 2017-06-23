@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import egovframework.espa.dao.ESPAExecuteVO;
+import egovframework.espa.handler.ESPAExecuteHandler;
 import egovframework.espa.service.ConfigService;
-import egovframework.espa.service.ESPAExecuteAgent;
 import egovframework.espa.service.QuestionExecuteService;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
@@ -41,13 +41,15 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
 		executeVO.setCode(result.get("test_code").toString());
 		executeVO.setLanguage(result.get("lang_name").toString());
+		executeVO.setTimeout(Long.valueOf(result.get("timeout").toString()));
+		executeVO.setBanKeyword(result.get("ban_keyword").toString());
 		executeVO.setCondition(conditionList);
 		executeVO.setGrading(gradingList);
 		executeVO.setTest(true);
 		
 		logger.debug("[BBAEK] testcode: " + executeVO.getCode());
 		
-		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
+		ESPAExecuteHandler agent = new ESPAExecuteHandler(executeVO, config);
 		agent.execute();
 		return executeVO;
 	}
@@ -61,12 +63,14 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
 		executeVO.setCode(result.get("test_code").toString());
 		executeVO.setLanguage(result.get("lang_name").toString());
+		executeVO.setTimeout(Long.valueOf(result.get("timeout").toString()));
+		executeVO.setBanKeyword(result.get("ban_keyword").toString());
 		executeVO.setCondition(conditionList);
 		executeVO.setGrading(gradingList);
 		executeVO.setTest(false);
 		logger.debug("[BBAEK] testcode: " + executeVO.getCode());
 		
-		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
+		ESPAExecuteHandler agent = new ESPAExecuteHandler(executeVO, config);
 		agent.execute();
 		return executeVO;
 	}

@@ -75,6 +75,10 @@
 								<table style="width:100%;">
 									<tr><th>사용언어</th></tr>
 									<tr><td><input id="lang-type" name="lang-type" style="width:100%;" required/></td></tr>
+									<tr><th>실행시간(timeout)</th></tr>
+									<tr><td><input type="number" id="timeout" name="timeout" data-bind="value:selected.timeout" style="width:90%"/>ms</td></tr>
+									<tr><th>금지어(, 로 구분)</th></tr>
+									<tr><td><input id="ban_keyword" name="ban_keyword" data-bind="value:selected.ban_keyword" style="width:100%" /></td></tr>
 									<tr><th>제약조건</th></tr>
 									<tr><td><div id="gridCondition" style="width:100%;height:100%"></div></td></tr>
 								</table>

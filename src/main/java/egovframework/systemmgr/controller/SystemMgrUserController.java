@@ -72,7 +72,7 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 	 */
 	@RequestMapping(value = "/create.do")
 	public @ResponseBody JSONPObject insertMngUserInfoJsonp(@RequestParam("callback") String c, @RequestParam("models") String models) {
-		logger.debug("---------------->/urtown/insertMngUserInfoJsonp.do");
+		logger.debug("---------------->/create.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
 		logger.debug("models:" + models); 
@@ -105,7 +105,7 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 	 */
 	@RequestMapping(value = "/update.do")
 	public @ResponseBody JSONPObject updateMngUserInfoJsonp(@RequestParam("callback") String c, @RequestParam("models") String models) {  
-		logger.debug("---------------->/urtown/updateMngUserInfoJsonp.do");
+		logger.debug("---------------->/update.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 
 		logger.debug("models:"+models); 
@@ -141,7 +141,7 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 	 */
 	@RequestMapping(value = "/delete.do")
 	public @ResponseBody JSONPObject deleteMngUserInfoJsonp(@RequestParam("callback") String c, @RequestParam("models") String models) {
-		logger.debug("---------------->/urtown/deleteMngUserInfoJsonp.do");
+		logger.debug("---------------->/delete.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 
 		logger.debug("models:"+models); 

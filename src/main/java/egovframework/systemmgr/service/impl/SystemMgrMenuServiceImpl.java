@@ -8,8 +8,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import egovframework.systemmgr.service.SystemMgrMenuService;
-import egovframework.urtown.service.MediConsultService;
-import egovframework.urtown.service.MediConsultVO;
 
 @Service("systemMgrMenuService")
 public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {

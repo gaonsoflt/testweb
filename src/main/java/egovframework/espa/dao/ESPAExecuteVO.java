@@ -1,9 +1,11 @@
 package egovframework.espa.dao;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class ESPAExecuteVO {
+	private String questionSeq;
 	private String code;
 	private String language;
 	private long timeout;
@@ -13,13 +15,16 @@ public class ESPAExecuteVO {
 	private boolean isTest;
 	private Exception error;
 	
-	// condition result
-	private ESPAExecuteResultVO result;
-	////////////////////////////////////////
-	
-	
 	public String getCode() {
 		return code;
+	}
+
+	public String getQuestionSeq() {
+		return questionSeq;
+	}
+
+	public void setQuestionSeq(String questionSeq) {
+		this.questionSeq = questionSeq;
 	}
 
 	public long getTimeout() {
@@ -48,17 +53,6 @@ public class ESPAExecuteVO {
 	
 	public void setBanKeyword(String[] banKeyword) {
 		this.banKeyword = banKeyword;
-	}
-
-	public ESPAExecuteResultVO getResult() {
-		return result;
-	}
-
-	public void setResult(ESPAExecuteResultVO result) {
-		if(result == null) {
-			result = new ESPAExecuteResultVO();
-		}
-		this.result = result;
 	}
 
 	public void setCode(String code) {
@@ -107,8 +101,9 @@ public class ESPAExecuteVO {
 
 	@Override
 	public String toString() {
-		return "ESPAExecuteVO [code=" + code + ", language=" + language + ", condition=" + condition + ", grading="
-				+ grading + ", isTest=" + isTest + ", error=" + error + ", result=" + result + "]";
+		return "ESPAExecuteVO [questionSeq=" + questionSeq + ", code=" + code + ", language=" + language + ", timeout="
+				+ timeout + ", banKeyword=" + Arrays.toString(banKeyword) + ", condition=" + condition + ", grading="
+				+ grading + ", isTest=" + isTest + ", error=" + error + "]";
 	} 
 }
 

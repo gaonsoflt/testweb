@@ -2,14 +2,19 @@ package egovframework.systemmgr.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import egovframework.espa.service.ConfigService;
+
 @Controller
 public class MainController {
 Logger logger = LoggerFactory.getLogger(MainController.class.getName());
+	@Autowired
+	ConfigService config;
 
 	@RequestMapping(value = "/main.do")
 	public String login(Model model) throws Exception {
@@ -27,21 +32,24 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	 * BBS
 	 */
 	@RequestMapping(value = "/bbs/notice.do")
-	public String bbsNotice(Model model) throws Exception {
-		return "bbs/notice";
+	public ModelAndView bbsNotice(Model model) throws Exception {
+		return new ModelAndView("bbs/notice");
 	}
 	
 	/*
 	 * ESPA
 	 */
 	@RequestMapping(value = "/mgr/question.do")
-	public String mgrQuestion(Model model) throws Exception {
-		return "espa/mgr/question";
+	public ModelAndView mgrQuestion(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/question");
+		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
+		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
+		return mav; 
 	}
 	
 	@RequestMapping(value = "/mgr/config.do")
-	public String mgrConfig(Model model) throws Exception {
-		return "espa/mgr/config";
+	public ModelAndView mgrConfig(Model model) throws Exception {
+		return new ModelAndView("espa/mgr/config");
 	}
 	
 	/*

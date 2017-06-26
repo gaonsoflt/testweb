@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import egovframework.espa.dao.ESPAExecuteVO;
 import egovframework.espa.service.QuestionExecuteService;
 
 @RequestMapping("/question/execute")
@@ -25,15 +24,16 @@ public class QuestionExecuteController {
 	@RequestMapping(value = "/test.do")
 	public ModelAndView executeTest(@RequestParam HashMap<String, Object> params) throws Exception {
 		logger.debug("[BBAEK] params: " + params);
-		ESPAExecuteVO vo = null;
+		boolean result = true;
+		ModelAndView model = new ModelAndView();
 		try {
-			vo = executeService.executeTest(params);
+			executeService.executeTest(params);
 		} catch (Exception e) {
 			e.printStackTrace();
+			model.addObject("error", e);
+			result = false;
 		}
-		ModelAndView model = new ModelAndView();
-
-		model.addObject("rtnList", vo);
+		model.addObject("success", result);
 		model.setViewName("jsonView");
 		return model;
 	}

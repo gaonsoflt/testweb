@@ -41,7 +41,15 @@ public class QuestionServiceImpl extends EgovAbstractServiceImpl implements Ques
 
 	@Override
 	public List<HashMap<String, Object>> getQuestion(HashMap<String, Object> map) throws Exception {
-		return questionMapper.selectQuestion(map);
+		List<HashMap<String, Object>> result = questionMapper.selectQuestion(map);
+		// init default value(timeout, ban_keyword) from espa config
+		if(result.size() > 0) {
+			if(result.get(0).get("timeout") == null) {
+				result.get(0).put("timeout", Long.valueOf(config.getEspaConfigVoValue("DEFAULT_TIMEOUT"))); 
+				result.get(0).put("ban_keyword", config.getEspaConfigVoValue("DEFAULT_BAN_KW")); 
+			}
+		}
+		return result;
 	}
 
 	@Override

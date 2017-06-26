@@ -4,7 +4,14 @@
 <mapper namespace="egovframework.espa.service.impl.QuestionGradingMapper">
 
 	<select id="selectGradingList" parameterType="hashMap" resultType="hashMap">
-		SELECT * 
+		SELECT 
+			question_seq,
+			grading_input,
+			grading_output,
+			grading_order,
+			grading_seq,
+			CASE WHEN correct = '1' THEN true ELSE false end correct,
+			exec_time
 		FROM tb_question_grading
 		WHERE question_seq = cast(#{question_seq} as integer) 
 		ORDER BY grading_order
@@ -33,6 +40,15 @@
 			grading_output = #{grading_output},
 			grading_order = CAST(#{grading_order} as integer)
 		WHERE question_seq = CAST(#{question_seq} as integer) 
+	</update>
+	
+	<update id="updateGradingTestResult" parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
+		UPDATE tb_question_grading
+		SET 
+			correct = CASE WHEN #{correct} = true THEN '1' ELSE '0' end,
+			exec_time = CAST(#{executeTime} as integer)
+		WHERE question_seq = CAST(#{questionSeq} as integer)
+		AND grading_seq = CAST(#{gradingSeq} as integer)
 	</update>
 	
 	<delete id="deleteGrading">

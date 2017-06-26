@@ -86,12 +86,13 @@
 						</div>
 						<div>
 							<div id="gradedata">
+								<button id="test-btn" type="button" onclick="startTest()">테스트시작</button>
+								<div><span id="exec-msg"></span></div>
 								<div id="gridGrading"></div>
 							</div>
 						</div>
 						<div>
 							<div id="testcode">
-								<button id="test-btn" type="button" onclick="startTest()">테스트시작</button>
 								<textarea id="test-code" name="test-code" placeholder="테스트에 사용할 코드를 입력하세요."></textarea>
 							</div>
 						</div>
@@ -305,16 +306,14 @@
 		document.getElementsByClassName("modify")[1].style.display = "none";
 		
 		// open window
-// 		wnd.center().maximize().open();		
 		wnd.center().open();		
 		questionViewModel.set("selected", new questionModel());
 		questionViewModel.dataSource.insert(0, questionViewModel.selected);
-		// read question condition
-		$("#gridCondition").data("kendoGrid").dataSource.read();
-		// read question condition
-		$("#gridGrading").data("kendoGrid").dataSource.read();
+		// init default value
+		questionViewModel.dataSource.data()[0].set("timeout", "${default_timeout}");
+		questionViewModel.dataSource.data()[0].set("ban_keyword", "${default_ban_kw}");
 		// clear test_code editor
-		initCodeEditor("");
+		setCodeEditor("");
 		// clear language(later)
 		
 		return false;
@@ -333,11 +332,16 @@
 		return G_Seq;	
 	}	
 	
-	function initCodeEditor(value) {
+	function setCodeEditor(value) {
 		editor.getDoc().setValue(value);
 	}
 	
+	function setExecMsg(msg) {
+	    document.getElementById("exec-msg").innerHTML = msg;
+	}
+	
 	function startTest() {
+		setExecMsg("테스트코드를 실행중입니다. 잠시만 기다려주세요.");
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/question/execute/test.do'/>",
@@ -347,7 +351,13 @@
 			async : false, //동기 방식
 			success : function(data, status) {
 				console.log(data);
-// 				codeModles = data.rtnList;
+				if(data.success) {
+	        		$("#gridGrading").data("kendoGrid").dataSource.read();
+	            	setExecMsg("테스트를 완료했습니다.");
+				} else {
+					// TODO: fix error message 
+					setExecMsg(data.error.message);
+				}
 			},
 			fail : function(data) {
 			},
@@ -376,6 +386,14 @@
             modal: true,
             visible: false,
             resizable: true,
+            open: function() {
+            	console.log("window.open");
+            	setExecMsg("");
+        		// read question condition
+        		$("#gridCondition").data("kendoGrid").dataSource.read();
+        		// read question grading data
+        		$("#gridGrading").data("kendoGrid").dataSource.read();
+            },
             close: function() {
             	console.log("window.close");
         		G_Seq = 0;
@@ -527,19 +545,13 @@
 				G_Seq = selectedItem.question_seq;
 				console.log("selected item: " + G_Seq + "(seq)");
                 console.log(selectedItem);
-                console.log("showDetails");
         		// read questionViewModel by G_Seq 
         		questionViewModel.dataSource.read();
-        		// read question condition
-        		$("#gridCondition").data("kendoGrid").dataSource.read();
-        		// read question grading data
-        		$("#gridGrading").data("kendoGrid").dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
         		$("#test-btn").css("display", "inline-block");
         		document.getElementsByClassName("modify")[0].style.display = "";
         		document.getElementsByClassName("modify")[1].style.display = "";
                 // open window
-//         		wnd.center().maximize().open();
         		wnd.center().open();
 			},
 			sortable : true,
@@ -587,9 +599,10 @@
 				mod_usr			:{ type: "string" },           
 				reg_dt			:{ type: "string" },
 				reg_usr			:{ type: "string" },
-// 				test_code		:{ type: "string" },
 				lang_type		:{ type: "string" },
-				lang_name		:{ type: "string" }
+				lang_name		:{ type: "string" },
+				timeout			:{ type: "number" },
+				ban_keyword		:{ type: "string" }
 			}
 		});
 		
@@ -648,7 +661,7 @@
 						console.log("viewmodel data: ");
 						console.log(response.rtnList);
 						if(typeof response.rtnList != "undefined") {
-							initCodeEditor(response.rtnList[0].test_code);
+							setCodeEditor(response.rtnList[0].test_code);
 						} 
 						return response.rtnList;
 					}
@@ -990,7 +1003,9 @@
 							question_seq: { type: "number", defaultValue : getG_Seq },
 							grading_input: { type: "string", validation: { required: true } },
 							grading_output: { type: "string", validation: { required: true } },
-							grading_order: { type: "number" }
+							grading_order: { type: "number" },
+							correct: { type: "boolean", editable: false },
+							exe_time: { type: "number", editable: false }
 						}   
 					}
 				},
@@ -1012,9 +1027,12 @@
             ],
 			columns : [
 				{ field : "grading_order", title : "번호", width : "10%", attributes : { style : "text-align: center;" } },
-				{ field : "grading_input", title : "입력값", width : "30%", attributes : { style : "text-align: center;" }, },
-				{ field : "grading_output", title : "출력값", width : "30%", attributes : { style : "text-align: center;" } },
+				{ field : "grading_input", title : "입력값", width : "20%", attributes : { style : "text-align: center;" }, },
+				{ field : "grading_output", title : "출력값", width : "20%", attributes : { style : "text-align: center;" } },
+				{ field : "correct", title : "테스트", width : "60", attributes : { style : "text-align: center;" } },
+				{ field : "exec_time", title : "ms", width : "60", attributes : { style : "text-align: center;" } },
 				{
+					width : "90",
 					command: [
 						{ name: "destroy", text: "" }
 					]

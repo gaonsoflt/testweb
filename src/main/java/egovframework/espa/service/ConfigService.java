@@ -29,18 +29,17 @@ public class ConfigService {
 	}
 
 	public ESPAConfigVO getEspaConfigVo(String cfgId) {
-		return getEspaConfigVo().get(getEspaConfigVo().indexOf(new ESPAConfigVO(cfgId)));
+		int idx = getEspaConfigVo().indexOf(new ESPAConfigVO(cfgId));
+		if(idx < 0)
+			return null;
+		return getEspaConfigVo().get(idx);
 	}
 	
 	public String getEspaConfigVoValue(String cfgId) {
-		return getEspaConfigVo().get(getEspaConfigVo().indexOf(new ESPAConfigVO(cfgId))).getCfg_value();
+		return getEspaConfigVo(cfgId).getCfg_value();
 	}
 	
 	public String getEspaConfigVoName(String cfgId) {
-		return getEspaConfigVo().get(getEspaConfigVo().indexOf(new ESPAConfigVO(cfgId))).getCfg_name();
-	}
-	
-	public String getEspaConfigVoId(String cfgId) {
-		return getEspaConfigVo().get(getEspaConfigVo().indexOf(new ESPAConfigVO(cfgId))).getCfg_id();
+		return getEspaConfigVo(cfgId).getCfg_name();
 	}
 }

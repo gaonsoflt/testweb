@@ -8,12 +8,12 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i> 권한관리 <small>사용자 권한을 관리합니다.</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 시스템관리</a></li>
-			<li class="active">권한관리</li>
-		</ol>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
+		</ol>	
 	</section>
 	<!-- Main content -->
 	<section class="content">
@@ -27,7 +27,7 @@
 							<div id="left-pane">
 								<div id="tabstrip">
 									<ul>
-										<li class='k-state-active'>그룹</li>
+										<li class='k-state-active'>구분</li>
 										<li>사용자</li>
 									</ul>
 									<div>
@@ -186,8 +186,8 @@
 			toolbar: [ ],
 			columns: [
 				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
-				{ field: "cd_nm", title: "그룹명", attributes: {style: "text-align: center;"} },
-				{ field: "cd_id", title: "그룹코드", width: 100, attributes: {style: "text-align: center;"}, hidden: true }
+				{ field: "cd_nm", title: "구분명", attributes: {style: "text-align: center;"} },
+				{ field: "cd_id", title: "구분ID", width: 100, attributes: {style: "text-align: center;"}, hidden: true }
 			],
 			editable: false,
 			noRecords: {
@@ -231,8 +231,8 @@
 			toolbar: [ ],
 			columns: [
 				{ field: "user_no", title: "신청자번호", width: 80, attributes : { style : "text-align: center;" }, hidden: true },
-				{ field: "user_id", title: "신청자", width: 80, attributes : { style : "text-align: center;" } },
-				{ field: "user_name", title: "신청자", width: 80, attributes : { style : "text-align: center;" } },
+				{ field: "user_id", title: "아이디", width: 80, attributes : { style : "text-align: center;" } },
+				{ field: "user_name", title: "이름", width: 80, attributes : { style : "text-align: center;" } },
 				{ field: "birthday", title: "생년월일", width: 100, attributes : { style : "text-align: center;" },
 					template: "#= (birthday == '') ? '' : kendo.toString(kendo.parseDate(birthday, 'yyyyMMdd'), 'yyyy-MM-dd') #" 
 				}

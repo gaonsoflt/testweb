@@ -8,12 +8,12 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i>사용자관리 <small>사용자를 관리합니다.</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 시스템관리</a></li>
-			<li class="active">사용자관리</li>
-		</ol>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
+		</ol>	
 	</section>
 	<!-- Main content -->
 	<section class="content">

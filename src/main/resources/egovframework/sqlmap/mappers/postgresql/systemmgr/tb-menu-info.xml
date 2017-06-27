@@ -25,7 +25,7 @@
 		ORDER BY MENU_ORDER
     </select>
 
-	<select id="getMenuInfo" parameterType="hashMap" resultType="hashMap">
+	<select id="getMenuInfoByUserAuth" parameterType="hashMap" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
 		SELECT * 
 			FROM (
 				SELECT
@@ -60,6 +60,18 @@
 			) B
 			WHERE A.MENU_SQ = B.MENU_SQ
 			ORDER BY main_order, menu_order
+    </select>
+    
+    <select id="getMenuInfo" parameterType="hashMap" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
+    	select
+			T.menu_id,
+			T.MENU_NM,
+			T.MENU_DESC,
+			M.MENU_NM 		AS MAIN_NM
+		FROM tb_menu_info T, tb_menu_info M
+		WHERE 1 = 1
+		AND T.PARENT_SQ = M.MENU_SQ
+		and T.menu_id = #{menu_id}
     </select>
     
 	<insert id="createMenuInfo" >

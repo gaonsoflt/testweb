@@ -188,9 +188,9 @@ $(document).ready(function() {
 		var menuList;
 		$.ajax({
 			type: "post",
-			url: "<c:url value='/sm/menu/getMenuInfo.do'/>",
+			url: "<c:url value='/sm/menu/getMenuInfoByUserAuth.do'/>",
 			data: {
-				'USER_NO': "${userStore.userseq}"
+// 				'USER_NO': "${userStore.userseq}"
 			},
 			async: false, //동기 방식
 			success: function(data, status){

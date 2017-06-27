@@ -7,11 +7,11 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i>접속이력관리 <small>로그인이력을 관리합니다.</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 시스템관리</a></li>
-			<li class="active">접속이력관리</li>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
 		</ol>
 	</section>
 	<!-- Main content -->

@@ -5,15 +5,48 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import egovframework.systemmgr.dao.SystemMgrMenuVO;
 import egovframework.systemmgr.service.SystemMgrMenuService;
 
 @Service("systemMgrMenuService")
 public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
-	
+	Logger logger = LoggerFactory.getLogger(SystemMgrMenuServiceImpl.class.getName());
+
 	@Resource(name = "systemMgrMenuMapper")
 	private SystemMgrMenuMapper menuInfoMapper;
+	
+	private List<SystemMgrMenuVO> menuVo;
+	
+	@Override
+	public List<SystemMgrMenuVO> getMenuVo() {
+		return menuVo;
+	}
+
+	@Override
+	public SystemMgrMenuVO getMenuVo(String menuId) {
+		int idx = getMenuVo().indexOf(new SystemMgrMenuVO(menuId));
+		if(idx < 0)
+			return null;
+		return getMenuVo().get(idx);
+	}
+
+	@Override
+	public void refreshMenu(HashMap<String, Object> param) throws Exception {
+		logger.debug("refresh cached menu data");
+		menuVo = menuInfoMapper.getMenuInfoByUserAuth(param);
+	}
+	
+	@Override
+	public List<SystemMgrMenuVO> getMenuInfoByUserAuth(HashMap<String, Object> map) throws Exception {
+		if(menuVo == null) {
+			refreshMenu(map);
+		}
+		return menuVo;
+	}
 
 	@Override
 	public List<HashMap<String, Object>> selectMenuInfo(HashMap<String, Object> map) throws Exception {
@@ -33,10 +66,5 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 	@Override
 	public void deleteMenuInfo(HashMap<String, Object> map) throws Exception {
 		menuInfoMapper.deleteMenuInfo(map);
-	}
-
-	@Override
-	public List<HashMap<String, Object>> getMenuInfo(HashMap<String, Object> map) throws Exception {
-		return menuInfoMapper.getMenuInfo(map);
 	}
 }

@@ -8,11 +8,11 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i>환경설정 <small>ESPA의 환경변수를 관리합니다.</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ESPA관리</a></li>
-			<li class="active">환경설정</li>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
 		</ol>
 	</section>
 	<!-- Main content -->

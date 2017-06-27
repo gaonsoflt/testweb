@@ -7,11 +7,11 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i>공지사항 <small>공지사항</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 게시판</a></li>
-			<li class="active">공지사항</li>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
 		</ol>
 	</section>
 	<!-- Main content -->

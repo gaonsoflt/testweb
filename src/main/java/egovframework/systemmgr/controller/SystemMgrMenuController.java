@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,8 +21,8 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.com.login.service.CmmLoginUser;
 import egovframework.common.service.CommonService;
+import egovframework.systemmgr.dao.SystemMgrMenuVO;
 import egovframework.systemmgr.service.SystemMgrMenuService;
-import egovframework.systemmgr.service.impl.SystemMgrMenuMapper;
 
 @RequestMapping("/sm/menu")
 @Controller
@@ -171,20 +168,30 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/getMenuInfo.do")
-	public ModelAndView getMenuInfo(@RequestParam Map<String,Object> paramMap) throws Exception {
+	@RequestMapping(value = "/getMenuInfoByUserAuth.do")
+	public ModelAndView getMenuInfoByUserAuth(@RequestParam Map<String,Object> paramMap) throws Exception {
 		ModelAndView model = new ModelAndView();
+    	CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	paramMap.put("USER_NO", userDetails.getUserseq());
 		logger.debug("===============================pamam: " + paramMap);
-		List<HashMap<String, Object>> rtnList = menuService.getMenuInfo((HashMap<String, Object>)paramMap);
+		List<SystemMgrMenuVO> rtnList = menuService.getMenuInfoByUserAuth((HashMap<String, Object>)paramMap);
 		logger.debug("rtnList: " + rtnList);
 		model.addObject("rtnList", rtnList);
 		model.setViewName("jsonView");
-		return model;
+		return model; 
 	}
 	
-	private Long nextSequence() throws NumberFormatException, Exception {
-		HashMap<String, Object> mParam = new HashMap<>();
-		mParam.put("SEQ_NM", "SQ_TB_MENU_INFO");
-		return Long.valueOf(commonService.getSequence(mParam));
+	@RequestMapping(value = "/notify.do")
+	public void refreshConfig() {
+		try {
+	    	CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    	HashMap<String,Object> paramMap = new HashMap<>(); 
+	    	paramMap.put("USER_NO", userDetails.getUserseq());
+			logger.debug("[BBAEK] refresh before: " + menuService.getMenuVo());
+			menuService.refreshMenu(paramMap);
+			logger.debug("[BBAEK] refresh after: " + menuService.getMenuVo());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

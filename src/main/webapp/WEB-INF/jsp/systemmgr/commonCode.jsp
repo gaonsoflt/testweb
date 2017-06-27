@@ -8,13 +8,12 @@
   	<!-- Content Header (Page header) -->
 	<section class="content-header">
   		<h1>
-    		<i class="fa fa-caret-right"></i>공통코드관리
-    		<small>공통코드를 관리합니다.</small>
-  		</h1>
-  		<ol class="breadcrumb">
-    		<li><a href="#"><i class="fa fa-dashboard"></i> 시스템관리</a></li>
-    		<li class="active">공통코드관리</li>
-  		</ol>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
+		</ol>
 	</section>
 	<!-- Main content -->
 	<section class="content">

@@ -89,6 +89,9 @@
 	.k-header .k-link{
 		text-align: center;
 	}
+	.k-grid-header th.k-header{
+		text-align: center;
+	}
 	</style>      
 </head>
 

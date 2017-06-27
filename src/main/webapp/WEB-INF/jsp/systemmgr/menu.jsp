@@ -8,11 +8,11 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			<i class="fa fa-caret-right"></i> 메뉴관리 <small>사이트 메뉴를 관리합니다.</small>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
 		</h1>
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> 시스템관리</a></li>
-			<li class="active">메뉴관리</li>
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
 		</ol>
 	</section>
 	<!-- Main content -->
@@ -121,7 +121,12 @@
 	        },  	
 	        sync: function(e) {
 				console.log("parentds sync complete");
-				alert("정상적으로 처리되었습니다.");  
+				$.ajax({
+					type : "get",
+					url : "<c:url value='/sm/menu/notify.do'/>",
+					async : false //동기 방식
+				});
+				alert("정상적으로 처리되었습니다.");
 			},  
 			batch: true               //     true: 쿼리를 한줄로,  false : row 단위로
 		});//datasource grid end...
@@ -266,6 +271,11 @@
 	        },  	
 	        sync: function(e) {
 				console.log("childds sync complete");
+				$.ajax({
+					type : "get",
+					url : "<c:url value='/sm/menu/notify.do'/>",
+					async : false //동기 방식
+				});
 				alert("정상적으로 처리되었습니다.");  
 			},  
 			batch: true               //     true: 쿼리를 한줄로,  false : row 단위로
@@ -296,6 +306,7 @@
 				{ field: "menu_nm", title: "이름", width: 150, attributes: {style: "text-align: left;"} },
 				{ field: "menu_id", title: "아이디", width: 120, attributes: {style: "text-align: left;"} },
 				{ field: "menu_url", title: "URL", width: 180, attributes: {style: "text-align: left;"} },
+				{ field: "menu_desc", title: "설명", width: 180, attributes: {style: "text-align: left;"} },
 				{ field: "menu_order", title: "정렬순서", width: 80, attributes: {style: "text-align: center;"} },
 				{ field: "use_yn", title: "사용여부", width: 80, attributes: {style: "text-align: center;" },
 					template: '<input type="checkbox" #= (use_yn) ? "checked=checked" : "" # disabled="disabled" ></input>' },

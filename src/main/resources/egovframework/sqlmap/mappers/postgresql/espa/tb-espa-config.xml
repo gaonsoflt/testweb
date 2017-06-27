@@ -105,4 +105,30 @@
 		FROM tb_espa_config
 		WHERE cfg_seq = cast(#{cfg_seq} as integer)
 	</update>
+	
+	<select id="selectESPAConfigByGroup" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			cfg_id, 
+			cfg_name,
+			cfg_value,
+			cfg_group
+		FROM tb_espa_config
+		<![CDATA[
+		WHERE use_yn = '1'
+		]]>
+		AND cfg_group = #{cfg_group}
+	</select>
+	
+	<select id="selectESPAConfigById" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			cfg_id, 
+			cfg_name,
+			cfg_value,
+			cfg_group
+		FROM tb_espa_config
+		<![CDATA[
+		WHERE use_yn = '1'
+		]]>
+		AND cfg_id = #{cfg_id}
+	</select>
 </mapper>

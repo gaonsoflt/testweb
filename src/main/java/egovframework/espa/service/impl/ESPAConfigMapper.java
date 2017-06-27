@@ -14,6 +14,10 @@ public interface ESPAConfigMapper {
 	
 	public List<ESPAConfigVO> selectAllESPAConfig(HashMap<String, Object> map) throws Exception;
 	
+	public List<ESPAConfigVO> selectESPAConfigByGroup(HashMap<String, Object> map) throws Exception;
+	
+	public List<ESPAConfigVO> selectESPAConfigById(HashMap<String, Object> map) throws Exception;
+	
 	public int selectESPAConfigAllTot(HashMap<String, Object> map) throws Exception;
 	
 	public int insertESPAConfig(HashMap<String, Object> map) throws Exception;

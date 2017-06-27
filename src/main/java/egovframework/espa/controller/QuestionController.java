@@ -176,4 +176,11 @@ public class QuestionController {
 		}
 		return new JSONPObject(c, models);
 	}
+	
+	@RequestMapping(value = "/getSupportLanguage.do")
+	public @ResponseBody JSONPObject getSupportLanguage(@RequestParam("callback") String c,@RequestParam("params") String params) throws Exception {
+		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		List<HashMap<String, Object>> rtnList = questionService.getSupportLanguage(paramMap);
+		return new JSONPObject(c, rtnList);
+	}
 }

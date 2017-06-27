@@ -75,6 +75,11 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		return new ModelAndView("systemmgr/userAuth");
 	}
 	
+	@RequestMapping(value = "/sm/usergroup.do")
+	public ModelAndView userGroupView(Model model) throws Exception {
+		return new ModelAndView("systemmgr/userGroup");
+	}
+	
 	@RequestMapping(value = "/sm/user.do")
 	public ModelAndView userView(Model model) throws Exception {
 		return new ModelAndView("systemmgr/user");

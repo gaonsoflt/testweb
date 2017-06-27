@@ -16,4 +16,6 @@ public interface QuestionService {
 	public int updateQuestion(HashMap<String, Object> map) throws Exception;
 	
 	public int deleteQuestion(HashMap<String, Object> map) throws Exception;  
+	
+	public List<HashMap<String, Object>> getSupportLanguage(HashMap<String, Object> map) throws Exception;
 }

@@ -1,5 +1,6 @@
 package egovframework.espa.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class QuestionServiceImpl extends EgovAbstractServiceImpl implements Ques
 	
 	@Resource(name = "questionGradingService")
 	private QuestionGradingService questionGradingService;
-
+	
 	
 	@Override
 	public List<HashMap<String, Object>> getQuestionList(HashMap<String, Object> map) throws Exception {
@@ -109,5 +110,18 @@ public class QuestionServiceImpl extends EgovAbstractServiceImpl implements Ques
 		execute += questionConditionService.deleteCondition(map);
 		execute += questionGradingService.deleteGrading(map);
 		return execute;
+	}
+
+	@Override
+	public List<HashMap<String, Object>> getSupportLanguage(HashMap<String, Object> map) throws Exception {
+		String value = config.getEspaConfigVoValue("LANGUAGE");
+		List<HashMap<String, Object>> rtn = new ArrayList<>();
+		for (String str : value.split(",")) {
+			HashMap<String, Object> lang = new HashMap<>();
+			lang.put("text", str);
+			lang.put("value", str);
+			rtn.add(lang);
+		};
+		return rtn;
 	}
 }

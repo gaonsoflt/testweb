@@ -21,18 +21,22 @@ public class ESPAConfigServiceImpl extends EgovAbstractServiceImpl implements ES
 	public List<HashMap<String, Object>> readESPAConfig(HashMap<String, Object> map) throws Exception {
 		return configMapper.selectESPAConfig(map);
 	}
+	
 	@Override
 	public int readESPAConfigAllTot(HashMap<String, Object> map) throws Exception {
 		return configMapper.selectESPAConfigAllTot(map);
 	}
+	
 	@Override
 	public int createESPAConfig(HashMap<String, Object> map) throws Exception {
 		return configMapper.insertESPAConfig(map);
 	}
+	
 	@Override
 	public int updateESPAConfig(HashMap<String, Object> map) throws Exception {
 		return configMapper.updateESPAConfig(map);
 	}
+	
 	@Override
 	public int deleteESPAConfig(HashMap<String, Object> map) throws Exception {
 		return configMapper.deleteESPAConfig(map);

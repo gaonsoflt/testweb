@@ -6,7 +6,7 @@
 	<select id="selectQuestionList" parameterType="hashMap" resultType="hashMap">
 		SELECT *
 		FROM (
-			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*, B.user_name, C.cd_nm as lang_name
+			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*, B.user_name
 			FROM (
 				SELECT
 					question_seq, 
@@ -34,7 +34,6 @@
 		       		</if>
 				</where>
 			) A LEFT JOIN TB_USER_INFO B ON B.USER_ID = A.REG_USR 
-			LEFT JOIN TB_CODE_MASTER C ON C.CD_ID = A.LANG_TYPE
 		) A
 		WHERE 1 = 1
 		<if test='PAGE != null'>
@@ -47,7 +46,7 @@
 	</select>
 	
 	<select id="selectQuestion" parameterType="hashMap" resultType="hashMap">
-		SELECT A.*, B.USER_NAME, C.cd_nm as lang_name 
+		SELECT A.*, B.USER_NAME 
 		FROM (
 			SELECT
 				question_seq, 
@@ -68,7 +67,6 @@
 			FROM tb_question
 			WHERE question_seq = cast(#{question_seq} as integer)
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
-		LEFT JOIN TB_CODE_MASTER C ON C.CD_ID = A.LANG_TYPE
 	</select>
 	
 	<select id="selectQuestionAllCount" parameterType="hashMap" resultType="integer">

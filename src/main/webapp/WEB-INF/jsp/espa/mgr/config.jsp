@@ -246,9 +246,9 @@ var
 				{ field : "cfg_group", title : "변수그룹", width : "10%", attributes : { style : "text-align: center;" } }, 
 				{ field : "cfg_id", title : "변수아이디", width : "10%", attributes : { style : "text-align: center;" } }, 
 				{ field : "cfg_name", title : "변수명", width : "10%", attributes : { style : "text-align: center;" } }, 
-				{ field : "cfg_value", title : "변수값", width : "20%", attributes : { style : "text-align: center;" } }, 
+				{ field : "cfg_value", title : "변수값", width : "25%", attributes : { style : "text-align: center;" } }, 
+				{ field : "description", title : "설명", width : "25%", attributes : { style : "text-align: center;" } }, 
 				{ field : "use_yn", title : "사용여부", width : "5%", attributes : { style : "text-align: center;" } }, 
-				{ field : "description", title : "설명", attributes : { style : "text-align: center;" } }, 
 				{
 					command: [
 						{ name: "destroy", text: "삭제" }

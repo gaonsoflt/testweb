@@ -490,7 +490,7 @@
 						question_seq : { type : "number", editable : false }, //data type of the field {Number|String|Boolean|Date} default is String
 						title : { type : "string", editable : false },
 						reg_dt : { type : "string", editable : false },
-						lang_name : { type : "string", editable : false },
+						lang_type : { type : "string", editable : false },
 						user_name : { type : "string", editable : false }
 					}
 				}
@@ -534,7 +534,7 @@
 				{ field : "question_seq", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: center;" } },
-				{ field : "lang_name", title : "사용언어", width : 150, attributes : { style : "text-align: center;" } },
+				{ field : "lang_type", title : "사용언어", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "user_name", title : "등록자", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "reg_dt", title : "등록일", width : 150, attributes : {	style : "text-align: center;" },
 					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd') #" }
@@ -600,7 +600,6 @@
 				reg_dt			:{ type: "string" },
 				reg_usr			:{ type: "string" },
 				lang_type		:{ type: "string" },
-				lang_name		:{ type: "string" },
 				timeout			:{ type: "number" },
 				ban_keyword		:{ type: "string" }
 			}
@@ -644,7 +643,7 @@
                             	elem.reg_dt = kendo.toString(new Date(Number(elem.reg_dt)), 'yyyy-MM-dd');
                             	elem.mod_dt = kendo.toString(new Date(Number(elem.mod_dt)), 'yyyy-MM-dd HH:mm');
                             	$("#lang-type").data("kendoDropDownList").value(elem.lang_type);
-        						$("#lang-type").data("kendoDropDownList").text(elem.lang_name);
+        						$("#lang-type").data("kendoDropDownList").text(elem.lang_type);
                             });
                     	}
                     	return response;
@@ -707,7 +706,6 @@
 				questionViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
 	        	questionViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
 	        	questionViewModel.dataSource.data()[0].set("lang_type", $("#lang-type").data("kendoDropDownList").value());
-	        	questionViewModel.dataSource.data()[0].set("lang_name", $("#lang-type").data("kendoDropDownList").text());
 	        	questionViewModel.dataSource.data()[0].set("test_code", editor.getDoc().getValue());
 	        	// convert tag for editor
 	        	if(typeof $("#con-question").val() != "undefined"
@@ -758,20 +756,16 @@
 			dataTextField : "text",
 			dataValueField : "value",
 			dataSource : {
-				transport: {
-	                read: {
-	                    url: "<c:url value='/common/readCodeListForCombo.do'/>",
-	                    dataType: "jsonp"
-	                },
-		    		parameterMap : function(data, type) {
-						if (type == "read") {
-							var result = {
-								CATGR : "_LANGUAGE_" 
-							};
-							return { params : kendo.stringify(result) };
-						}
-		    		}
-	            }
+				transport : {
+					read : {
+						url : "<c:url value='/mgr/question/getSupportLanguage.do'/>",
+						dataType : "jsonp"
+					},
+					parameterMap : function(data, type) {
+						var result = { };
+						return { params : kendo.stringify(result) };
+					}
+				}
 			},
 			parse: function(response) {
     			console.log("lang-type:kendoDropDownList:parse");
@@ -783,8 +777,6 @@
     		},
 			change : function() {
             	console.log("lang-type:kendoDropDownList:change");
-// 				questionViewModel.dataSource.data()[0].set("lang_type", $("#lang-type").data("kendoDropDownList").value());
-// 	        	questionViewModel.dataSource.data()[0].set("lang_name", $("#lang-type").data("kendoDropDownList").text());
 			},
 			index : 0
 		});

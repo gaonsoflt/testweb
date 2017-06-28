@@ -233,6 +233,10 @@
 			},
 			columns : [
 				{
+					field : "user_seq",
+					hidden : true,
+				},
+				{
 					field : "user_type",
 					title : "사용자구분",
 					width : 120,
@@ -278,7 +282,7 @@
 						required : true,
 						min : 1
 					},
-					width : 90
+					width : 120
 				},
 				{
 					field : "user_id",
@@ -288,13 +292,13 @@
 						min : 1
 					},
 					attributes : { style : "text-align: center;" },
-					width : 110
+					width : 120
 				},
 				{
 					field : "password",
 					title : "비밀번호",
 					attributes : { style : "text-align: center;" },
-					width : 110,
+					width : 100,
 					editor : function(container, options) {
 						$('<input type="password" class="k-textbox" name="' + options.field + '"/>').appendTo(container);
 					}
@@ -303,7 +307,7 @@
 					field : "birthday",
 					title : "생년월일",
 					attributes : { style : "text-align: center;" },
-					width : 120,
+					width : 100,
 					editor : function(container, options) {
 						$('<input name="' + options.field + '"/>')
 						.appendTo(container)
@@ -326,27 +330,76 @@
 					field : "phone",
 					title : "연락처",
 					attributes : { style : "text-align: center;" },
-					width : 140,
+					width : 130,
 					template : "#= phone == null ? '' : phone.substring(0,3) + '-' + phone.substring(3,7) + '-' + phone.substring(7) #"
 				},
 				{
-					field : "user_seq",
-					title : "사용자SEQ",
-					hidden : true,
+					field : "group",
+					title : "그룹",
 					attributes : { style : "text-align: center;" },
-					width : 70
+					width : 300,
+					editor : function(container, options) {
+						$('<select name="' + options.field + '"/>')
+						.appendTo(container)
+						.kendoMultiSelect({
+							placeholder: "Select Group...",
+			                dataTextField: "cd_nm",
+			                dataValueField: "cd_id",
+			                autoBind: false,
+			                dataSource: {
+			                    transport: {
+			    					read : { 
+			    						url: "${contextPath}/sm/code" + "/readDetails.do",
+			    						dataType: "jsonp", 
+			    						complete: function(e){ 
+			    					    	console.log("group-grid:dataSource:/readDetails.do");
+			    					    }
+			    					},
+			    					parameterMap: function(data, type) {//type =  read, create, update, destroy
+			    						if (type == "read"){
+			    	                       	var result = {
+			    								CATGR: "100462" // 100462=_USER_GROUP_
+			    							};
+			    							return { params: kendo.stringify(result) }; 
+			    						}
+			    					}
+			    				},
+			    				schema: {
+			    					data: function(response) {
+			    						return response.rtnList;
+			    					},
+			    					total: function(response) {
+			    						return response.total;
+			    					},
+			    					errors: function(response) {
+			    						return response.error;
+			    					},
+			    					model:{
+			    						id: "cd",
+			    						fields: { 
+			    							cd		: { type: "string" },
+			    							cd_nm	: { type: "string" },
+			    							cd_id	: { type: "string" }
+			    						}  
+			    					}
+			    				}
+			                },
+							autoClose: false
+						});
+					}
+// 					},
+// 					template : "#= group #"
 				},
 				{
 					field : "note",
 					title : "설명",
-					attributes : { style : "text-align: left;" },
-					width : 300
+					attributes : { style : "text-align: left;" }
 				},
 				{
 					field : "use_yn",
 					title : "사용여부",
 					attributes : { style : "text-align: center;" },
-					width : 110
+					width : 80
 				},
 				{
 					title : "관리",
@@ -355,7 +408,7 @@
 						{ name : "edit", text : "수정" }, 
 					    { name : "destroy", text : "삭제" } 
 					],
-					width : 160
+					width : 150
 				}
 			],
 			editable : {
@@ -451,21 +504,17 @@
 
 <!-- custome style -->
 <style>
-.k-grid td {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-#gridDetail .k-grid-content {
-	overflow-x: auto;
-}
-
-#gridDetail table th {
-	text-align: center;
-}
-</style>
-<!-- custome script -->
-<script>
+	#gridDetail .k-grid-content {
+		overflow-x: auto;
+	}
 	
-</script>
+	#gridDetail table th {
+		text-align: center;
+	}
+	.k-grid td {
+	    overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+</style>
 <%@ include file="../inc/footer.jsp"%>

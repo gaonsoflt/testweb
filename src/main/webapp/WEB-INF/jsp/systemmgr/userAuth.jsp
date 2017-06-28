@@ -27,11 +27,15 @@
 							<div id="left-pane">
 								<div id="tabstrip">
 									<ul>
+										<li>그룹</li>
 										<li class='k-state-active'>구분</li>
 										<li>사용자</li>
 									</ul>
 									<div>
 										<div id="usergroup-grid"></div>
+									</div>
+									<div>
+										<div id="usertype-grid"></div>
 									</div>
 									<div>
 										<div id="user-grid"></div>
@@ -86,94 +90,49 @@
             }
         });
 	
-	    var crudServiceBaseUrl = "${contextPath}/sm/userauth";
-	    var usergroupDs = new kendo.data.DataSource({
-			transport: {
-				read : { 
-					url: crudServiceBaseUrl + "/readgroup.do",
-					dataType: "jsonp", 
-					complete: function(e){ 
-				    	console.log("usergroupDs /readgroup.do");
-				    }
-				},
-				parameterMap: function(data, type) {//type =  read, create, update, destroy
-					if (type == "read"){
-	                   	var result = {
+		
+		$("#usertype-grid").kendoGrid({
+			dataSource: {
+				transport: {
+					read : { 
+						url: "${contextPath}/sm/code" + "/readDetails.do",
+						dataType: "jsonp", 
+						complete: function(e){ 
+					    	console.log("usertype-grid:dataSource:/readDetails.do");
+					    }
+					},
+					parameterMap: function(data, type) {//type =  read, create, update, destroy
+						if (type == "read"){
+		                   	var result = {
 		                   		CATGR: '100017' // 100017 = user_type
-		                };
-						return { params: kendo.stringify(result) }; 
+			                };
+							return { params: kendo.stringify(result) }; 
+						}
 					}
-					if (type !== "read" && data.models) { return { models: kendo.stringify(data.models) }; }
-				}
-			},
-			schema: {
-				data: function(response) {
-					return response.rtnList;
 				},
-				total: function(response) {
-					return response.total;
-				},
-				errors: function(response) {
-					return response.error;
-				},
-				model:{
-					id: "cd",
-					fields: { //data type of the field {Number|String|Boolean|Date} default is String
-						cd		: { type: "string" },
-						cd_nm	: { type: "string" },
-						cd_id	: { type: "string" }
-					}  
-				}
-			},
-	        error : function(e) {
-		    	console.log('usergroupDs error: ' + e.errors);
-	        }
-		});//datasource grid end...
-		
-	    var userDs = new kendo.data.DataSource({
-			transport: {
-				read	: { 
-					url: crudServiceBaseUrl + "/readuser.do",
-					dataType: "jsonp", 
-					complete: function(e){ 
-				    	console.log("userDs /readuser.do...................");
-				    }
-				},
-				parameterMap: function(data, type) {//type =  read, create, update, destroy
-					if (type == "read"){
-	                   	var result = {
-						};
-						return { params: kendo.stringify(result) }; 
+				schema: {
+					data: function(response) {
+						return response.rtnList;
+					},
+					total: function(response) {
+						return response.total;
+					},
+					errors: function(response) {
+						return response.error;
+					},
+					model:{
+						id: "cd",
+						fields: { //data type of the field {Number|String|Boolean|Date} default is String
+							cd		: { type: "string" },
+							cd_nm	: { type: "string" },
+							cd_id	: { type: "string" }
+						}  
 					}
-					if (type !== "read" && data.models) { return { models: kendo.stringify(data.models) }; }
-				}
+				},
+		        error : function(e) {
+			    	console.log('usertype-grid:dataSource:error:' + e.errors);
+		        }
 			},
-			schema: {
-				data: function(response) {
-					return response.rtnList;
-				},
-				total: function(response) {
-					return response.total;
-				},
-				errors: function(response) {
-					return response.error;
-				},
-				model:{
-					id: "user_no",
-					fields: { //data type of the field {Number|String|Boolean|Date} default is String
-						user_name:		{ type: "string" },
-						user_no:		{ type: "string" },
-						birthday: 		{ type: "string" }
-					}  
-				}
-			},
-	        error : function(e) {
-		    	console.log('userDs error: ' + e.errors);
-	        }
-		});//datasource grid end...
-		
-		$("#usergroup-grid").kendoGrid({
-			dataSource: usergroupDs,
 			pageable: false,
 			height: 660,
 			resizable: true,  //컬럼 크기 조절
@@ -193,32 +152,80 @@
 			noRecords: {
 				template: "검색된 결과가 없습니다."
             },
+            change: function(e) {
+				console.log("usertype-grid:change");
+				var selectedItem = this.dataItem(this.select());
+		        G_TYPE = "USER_TYPE";
+		        G_USER_TYPE = selectedItem.cd_id;
+				console.log("selected item: " + G_USER_TYPE + "(seq)");
+				$("#auth-grid").data("kendoGrid").setDataSource(authDs);
+				authDs.read();
+            },
             dataBound: function(e) {
-				console.log("parentgrid dataBound..............");
-				
-				var grid = this;
-			    $(grid.tbody).on("click", "td", function (e) {
-			        var row = $(this).closest("tr");
-			        var rowIdx = $("tr", grid.tbody).index(row);
-			        var colIdx = $("td", row).index(this);
-			        var data = grid.dataItem(row);
+				console.log("usertype-grid:dataBound");
+// 				var grid = this;
+// 			    $(grid.tbody).on("click", "td", function (e) {
+// 			        var row = $(this).closest("tr");
+// 			        var rowIdx = $("tr", grid.tbody).index(row);
+// 			        var colIdx = $("td", row).index(this);
+// 			        var data = grid.dataItem(row);
 			        
-			        if(G_TYPE == '') {
-				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-			        }
-			        G_TYPE = "USER_TYPE";
-			        if(data.cd_id == null || data.cd_id == '') {
-			        	G_USER_TYPE = 0;
-			        } else {
-				        G_USER_TYPE = data.cd_id;
-				        $("#auth-grid").data("kendoGrid").dataSource.read();
-			        }			
-			    });
+// 			        if(G_TYPE == '') {
+// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
+// 			        }
+// 			        G_TYPE = "USER_TYPE";
+// 			        if(data.cd_id == null || data.cd_id == '') {
+// 			        	G_USER_TYPE = 0;
+// 			        } else {
+// 				        G_USER_TYPE = data.cd_id;
+// 				        $("#auth-grid").data("kendoGrid").dataSource.read();
+// 			        }			
+// 			    });
 			}
 		});
 		
 		$("#user-grid").kendoGrid({
-			dataSource: userDs,
+			dataSource: {
+				transport: {
+					read	: { 
+						url: "${contextPath}/sm/user" + "/read.do",
+						dataType: "jsonp", 
+						complete: function(e){ 
+					    	console.log("userDs /read.do...................");
+					    }
+					},
+					parameterMap: function(data, type) {//type =  read, create, update, destroy
+						if (type == "read"){
+		                   	var result = {
+							};
+							return { params: kendo.stringify(result) }; 
+						}
+					}
+				},
+				schema: {
+					data: function(response) {
+						return response.rtnList;
+					},
+					total: function(response) {
+						return response.total;
+					},
+					errors: function(response) {
+						return response.error;
+					},
+					model:{
+						id: "user_seq",
+						fields: { //data type of the field {Number|String|Boolean|Date} default is String
+							user_seq:		{ type: "number" },
+							user_id:		{ type: "string" },
+							user_name:		{ type: "string" },
+							birthday: 		{ type: "string" }
+						}  
+					}
+				},
+		        error : function(e) {
+			    	console.log('user-grid:dataSource:error: ' + e.errors);
+		        }
+			},
 			pageable: false,
 			height: 660,
 			resizable: true,  //컬럼 크기 조절
@@ -230,7 +237,7 @@
 			mobile: true,
 			toolbar: [ ],
 			columns: [
-				{ field: "user_no", title: "신청자번호", width: 80, attributes : { style : "text-align: center;" }, hidden: true },
+				{ field: "user_seq", hidden: true },
 				{ field: "user_id", title: "아이디", width: 80, attributes : { style : "text-align: center;" } },
 				{ field: "user_name", title: "이름", width: 80, attributes : { style : "text-align: center;" } },
 				{ field: "birthday", title: "생년월일", width: 100, attributes : { style : "text-align: center;" },
@@ -241,31 +248,41 @@
 			noRecords: {
 				template: "검색된 결과가 없습니다."
             },
+            change: function(e) {
+				console.log("user-grid:change");
+				var selectedItem = this.dataItem(this.select());
+		        G_TYPE = "USER_NO";
+		        G_USER_NO = selectedItem.user_seq;
+				console.log("selected item: " + G_USER_NO + "(seq)");
+				$("#auth-grid").data("kendoGrid").setDataSource(authDs);
+				authDs.read();
+            },
             dataBound: function(e) {
-				console.log("parentgrid dataBound..............");
+				console.log("user-grid:dataBound");
 				
-				var grid = this;
-			    $(grid.tbody).on("click", "td", function (e) {
-			        var row = $(this).closest("tr");
-			        var rowIdx = $("tr", grid.tbody).index(row);
-			        var colIdx = $("td", row).index(this);
-			        var data = grid.dataItem(row);
+// 				var grid = this;
+// 			    $(grid.tbody).on("click", "td", function (e) {
+// 			        var row = $(this).closest("tr");
+// 			        var rowIdx = $("tr", grid.tbody).index(row);
+// 			        var colIdx = $("td", row).index(this);
+// 			        var data = grid.dataItem(row);
 			        
-			        if(G_TYPE == '') {
-				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-			        }
-			        G_TYPE = "USER_NO";
-			        if(data.USER_SEQ == null || data.USER_SEQ == '') {
-			        	G_USER_NO = 0;
-			        } else {
-				        G_USER_NO = data.user_seq;
-				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-				        $("#auth-grid").data("kendoGrid").dataSource.read();
-			        }			
-			    });
+// 			        if(G_TYPE == '') {
+// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
+// 			        }
+// 			        G_TYPE = "USER_NO";
+// 			        if(data.USER_SEQ == null || data.USER_SEQ == '') {
+// 			        	G_USER_NO = 0;
+// 			        } else {
+// 				        G_USER_NO = data.user_seq;
+// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
+// 				        $("#auth-grid").data("kendoGrid").dataSource.read();
+// 			        }			
+// 			    });
 			}
 		});
 		
+ 	    var crudServiceBaseUrl = "${contextPath}/sm/userauth";
 		var authDs = new kendo.data.DataSource({
 			transport: {
 				read	: { 

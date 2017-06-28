@@ -54,7 +54,6 @@ public class SystemMgrCodeController {
 			//rtnMap.put("total", mngCodeService.selectMngCodeInfoTot((HashMap<String, Object>)paramMap));
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
@@ -87,7 +86,6 @@ public class SystemMgrCodeController {
 			rtnMap.put("total", systemMngCodeService.selectMngCodeInfoTot((HashMap<String, Object>)paramMap));
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
@@ -117,7 +115,6 @@ public class SystemMgrCodeController {
 				systemMngCodeService.insertMngCodeInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
@@ -147,7 +144,6 @@ public class SystemMgrCodeController {
 				systemMngCodeService.updateMngCodeInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
@@ -178,7 +174,6 @@ public class SystemMgrCodeController {
 				systemMngCodeService.deleteMngCodeInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());

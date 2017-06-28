@@ -6,7 +6,6 @@
 		SELECT nextval('${SEQ_NM}')
 	</select>
 
-
 	<select id="getCodeListByCdID" parameterType="hashMap" resultType="hashMap">
 		SELECT *
 		FROM TB_CODE_MASTER
@@ -27,8 +26,6 @@
 		</if>
 		ORDER BY SORT_NO
 	</select>
-
-
 
 	<select id="getAutoComplete" parameterType="hashMap" resultType="hashMap">
 		SELECT
@@ -73,7 +70,6 @@
 			AND CATGR = (SELECT CD FROM TB_CODE_MASTER WHERE CD_ID = #{CATGR})
 		</if>
 	</select>
-
 
 	<select id="getUserAutoComplete" parameterType="hashMap" resultType="hashMap">
 		SELECT

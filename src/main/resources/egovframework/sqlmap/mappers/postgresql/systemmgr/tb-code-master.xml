@@ -79,10 +79,14 @@
 					MOD_USR ,
 					MOD_DT
 				FROM TB_CODE_MASTER
-				WHERE 1=1
-				<if test='CATGR != null'>
-					AND CATGR = #{CATGR}
-				</if>
+				<where>
+					<if test='CATGR != null'>
+						CATGR = #{CATGR}
+					</if>
+					<if test='CD_ID != null'>
+						AND CD_ID = #{CD_ID}
+					</if>
+				</where>
 				ORDER BY SORT_NO
 			) A
 		) A

@@ -43,7 +43,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
 		executeVO.setQuestionSeq(result.get("question_seq").toString());
 		executeVO.setCode(result.get("test_code").toString());
-		executeVO.setLanguage(result.get("lang_name").toString());
+		executeVO.setLanguage(result.get("lang_type").toString());
 		executeVO.setTimeout(Long.valueOf((result.get("timeout") != null) ? result.get("timeout").toString() : "-1"));
 		executeVO.setBanKeyword((result.get("ban_keyword") != null) ? result.get("ban_keyword").toString() : "");
 		executeVO.setCondition(conditionList);
@@ -82,7 +82,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
 		executeVO.setQuestionSeq(result.get("question_seq").toString());
 		executeVO.setCode(result.get("test_code").toString());
-		executeVO.setLanguage(result.get("lang_name").toString());
+		executeVO.setLanguage(result.get("lang_type").toString());
 		executeVO.setTimeout(Long.valueOf((result.get("timeout") != null) ? result.get("timeout").toString() : "-1"));
 		executeVO.setBanKeyword((result.get("ban_keyword") != null) ? result.get("ban_keyword").toString() : "");
 		executeVO.setCondition(conditionList);

@@ -47,14 +47,16 @@ public class ESPAExecuteAgent {
 		
 		if(executeVo.getLanguage().equals("JAVA")) {
 			handler = new ESPAExecuteJavaHandler(executeVo, config);
-			handler.execute();
 		} else if(executeVo.getLanguage().equals("C")) {
 			throw new ESPAExecuteException("not support execute C", ESPAExcuteCode.ERR_NOT_SUPPORT);
 		} else if(executeVo.getLanguage().equals("C++")) {
 			throw new ESPAExecuteException("not support execute C++", ESPAExcuteCode.ERR_NOT_SUPPORT);
 		} else if(executeVo.getLanguage().equals("Phython")) {
 			throw new ESPAExecuteException("not support execute Phython", ESPAExcuteCode.ERR_NOT_SUPPORT);
+		} else {
+			throw new ESPAExecuteException("not support language: " + executeVo.getLanguage(), ESPAExcuteCode.ERR_NOT_SUPPORT);
 		}
+		handler.execute();
 		
 		if(resultHandler != null) {
 			resultHandler.handleResult(handler.getResult());

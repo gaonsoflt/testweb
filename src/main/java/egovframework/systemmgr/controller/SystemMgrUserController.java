@@ -43,23 +43,19 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 
 		logger.debug("params:"+params); 
 		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
-		List<HashMap<String, Object>> rtnList = null;
 		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 		
 		try {
-			rtnList = (List<HashMap<String, Object>>)systemMngUserService.selectSystemMngUserInfo((HashMap<String, Object>)paramMap);
+			List<HashMap<String, Object>> rtnList = (List<HashMap<String, Object>>)systemMngUserService.selectSystemMngUserInfo(paramMap);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", systemMngUserService.selectSystemMngUserInfoTot(paramMap));
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
-		System.out.println("result size: " + rtnList.size());
-		System.out.println("result: " + rtnList);
 		return new JSONPObject(c,rtnMap);
 	}
 	
@@ -123,7 +119,6 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
@@ -154,7 +149,6 @@ Logger logger = LoggerFactory.getLogger(SystemMgrUserController.class.getName())
 				systemMngUserService.deleteSystemMngUserInfo(paramMap);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());

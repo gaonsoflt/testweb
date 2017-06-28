@@ -161,7 +161,7 @@
 									return { params: kendo.stringify(result) }; 
 								}
                                
-								if (type !== "read" && data.models) {	
+								if (type != "read" && data.models) {	
 									return { models: kendo.stringify(data.models) };
 								}
 							}

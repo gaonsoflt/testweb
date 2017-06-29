@@ -17,9 +17,17 @@ public class SystemMgrUserServiceImpl extends EgovAbstractServiceImpl implements
 	@Resource(name = "systemMgrUserMapper")
 	private SystemMgrUserMapper systemMgrUserMapper;
 	
+	@Resource(name = "systemMgrUserGroupMapper")
+	private SystemMgrUserGroupMapper userGroupMapper;
+	
 	public List<HashMap<String, Object>> selectSystemMngUserInfo(HashMap<String, Object> map) throws Exception{
-		return systemMgrUserMapper.selectSystemMgrUserInfo(map);
+		List<HashMap<String, Object>> rtn = systemMgrUserMapper.selectSystemMgrUserInfo(map);
+//		for (int i = 0; i < rtn.size(); i++) {
+//			rtn.get(i).put("groups", userGroupMapper.selectGroupByUser(rtn.get(i)));
+//		}
+		return rtn;
 	}	
+	
 	public int selectSystemMngUserInfoTot(HashMap<String, Object> map) throws Exception{
 		return systemMgrUserMapper.selectSystemMgrUserInfoTot(map); 
 	}

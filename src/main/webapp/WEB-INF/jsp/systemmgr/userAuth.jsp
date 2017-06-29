@@ -27,8 +27,8 @@
 							<div id="left-pane">
 								<div id="tabstrip">
 									<ul>
-										<li>그룹</li>
-										<li class='k-state-active'>구분</li>
+										<li class='k-state-active'>그룹</li>
+										<li>구분</li>
 										<li>사용자</li>
 									</ul>
 									<div>
@@ -58,7 +58,7 @@
 	var G_Admin = "${userStore.username}";  
 	var G_UserNm = "${userStore.fullname}";
 	var G_USER_NO = 0;
-	var G_USER_TYPE = 0;
+	var G_TYPEVALUE = 0;
 	var G_TYPE = "";
 	var temp;
 	
@@ -90,6 +90,80 @@
             }
         });
 	
+		$("#usergroup-grid").kendoGrid({
+			dataSource: {
+				transport: {
+					read : { 
+						url: "${contextPath}/sm/code" + "/readDetails.do",
+						dataType: "jsonp", 
+						complete: function(e){ 
+					    	console.log("usergroup-grid:dataSource:read:complete");
+					    }
+					},
+					parameterMap: function(data, type) {//type =  read, create, update, destroy
+						if (type == "read"){
+		                   	var result = {
+		                   		CATGR: '100462' // 100017 = user_type
+			                };
+							return { params: kendo.stringify(result) }; 
+						}
+					}
+				},
+				schema: {
+					data: function(response) {
+						return response.rtnList;
+					},
+					total: function(response) {
+						return response.total;
+					},
+					errors: function(response) {
+						return response.error;
+					},
+					model:{
+						id: "cd",
+						fields: { //data type of the field {Number|String|Boolean|Date} default is String
+							cd		: { type: "string" },
+							cd_nm	: { type: "string" },
+							cd_id	: { type: "string" }
+						}  
+					}
+				},
+		        error : function(e) {
+			    	console.log('usergroup-grid:dataSource:error:' + e.errors);
+		        }
+			},
+			pageable: false,
+			height: 660,
+			resizable: true,  //컬럼 크기 조절
+			reorderable: true, //컬럼 위치 이동
+			autoBind: true,
+			navigatable: true,
+			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
+			scrollable: true,
+			mobile: true,
+			toolbar: [ ],
+			columns: [
+				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
+				{ field: "cd_nm", title: "구분명", attributes: {style: "text-align: center;"} },
+				{ field: "cd_id", title: "구분ID", width: 100, attributes: {style: "text-align: center;"}, hidden: true }
+			],
+			editable: false,
+			noRecords: {
+				template: "검색된 결과가 없습니다."
+            },
+            change: function(e) {
+				console.log("usergroup-grid:change");
+				var selectedItem = this.dataItem(this.select());
+		        G_TYPE = "USER_GROUP";
+		        G_TYPEVALUE = selectedItem.cd_id;
+				console.log("selected item: " + G_TYPEVALUE);
+				$("#auth-grid").data("kendoGrid").setDataSource(authDs);
+				authDs.read();
+            },
+            dataBound: function(e) {
+				console.log("usergroup-grid:dataBound");
+			}
+		});
 		
 		$("#usertype-grid").kendoGrid({
 			dataSource: {
@@ -98,7 +172,7 @@
 						url: "${contextPath}/sm/code" + "/readDetails.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
-					    	console.log("usertype-grid:dataSource:/readDetails.do");
+					    	console.log("usertype-grid:dataSource:read:complete");
 					    }
 					},
 					parameterMap: function(data, type) {//type =  read, create, update, destroy
@@ -156,31 +230,13 @@
 				console.log("usertype-grid:change");
 				var selectedItem = this.dataItem(this.select());
 		        G_TYPE = "USER_TYPE";
-		        G_USER_TYPE = selectedItem.cd_id;
-				console.log("selected item: " + G_USER_TYPE + "(seq)");
+		        G_TYPEVALUE = selectedItem.cd_id;
+				console.log("selected item: " + G_TYPEVALUE);
 				$("#auth-grid").data("kendoGrid").setDataSource(authDs);
 				authDs.read();
             },
             dataBound: function(e) {
 				console.log("usertype-grid:dataBound");
-// 				var grid = this;
-// 			    $(grid.tbody).on("click", "td", function (e) {
-// 			        var row = $(this).closest("tr");
-// 			        var rowIdx = $("tr", grid.tbody).index(row);
-// 			        var colIdx = $("td", row).index(this);
-// 			        var data = grid.dataItem(row);
-			        
-// 			        if(G_TYPE == '') {
-// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-// 			        }
-// 			        G_TYPE = "USER_TYPE";
-// 			        if(data.cd_id == null || data.cd_id == '') {
-// 			        	G_USER_TYPE = 0;
-// 			        } else {
-// 				        G_USER_TYPE = data.cd_id;
-// 				        $("#auth-grid").data("kendoGrid").dataSource.read();
-// 			        }			
-// 			    });
 			}
 		});
 		
@@ -191,7 +247,7 @@
 						url: "${contextPath}/sm/user" + "/read.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
-					    	console.log("userDs /read.do...................");
+					    	console.log("user-grid:dataSource:read:complete");
 					    }
 					},
 					parameterMap: function(data, type) {//type =  read, create, update, destroy
@@ -252,34 +308,14 @@
 				console.log("user-grid:change");
 				var selectedItem = this.dataItem(this.select());
 		        G_TYPE = "USER_NO";
-		        G_USER_NO = selectedItem.user_seq;
-				console.log("selected item: " + G_USER_NO + "(seq)");
+		        G_TYPEVALUE = selectedItem.user_seq;
+				console.log("selected item: " + G_USER_NO);
 				$("#auth-grid").data("kendoGrid").setDataSource(authDs);
 				authDs.read();
             },
             dataBound: function(e) {
 				console.log("user-grid:dataBound");
-				
-// 				var grid = this;
-// 			    $(grid.tbody).on("click", "td", function (e) {
-// 			        var row = $(this).closest("tr");
-// 			        var rowIdx = $("tr", grid.tbody).index(row);
-// 			        var colIdx = $("td", row).index(this);
-// 			        var data = grid.dataItem(row);
-			        
-// 			        if(G_TYPE == '') {
-// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-// 			        }
-// 			        G_TYPE = "USER_NO";
-// 			        if(data.USER_SEQ == null || data.USER_SEQ == '') {
-// 			        	G_USER_NO = 0;
-// 			        } else {
-// 				        G_USER_NO = data.user_seq;
-// 				        $("#auth-grid").data("kendoGrid").setDataSource(authDs);
-// 				        $("#auth-grid").data("kendoGrid").dataSource.read();
-// 			        }			
-// 			    });
-			}
+            }
 		});
 		
  	    var crudServiceBaseUrl = "${contextPath}/sm/userauth";
@@ -289,7 +325,7 @@
 					url: crudServiceBaseUrl + "/readauth.do", 
 					dataType: "jsonp", 
 					complete: function(e){ 
-				    	console.log("authDs /readauth.do");
+				    	console.log("authDs:read:complete");
 				    }
 				},
 				update	: { 
@@ -300,16 +336,14 @@
 					if (type == "read"){
 	                   	var result = {
 	                        TYPE: G_TYPE,
-	                        USER_NO: G_USER_NO,
-	                        USER_TYPE: G_USER_TYPE
+	                        TYPEVALUE: G_TYPEVALUE
 						};
 						return { params: kendo.stringify(result) }; 
 					}
 					if (type == "update"){
 	                   	var result = {
 	                        TYPE: G_TYPE,
-	                        USER_NO: G_USER_NO,
-	                        USER_TYPE: G_USER_TYPE
+	                        TYPEVALUE: G_TYPEVALUE
 						};
 						return { params: kendo.stringify(result), models: kendo.stringify(data.models) }; 
 					}
@@ -346,14 +380,18 @@
 				}
 			},
 	        error : function(e) {
-		    	console.log('authDs error: ' + e.errors);
+		    	console.log('authDs:error: ' + e.errors);
 	        },
 	        change : function(e) {
-	        	console.log("authDs change");
+	        	console.log("authDs:change");
 	        },  	
 	        sync: function(e) {
-	        	temp =e;
-				console.log("authDs sync complete");
+				console.log("authDs:sync");
+				$.ajax({
+					type : "get",
+					url : "<c:url value='/sm/menu/notify.do'/>",
+					async : false //동기 방식
+				});
 				alert("정상적으로 처리되었습니다.");  
 			},  
 			batch: true               //     true: 쿼리를 한줄로,  false : row 단위로
@@ -365,7 +403,7 @@
 			height: 715,
 			resizable: true,  //컬럼 크기 조절
 			reorderable: true, //컬럼 위치 이동
-			autoBind: true,
+			autoBind: false,
 			navigatable: true,
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			mobile: true,
@@ -390,7 +428,7 @@
 			],
 			editable: true,
 			edit: function(e) {//Fired when the user edits or creates a data item
-				console.log("authGrid edit");
+				console.log("auth-grid:edit");
 				/*if(e.model.isNew()) {
 					console.log("authGrid new");
 					var parentGrid = $("#parent-grid").data("kendoGrid");
@@ -410,13 +448,13 @@
 				childDs.at(0).set("PARENT_SQ", G_MENU_SQ);*/
 			},
             save: function(e) {//저장전 이벤트
-				console.log("authGrid save");
+				console.log("auth-grid:save");
             },
             saveChanges: function(e) {//저장버턴 클릭시 이벤트
-            	console.log("authGrid saveChanges");
+            	console.log("auth-grid:saveChanges");
 			},
 			sync: function(e) {
-				console.log("authGrid sync");
+				console.log("auth-grid:sync");
 				childDs.read();
 			},
 			dataBound: function(e) {

@@ -36,19 +36,24 @@
 		    		AUTH_SQ,
 				  	USER_NO,
 					USER_TYPE,
+					USER_GROUP,
 					MENU_SQ, 
 					CASE WHEN AUTH_C = '1' THEN true ELSE false end AUTH_C,
 					CASE WHEN AUTH_R = '1' THEN true ELSE false end AUTH_R,
 					CASE WHEN AUTH_U = '1' THEN true ELSE false end AUTH_U,
 					CASE WHEN AUTH_D = '1' THEN true ELSE false end AUTH_D
 				FROM TB_USER_AUTH
-				  	WHERE 1 = 1
+			  	<where>
 				  	<if test="TYPE.equals('USER_TYPE')">
-					  	AND USER_TYPE = #{USER_TYPE}
+					  	USER_TYPE = #{TYPEVALUE}
 					</if> 
 				  	<if test="TYPE.equals('USER_NO')">
-					  	AND USER_NO = #{USER_NO}
+					  	AND USER_NO = #{TYPEVALUE}
 					</if> 
+				  	<if test="TYPE.equals('USER_GROUP')">
+					  	AND USER_GROUP = #{TYPEVALUE}
+					</if> 
+				</where>
 		  	) B
 			ON A.MENU_SQ = B.MENU_SQ
 	</select>
@@ -57,14 +62,16 @@
 		MERGE INTO TB_USER_AUTH T
   			USING DUAL
   				ON (
-	  				T.AREA_GB = #{AREA_GB} 
+	  				T.MENU_SQ = #{MENU_SQ}
 	  				<if test="TYPE.equals('USER_NO')">
-	  					AND T.USER_NO = #{USER_NO} 
+	  					AND T.USER_NO = #{TYPEVALUE} 
 	  				</if>
 	  				<if test="TYPE.equals('USER_TYPE')">
-	  					AND T.USER_TYPE = #{USER_TYPE} 
+	  					AND T.USER_TYPE = #{TYPEVALUE} 
 	  				</if>
-	  				AND T.MENU_SQ = #{MENU_SQ}
+	  				<if test="TYPE.equals('USER_GROUP')">
+	  					AND T.USER_GROUP = #{TYPEVALUE} 
+	  				</if>
   				)
 			WHEN MATCHED THEN
 				UPDATE SET
@@ -75,12 +82,14 @@
   			WHEN NOT MATCHED THEN
 			    INSERT (
 					T.AUTH_SQ,
-					T.AREA_GB,
 					<if test="TYPE.equals('USER_NO')">
 						T.USER_NO,
 					</if>
 					<if test="TYPE.equals('USER_TYPE')">
 						T.USER_TYPE,
+					</if>
+					<if test="TYPE.equals('USER_GROUP')">
+						T.USER_GROUP,
 					</if>
 					T.MENU_SQ,
 					T.AUTH_C,
@@ -89,12 +98,14 @@
 					T.AUTH_D
 			    ) VALUES (
 			     	#{AUTH_SQ			, jdbcType=NUMERIC},
-					#{AREA_GB			, jdbcType=VARCHAR},
 					<if test="TYPE.equals('USER_NO')">
-						#{USER_NO			, jdbcType=NUMERIC},
+						#{TYPEVALUE			, jdbcType=NUMERIC},
 					</if>
 					<if test="TYPE.equals('USER_TYPE')">
-						#{USER_TYPE			, jdbcType=VARCHAR},
+						#{TYPEVALUE			, jdbcType=VARCHAR},
+					</if>
+					<if test="TYPE.equals('USER_GROUP')">
+						#{TYPEVALUE			, jdbcType=VARCHAR},
 					</if>
 					#{MENU_SQ			, jdbcType=NUMERIC},
 					#{AUTH_C			, jdbcType=VARCHAR},
@@ -113,6 +124,9 @@
 			<if test="TYPE.equals('USER_TYPE')">
 				USER_TYPE, 
 			</if>
+			<if test="TYPE.equals('USER_GROUP')">
+				USER_GROUP, 
+			</if>
 			MENU_SQ, 
 			AUTH_C, 
 			AUTH_R, 
@@ -121,10 +135,13 @@
 		) VALUES (
 			nextval('sq_tb_user_auth'),
 			<if test="TYPE.equals('USER_NO')">
-				cast(#{USER_NO} as integer),
+				cast(#{TYPEVALUE} as integer),
  			</if>
 			<if test="TYPE.equals('USER_TYPE')">
-				#{USER_TYPE}, 
+				#{TYPEVALUE}, 
+			</if>
+			<if test="TYPE.equals('USER_GROUP')">
+				#{TYPEVALUE}, 
 			</if>
 			cast(#{menu_sq} as integer),
 			CASE WHEN #{auth_c} = true THEN '1' ELSE '0' end,
@@ -143,47 +160,29 @@
 			auth_d = CASE WHEN #{auth_d} = true THEN '1' ELSE '0' end
 		WHERE MENU_SQ = cast(#{menu_sq} as integer)
 			<if test="TYPE.equals('USER_NO')">
-				AND USER_NO = #{USER_NO} 
+				AND USER_NO = #{TYPEVALUE} 
  			</if>
 			<if test="TYPE.equals('USER_TYPE')">
-				AND USER_TYPE = #{USER_TYPE} 
+				AND USER_TYPE = #{TYPEVALUE} 
+			</if>
+			<if test="TYPE.equals('USER_GROUP')">
+				AND USER_GROUP = #{TYPEVALUE} 
 			</if>
 	</update>
 	
 	<select id="getUserAuth" parameterType="hashMap" resultType="hashMap">
 		SELECT 
-			A.MENU_SQ,
-			(SELECT MENU_ID FROM TB_MENU_INFO WHERE MENU_SQ = A.MENU_SQ) AS MENU_ID,
-			A.USER_NO,
-			A.USER_TYPE,
-			CASE WHEN (CASE WHEN A.AUTH_C = '1' THEN 1 ELSE 0 end + CASE WHEN B.AUTH_C = '1' THEN 1 ELSE 0 end) = 0 THEN false ELSE true end AUTH_C,
-			CASE WHEN (CASE WHEN A.AUTH_R = '1' THEN 1 ELSE 0 end + CASE WHEN B.AUTH_R = '1' THEN 1 ELSE 0 end) = 0 THEN false ELSE true end AUTH_R,
-			CASE WHEN (CASE WHEN A.AUTH_U = '1' THEN 1 ELSE 0 end + CASE WHEN B.AUTH_U = '1' THEN 1 ELSE 0 end) = 0 THEN false ELSE true end AUTH_U,
-			CASE WHEN (CASE WHEN A.AUTH_D = '1' THEN 1 ELSE 0 end + CASE WHEN B.AUTH_D = '1' THEN 1 ELSE 0 end) = 0 THEN false ELSE true end AUTH_D
-		FROM (
-				SELECT 
-					MENU_SQ,
-					USER_NO,
-					USER_TYPE,
-					AUTH_C,
-					AUTH_R,
-					AUTH_U,
-					AUTH_D
-				FROM TB_USER_AUTH
-					WHERE USER_TYPE = (SELECT USER_TYPE FROM TB_USER_INFO WHERE USER_SEQ = CAST(#{USER_NO} as integer))
-			) A LEFT JOIN (
-				SELECT 
-					MENU_SQ,
-					USER_NO,
-					USER_TYPE,
-					AUTH_C,
-					AUTH_R,
-					AUTH_U,
-					AUTH_D
-				FROM TB_USER_AUTH
-					WHERE USER_NO = CAST(#{USER_NO} as integer)
-			) B
-			ON A.MENU_SQ = B.MENU_SQ
-		WHERE A.MENU_SQ = (SELECT MENU_SQ FROM TB_MENU_INFO WHERE MENU_ID = #{MENU_ID})
+			MENU_SQ,
+			CASE WHEN SUM(CAST(AUTH_C as integer)) = 0 THEN FALSE ELSE TRUE END AUTH_C,
+			CASE WHEN SUM(CAST(AUTH_R as integer)) = 0 THEN FALSE ELSE TRUE END AUTH_R,
+			CASE WHEN SUM(CAST(AUTH_U as integer)) = 0 THEN FALSE ELSE TRUE END AUTH_U,
+			CASE WHEN SUM(CAST(AUTH_D as integer)) = 0 THEN FALSE ELSE TRUE END AUTH_D
+		FROM TB_USER_AUTH
+		WHERE MENU_SQ = (SELECT MENU_SQ FROM TB_MENU_INFO WHERE MENU_ID = #{MENU_ID})
+		AND(USER_NO = CAST(#{USER_NO} as integer) 
+			OR USER_TYPE = (SELECT USER_TYPE FROM TB_USER_INFO WHERE USER_SEQ = CAST(#{USER_NO} as integer))
+			OR USER_GROUP IN (SELECT GROUP_ID FROM TB_USER_GROUP WHERE USER_SEQ = CAST(#{USER_NO} as integer))
+		)
+		GROUP BY MENU_SQ
     </select>
 </mapper>

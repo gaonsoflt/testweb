@@ -178,6 +178,7 @@
 						birthday : { editable : true, validation : { required : true } },
 						use_yn : { type : "boolean", defaultValue : true },
 						phone : { type : "string" },
+						groups : { type : "string", editable : false },
 						note : { type : "string", editable : true },
 						cre_usr : { type : "string", editable : false, defaultValue : "${userStore.username}" },
 						mod_usr : { type : "string", editable : false, defaultValue : "${userStore.username}" }
@@ -275,16 +276,6 @@
 					template : "#=fnCodeNameByCdID(user_type)#"
 				},
 				{
-					field : "user_name",
-					title : "이름",
-					attributes : { style : "text-align: center;" },
-					validation : {
-						required : true,
-						min : 1
-					},
-					width : 120
-				},
-				{
 					field : "user_id",
 					title : "아이디",
 					validation : {
@@ -302,6 +293,16 @@
 					editor : function(container, options) {
 						$('<input type="password" class="k-textbox" name="' + options.field + '"/>').appendTo(container);
 					}
+				},
+				{
+					field : "user_name",
+					title : "이름",
+					attributes : { style : "text-align: center;" },
+					validation : {
+						required : true,
+						min : 1
+					},
+					width : 120
 				},
 				{
 					field : "birthday",
@@ -334,62 +335,68 @@
 					template : "#= phone == null ? '' : phone.substring(0,3) + '-' + phone.substring(3,7) + '-' + phone.substring(7) #"
 				},
 				{
-					field : "group",
+					field : "groups",
 					title : "그룹",
 					attributes : { style : "text-align: center;" },
-					width : 300,
-					editor : function(container, options) {
-						$('<select name="' + options.field + '"/>')
-						.appendTo(container)
-						.kendoMultiSelect({
-							placeholder: "Select Group...",
-			                dataTextField: "cd_nm",
-			                dataValueField: "cd_id",
-			                autoBind: false,
-			                dataSource: {
-			                    transport: {
-			    					read : { 
-			    						url: "${contextPath}/sm/code" + "/readDetails.do",
-			    						dataType: "jsonp", 
-			    						complete: function(e){ 
-			    					    	console.log("group-grid:dataSource:/readDetails.do");
-			    					    }
-			    					},
-			    					parameterMap: function(data, type) {//type =  read, create, update, destroy
-			    						if (type == "read"){
-			    	                       	var result = {
-			    								CATGR: "100462" // 100462=_USER_GROUP_
-			    							};
-			    							return { params: kendo.stringify(result) }; 
-			    						}
-			    					}
-			    				},
-			    				schema: {
-			    					data: function(response) {
-			    						return response.rtnList;
-			    					},
-			    					total: function(response) {
-			    						return response.total;
-			    					},
-			    					errors: function(response) {
-			    						return response.error;
-			    					},
-			    					model:{
-			    						id: "cd",
-			    						fields: { 
-			    							cd		: { type: "string" },
-			    							cd_nm	: { type: "string" },
-			    							cd_id	: { type: "string" }
-			    						}  
-			    					}
-			    				}
-			                },
-							autoClose: false
-						});
-					}
-// 					},
-// 					template : "#= group #"
+					width : 300
 				},
+// 				{
+// 					field : "groups",
+// 					title : "그룹",
+// 					attributes : { style : "text-align: center;" },
+// 					width : 300,
+// 					editor : function(container, options) {
+// 						$('<select name="' + options.field + '"/>')
+// 						.appendTo(container)
+// 						.kendoMultiSelect({
+// 							placeholder: "Select Group...",
+// 			                dataTextField: "cd_nm",
+// 			                dataValueField: "cd_id",
+// 			                autoBind: false,
+// 			                dataSource: {
+// 			                    transport: {
+// 			    					read : { 
+// 			    						url: "${contextPath}/sm/code" + "/readDetails.do",
+// 			    						dataType: "jsonp", 
+// 			    						complete: function(e){ 
+// 			    					    	console.log("group-grid:field:dataSource:read:complete");
+// 			    					    }
+// 			    					},
+// 			    					parameterMap: function(data, type) {//type =  read, create, update, destroy
+// 			    						if (type == "read"){
+// 			    	                       	var result = {
+// 			    								CATGR: "100462" // 100462=_USER_GROUP_
+// 			    							};
+// 			    							return { params: kendo.stringify(result) }; 
+// 			    						}
+// 			    					}
+// 			    				},
+// 			    				schema: {
+// 			    					data: function(response) {
+// 			    						return response.rtnList;
+// 			    					},
+// 			    					total: function(response) {
+// 			    						return response.total;
+// 			    					},
+// 			    					errors: function(response) {
+// 			    						return response.error;
+// 			    					},
+// 			    					model:{
+// 			    						id: "cd",
+// 			    						fields: { 
+// 			    							cd		: { type: "string" },
+// 			    							cd_nm	: { type: "string" },
+// 			    							cd_id	: { type: "string" }
+// 			    						}  
+// 			    					}
+// 			    				}
+// 			                },
+// 							autoClose: false
+// 						});
+// 					}
+// // 					},
+// // 					template : "#= group #"
+// 				},
 				{
 					field : "note",
 					title : "설명",

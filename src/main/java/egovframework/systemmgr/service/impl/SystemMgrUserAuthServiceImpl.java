@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import egovframework.systemmgr.controller.SystemMgrUserAuthController;
+import egovframework.systemmgr.service.SystemMgrMenuService;
 import egovframework.systemmgr.service.SystemMgrUserAuthService;
 
 @Service("systemMgrUserAuthService")
@@ -18,7 +18,10 @@ public class SystemMgrUserAuthServiceImpl implements SystemMgrUserAuthService {
 
 	@Resource(name = "systemMgrUserAuthMapper")
 	private SystemMgrUserAuthMapper userAuthMapper;
-
+	
+	@Resource(name = "systemMgrMenuService")
+	private SystemMgrMenuService menuService;
+	
 	@Override
 	public List<HashMap<String, Object>> selectUserAuthByUserType(HashMap<String, Object> map) throws Exception {
 		return userAuthMapper.selectUserAuthByUserType(map);
@@ -51,6 +54,7 @@ public class SystemMgrUserAuthServiceImpl implements SystemMgrUserAuthService {
 
 	@Override
 	public List<HashMap<String, Object>> getUserAuth(HashMap<String, Object> map) throws Exception {
+		// TODO: add userauth of priority
 		return userAuthMapper.getUserAuth(map);
 	}
 }

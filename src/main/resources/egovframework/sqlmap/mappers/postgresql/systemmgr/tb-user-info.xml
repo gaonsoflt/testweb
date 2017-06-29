@@ -8,21 +8,27 @@
 				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
 				FROM (
 					SELECT
-						USER_SEQ ,
-						USER_NAME ,
-						PHONE ,
-						NOTE ,
-						USER_ID ,
-						'' AS PASSWORD ,
-						BIRTHDAY ,
-						USER_TYPE ,
-						CASE WHEN USE_YN = '1' THEN true ELSE false end USE_YN,
-						CRE_USR ,
-						CRE_DT ,
-						MOD_USR ,
-						MOD_DT ,
-						NOTE
-					FROM TB_USER_INFO
+						A.USER_SEQ,
+						A.USER_NAME,
+						A.PHONE,
+						A.NOTE,
+						A.USER_ID,
+						'' AS PASSWORD,
+						A.BIRTHDAY,
+						A.USER_TYPE,
+						CASE WHEN A.USE_YN = '1' THEN true ELSE false end USE_YN,
+						B.GROUPS,
+						A.CRE_USR,
+						A.CRE_DT,
+						A.MOD_USR,
+						A.MOD_DT,
+						A.NOTE
+					FROM TB_USER_INFO A INNER JOIN (
+						SELECT 
+							A.USER_SEQ, ARRAY_TO_STRING(ARRAY_AGG(B.CD_NM),',') AS GROUPS 
+						FROM TB_USER_GROUP A INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+						GROUP BY A.USER_SEQ
+					) B ON A.USER_SEQ = B.USER_SEQ
 					WHERE 1=1
 					<if test="G_UserNmVal != null">
 						AND USER_NAME LIKE '%'||#{G_UserNmVal}||'%'

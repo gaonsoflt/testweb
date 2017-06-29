@@ -55,6 +55,13 @@
     	]]>
 		</if>
 	</select>
+	
+	<select id="selectGroupByUser" parameterType="hashMap" resultType="hashMap">
+		SELECT A.*, B.CD_NM
+		FROM TB_USER_GROUP A INNER JOIN TB_CODE_MASTER B
+		ON A.GROUP_ID = B.CD_ID
+		WHERE A.USER_SEQ = cast(#{user_seq} as integer);
+	</select>
     
    	<insert id="updateInsertGroupUser">
 		INSERT INTO TB_USER_GROUP (

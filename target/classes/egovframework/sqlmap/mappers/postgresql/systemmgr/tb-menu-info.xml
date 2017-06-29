@@ -56,7 +56,11 @@
 				FROM tb_user_auth
 	  			WHERE 1 = 1
 	  				AND auth_r = '1'
-	            	AND (user_type = (SELECT user_type FROM tb_user_info WHERE user_seq = cast(#{USER_NO} as integer)) OR user_no = cast(#{USER_NO} as integer))
+	            	AND (
+	            		USER_TYPE = (SELECT USER_TYPE FROM TB_USER_INFO WHERE USER_SEQ = CAST(#{USER_NO} AS INTEGER)) 
+	            		OR USER_NO = CAST(#{USER_NO} AS INTEGER)
+	            		OR USER_GROUP IN (SELECT GROUP_ID FROM TB_USER_GROUP WHERE USER_SEQ = CAST(#{USER_NO} AS INTEGER))
+	            	)
 			) B
 			WHERE A.MENU_SQ = B.MENU_SQ
 			ORDER BY main_order, menu_order

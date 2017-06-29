@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
-import egovframework.com.login.service.CmmLoginUser;
 import egovframework.common.service.CommonService;
 import egovframework.dgms.service.MngCodeService;
 import egovframework.systemmgr.service.SystemMgrUserAuthService;
@@ -61,19 +59,13 @@ public class SystemMgrUserAuthController {
 		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
 		
 		// set parameter login user area_id
-		CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		HashMap<String, Object> param;
 		try {
 			for (int i = 0; i < paramMapList.size(); i++) {
 				param = (HashMap<String, Object>) paramMapList.get(i);
-//				param.put("AUTH_SQ", nextSequence());
 				String type = (String) paramMap.get("TYPE");
 				param.put("TYPE", type);
-				if(type.equals("USER_NO")) {
-					param.put("USER_NO", paramMap.get("USER_NO"));
-				} else {
-					param.put("USER_TYPE", paramMap.get("USER_TYPE"));
-				}
+				param.put("TYPEVALUE", paramMap.get("TYPEVALUE"));
 				this.logger.debug("paramMap:" + param);
 				// 업데이트 시 완료 상태로 변경
 				userAuthService.updateInsertUserAuth(param);
@@ -90,7 +82,7 @@ public class SystemMgrUserAuthController {
 	@RequestMapping(value = "/getUserAuth.do")
 	public ModelAndView getMenuInfo(@RequestParam Map<String,Object> paramMap) throws Exception {
 		ModelAndView model = new ModelAndView();
-		logger.debug("===============================pamam: " + paramMap);
+		logger.debug("===============================param: " + paramMap);
 		HashMap<String, Object> result = userAuthService.getUserAuth((HashMap<String, Object>) paramMap).get(0);
 		logger.debug("result: " + result);
 		model.addObject("result", result);
@@ -98,10 +90,9 @@ public class SystemMgrUserAuthController {
 		return model;
 	}
 	
-	private Long nextSequence() throws NumberFormatException, Exception {
-		HashMap<String, Object> mParam = new HashMap<>();
-		mParam.put("SEQ_NM", "SQ_TB_USER_AUTH");
-		return Long.valueOf(commonService.getSequence(mParam));
-	}
-
+//	private Long nextSequence() throws NumberFormatException, Exception {
+//		HashMap<String, Object> mParam = new HashMap<>();
+//		mParam.put("SEQ_NM", "SQ_TB_USER_AUTH");
+//		return Long.valueOf(commonService.getSequence(mParam));
+//	}
 }

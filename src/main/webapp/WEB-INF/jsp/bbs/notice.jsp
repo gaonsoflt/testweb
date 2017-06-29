@@ -44,11 +44,11 @@
 	</section>
 </div>
 
-<div id="window">
+<div id="window" style="display:none;">
 	<div>
-		<button id="delete-btn" class="k-primary" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
-		<button id="save-btn" class="k-primary" data-bind="click: save" style="float:right;margin:10px 10px 0 0;">저장</button>
-		<button id="cancel-btn" class="k-primary" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
+		<button id="delete-btn" data-role="button" data-icon="close" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
+		<button id="save-btn" data-role="button" data-icon="pencil" data-bind="click: save" style="float:right;margin:10px 10px 0 0;">저장</button>
+		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
 	</div>
 	<table style="width:100%;">
 		<colgroup>
@@ -594,9 +594,9 @@
 	    // binding data to window
 		kendo.bind($("#window"), noticeViewModel);
 	    		
-	    $("#cancel-btn").kendoButton({ icon: "cancel" });
-	    $("#save-btn").kendoButton({ icon: "pencil" });
-	    $("#delete-btn").kendoButton({ icon: "close" });
+// 	    $("#cancel-btn").kendoButton({ icon: "cancel" });
+// 	    $("#save-btn").kendoButton({ icon: "pencil" });
+// 	    $("#delete-btn").kendoButton({ icon: "close" });
 	    
 	    $("#expose-from").kendoDateTimePicker({
 			culture: "ko-KR",

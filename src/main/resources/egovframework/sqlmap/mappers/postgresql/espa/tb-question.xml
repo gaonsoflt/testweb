@@ -71,8 +71,34 @@
 	</select>
 	
 	<select id="selectQuestionAllCount" parameterType="hashMap" resultType="integer">
-		SELECT count(*)
-		FROM tb_question
+		SELECT COUNT(*)
+		FROM (
+			SELECT
+				question_seq, 
+				title, 
+				reg_dt, 
+				reg_usr, 
+				mod_dt, 
+				mod_usr,
+				lang_type
+			FROM tb_question
+			<where>
+	       		<if test="CONDITION eq 'TITLE'">
+	       			title LIKE '%'||#{KEYWORD}||'%'
+	       		</if>
+	       		<if test="CONDITION eq 'USER_NAME'">
+	       			AND reg_usr LIKE '%'||#{KEYWORD}||'%'
+	       		</if>
+	       		<if test="CONDITION eq 'REG_DT'">
+	       			<![CDATA[
+	       			AND reg_dt >= TO_DATE(#{KEYWORD}, 'YYYY-MM-DD') AND reg_dt < TO_DATE(#{KEYWORD}, 'YYYY-MM-DD')+1
+					]]>
+	       		</if>
+	       		<if test="CONDITION eq 'LANG_TYPE'">
+	       			AND lang_type LIKE '%'||#{KEYWORD}||'%'
+	       		</if>
+			</where>
+		) A LEFT JOIN TB_USER_INFO B ON B.USER_ID = A.REG_USR 
 	</select>
 	
 	<insert id="insertQuestion">

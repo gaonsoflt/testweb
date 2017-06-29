@@ -60,10 +60,10 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		return mav; 
 	}
 	
-	@RequestMapping(value = "/mgr/deploy.do")
+	@RequestMapping(value = "/mgr/question/deploy.do")
 	public ModelAndView mgrDeploy(Model model) throws Exception {
-		ModelAndView mav = new ModelAndView("espa/mgr/deploy");
-		mav.addObject("menu", menuService.getMenuVo("espaMgrDeploy"));
+		ModelAndView mav = new ModelAndView("espa/mgr/questionDeploy");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionDeploy"));
 		return mav;
 	}
 	

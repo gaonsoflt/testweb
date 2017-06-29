@@ -170,7 +170,7 @@
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			scrollable: true,
 			mobile: true,
-			toolbar: [ ],
+			toolbar: false,
 			columns: [
 				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
 				{ field: "cd_nm", title: "그룹명", attributes: {style: "text-align: center;"},
@@ -270,7 +270,7 @@
 // 					itemsPerPage : "한 페이지 출력 수"
 // 				}
 // 			},
-			toolbar: [ ],
+			toolbar: false,
 			columns: [
 				{ field: "user_seq", hidden: true },
 				{ field: "user_name", title: "이름", attributes : { style : "text-align: center;" } },

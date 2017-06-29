@@ -141,7 +141,7 @@
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			scrollable: true,
 			mobile: true,
-			toolbar: [ ],
+			toolbar: false,
 			columns: [
 				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
 				{ field: "cd_nm", title: "구분명", attributes: {style: "text-align: center;"} },
@@ -216,7 +216,7 @@
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			scrollable: true,
 			mobile: true,
-			toolbar: [ ],
+			toolbar: false,
 			columns: [
 				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
 				{ field: "cd_nm", title: "구분명", attributes: {style: "text-align: center;"} },
@@ -291,7 +291,7 @@
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			scrollable: true,
 			mobile: true,
-			toolbar: [ ],
+			toolbar: false,
 			columns: [
 				{ field: "user_seq", hidden: true },
 				{ field: "user_id", title: "아이디", width: 80, attributes : { style : "text-align: center;" } },

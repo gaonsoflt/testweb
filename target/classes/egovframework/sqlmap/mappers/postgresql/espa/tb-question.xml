@@ -63,7 +63,8 @@
 				test_code,
 				lang_type,
 				timeout,
-				ban_keyword
+				ban_keyword,
+				max_codesize
 			FROM tb_question
 			WHERE question_seq = cast(#{question_seq} as integer)
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
@@ -93,6 +94,7 @@
 			test_code,
 			lang_type,
 			timeout,
+			max_codesize,
 			ban_keyword
 		) VALUES (
 			nextval('sq_tb_question'), 
@@ -109,6 +111,7 @@
 			#{test_code},
 			#{lang_type},
 			cast(#{timeout} as integer),
+			cast(#{max_codesize} as integer),
 			#{ban_keyword}
 		)
 	</insert>
@@ -127,6 +130,7 @@
 			mod_dt = now(),
 			lang_type = #{lang_type},
 			timeout = cast(#{timeout} as integer),
+			max_codesize = cast(#{max_codesize} as integer),
 			ban_keyword = #{ban_keyword}
 		WHERE question_seq = cast(#{question_seq} as integer)
 	</update>

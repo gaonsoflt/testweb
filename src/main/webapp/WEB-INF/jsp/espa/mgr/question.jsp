@@ -39,7 +39,7 @@
 	</section>
 </div>
 
-<div id="window">
+<div id="window" style="display:none;">
 	<div>
 		<button id="delete-btn" class="k-primary" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
 		<button id="save-btn" class="k-primary" data-bind="click: save" style="float:right;margin:10px 10px 0 0;">저장</button>
@@ -75,6 +75,8 @@
 								<table style="width:100%;">
 									<tr><th>사용언어</th></tr>
 									<tr><td><input id="lang-type" name="lang-type" style="width:100%;" required/></td></tr>
+									<tr><th>최대 코드 사이즈</th></tr>
+									<tr><td><input type="number" id="max_codesize" name="max_codesize" data-bind="value:selected.max_codesize" style="width:90%"/>byte</td></tr>
 									<tr><th>실행시간(timeout)</th></tr>
 									<tr><td><input type="number" id="timeout" name="timeout" data-bind="value:selected.timeout" style="width:90%"/>ms</td></tr>
 									<tr><th>금지어(, 로 구분)</th></tr>
@@ -312,6 +314,7 @@
 		// init default value
 		questionViewModel.dataSource.data()[0].set("timeout", "${default_timeout}");
 		questionViewModel.dataSource.data()[0].set("ban_keyword", "${default_ban_kw}");
+		questionViewModel.dataSource.data()[0].set("max_codesize", "${default_max_codesize}");
 		// clear test_code editor
 		setCodeEditor("");
 		// clear language(later)
@@ -601,6 +604,7 @@
 				reg_usr			:{ type: "string" },
 				lang_type		:{ type: "string" },
 				timeout			:{ type: "number" },
+				max_codesize	:{ type: "number" },
 				ban_keyword		:{ type: "string" }
 			}
 		});

@@ -30,9 +30,11 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	}
 
 	@RequestMapping(value = "/dashboard.do")
-	public String showDashboard(Model model) throws Exception {
+	public ModelAndView showDashboard(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("systemmgr/dashboard");
+		mav.addObject("menu", menuService.getMenuVo("notice"));
 		model.addAttribute("menuId", "");
-		return "systemmgr/dashboard";
+		return mav;
 	}
 
 	/*
@@ -53,8 +55,23 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		ModelAndView mav = new ModelAndView("espa/mgr/question");
 		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
 		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
+		mav.addObject("default_max_codesize", config.getEspaConfigVoValue("DEFAULT_MAX_CODESIZE"));
 		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestion"));
 		return mav; 
+	}
+	
+	@RequestMapping(value = "/mgr/deploy.do")
+	public ModelAndView mgrDeploy(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/deploy");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrDeploy"));
+		return mav;
+	}
+	
+	@RequestMapping(value = "/mgr/score.do")
+	public ModelAndView mgrScore(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/config");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrScore"));
+		return mav;
 	}
 	
 	@RequestMapping(value = "/mgr/config.do")

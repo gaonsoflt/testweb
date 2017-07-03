@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.espa.service.impl.QuestionGradingHistoryMapper"> 
+
+    <insert id="insertGradingHistory"  parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
+		INSERT INTO tb_question_grading_his(
+			deploy_seq,
+	      	user_seq,
+	      	submit_dt,
+	      	exec_time,
+	      	score_rate,
+	      	grading_order
+		) VALUES (
+			CAST(#{deploySeq} as integer),
+			CAST(#{userSeq} as integer),
+			#{submitDt},
+			CAST(#{executeTime} as integer),
+			CAST(#{socoreRate} as integer),
+			CAST(#{gradingOrder} as integer)
+		) 
+	</insert> 
+</mapper>

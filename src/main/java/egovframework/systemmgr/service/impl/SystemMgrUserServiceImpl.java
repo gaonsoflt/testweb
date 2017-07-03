@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import egovframework.com.login.service.CmmLoginUser;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.systemmgr.service.SystemMgrUserService;
 
@@ -19,6 +21,11 @@ public class SystemMgrUserServiceImpl extends EgovAbstractServiceImpl implements
 	
 	@Resource(name = "systemMgrUserGroupMapper")
 	private SystemMgrUserGroupMapper userGroupMapper;
+	
+	public CmmLoginUser getLoginUserInfo() {
+		CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userDetails;
+	}
 	
 	public List<HashMap<String, Object>> selectSystemMngUserInfo(HashMap<String, Object> map) throws Exception{
 		List<HashMap<String, Object>> rtn = systemMgrUserMapper.selectSystemMgrUserInfo(map);

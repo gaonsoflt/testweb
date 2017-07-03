@@ -18,10 +18,13 @@ import egovframework.espa.util.StringUtil;
 
 public class ESPAExecuteJavaHandler extends ESPAExecuteHandler {
 	private Logger logger = LoggerFactory.getLogger(ESPAExecuteJavaHandler.class.getName());
-
+	
 	public ESPAExecuteJavaHandler(ESPAExecuteVO vo, ConfigService config) {
 		this.vo = vo;
 		this.config = config;
+		if(vo.getGradingHandler() != null) {
+			this.gradingHandler = vo.getGradingHandler();
+		}
 	}
 
 	@Override
@@ -33,8 +36,7 @@ public class ESPAExecuteJavaHandler extends ESPAExecuteHandler {
 		if (vo.isTest()) {
 			clsName = config.getEspaConfigVoValue("JAVA_TEST_CLS_NAME");
 		} else {
-			// TODO: get user code name
-			clsName = "";
+			clsName = config.getEspaConfigVoValue("JAVA_CLS_NAME");;
 		}
 		String clsFileName = clsName + ".java";
 		String filePath = config.getEspaConfigVoValue("JAVA_SRC_PATH");
@@ -87,6 +89,10 @@ public class ESPAExecuteJavaHandler extends ESPAExecuteHandler {
 			HashMap<String, Object> grading = vo.getGrading().get(i);
 			result.setQuestionSeq(Long.valueOf(vo.getQuestionSeq()));
 			result.setGradingSeq(Long.valueOf(grading.get("grading_seq").toString()));
+			result.setGradingOrder(Long.valueOf(grading.get("grading_order").toString()));
+			result.setUserSeq(vo.getUserSeq());
+			result.setDeploySeq(vo.getDeploySeq());
+			result.setSubmitDt(vo.getSubmitDt());
 
 			logger.debug("create input file: " + (i + 1));
 			// 3. create grading input file as much as grading size
@@ -128,14 +134,12 @@ public class ESPAExecuteJavaHandler extends ESPAExecuteHandler {
 			logger.debug("output: " + output.toString());
 
 			// 6. compare with output between output file
-			if (StringUtil.compareStringByTokenizer(gradingOutput, output.toString())) {
-				logger.error("equals with grading output between output");
-			} else {
-				logger.error("not equals with grading output between output");
+			double socoreRate = gradingHandler.grade(gradingOutput, output.toString());
+			if (socoreRate == 0) {
 				result.setException(new ESPAExecuteException("not equals with grading output between output",
 						ESPAExcuteCode.ERR_NOT_EQUALS));
 			}
-
+			result.setSocoreRate(socoreRate);
 			getResult().add(result);
 		}
 		start = System.nanoTime() - start;

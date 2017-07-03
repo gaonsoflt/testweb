@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class FileUtil {
 	public static boolean writeFile(String fileName, String filePath, String content) {
 		return writeFile(fileName, filePath, content, true);
@@ -38,6 +40,14 @@ public class FileUtil {
 			}
 		}
 		return rtn;
+	}
+	
+	public static String readFile(MultipartFile file) throws IOException {
+		if(!file.isEmpty()){
+			byte[] fileData = file.getBytes();
+			return new String(fileData, "UTF8");
+		}
+		return null;
 	}
 	
 	public static StringBuilder readFile(String fileName, String filePath) {

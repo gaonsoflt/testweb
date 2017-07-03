@@ -26,14 +26,14 @@ CREATE TABLE public.tb_code_master (
 	CONSTRAINT pk_tb_code_master PRIMARY KEY (cd,catgr)
 );
 
-CREATE TABLE public.tb_login_history (
+CREATE TABLE public.tb_login_his (
 	access_dt timestamp NOT NULL,
 	user_seq int4 NOT NULL,
 	log_type varchar NULL,
 	req_ip varchar(36) NULL,
 	req_device varchar(64) NULL,
 	seq int4 NOT NULL,
-	CONSTRAINT tb_login_history_pk PRIMARY KEY (seq)
+	CONSTRAINT tb_login_his_pk PRIMARY KEY (seq)
 );
 
 CREATE TABLE public.tb_menu_info (

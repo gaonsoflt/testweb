@@ -48,11 +48,21 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	}
 	
 	/*
-	 * ESPA
+	 * ESPA Student
+	 */
+	@RequestMapping(value = "/question.do")
+	public ModelAndView question(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/student/question");
+		mav.addObject("menu", menuService.getMenuVo("question"));
+		return mav;
+	}
+	
+	/*
+	 * ESPA Management
 	 */
 	@RequestMapping(value = "/mgr/question.do")
 	public ModelAndView mgrQuestion(Model model) throws Exception {
-		ModelAndView mav = new ModelAndView("espa/mgr/question");
+		ModelAndView mav = new ModelAndView("espa/mgr/questionMgr");
 		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
 		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
 		mav.addObject("default_max_codesize", config.getEspaConfigVoValue("DEFAULT_MAX_CODESIZE"));

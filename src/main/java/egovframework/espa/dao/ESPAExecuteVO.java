@@ -1,30 +1,73 @@
 package egovframework.espa.dao;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import egovframework.espa.core.execute.handler.ESPAExecuteGradingHandler;
+
 public class ESPAExecuteVO {
-	private String questionSeq;
+	private long questionSeq;
+	private long deploySeq;
+	private long userSeq;
 	private String code;
+	private Timestamp submitDt;
 	private String language;
 	private long timeout;
 	private String[] banKeyword;
+	private long maxCodeSize;
 	private List<HashMap<String, Object>> condition;
 	private List<HashMap<String, Object>> grading;
+	private ESPAExecuteGradingHandler gradingHandler;
 	private boolean isTest;
 	private Exception error;
 	
+	//execute result
+	private List<ESPAExecuteResultVO> resultList;
+	
+	public List<ESPAExecuteResultVO> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<ESPAExecuteResultVO> resultList) {
+		this.resultList = resultList;
+	}
+
 	public String getCode() {
 		return code;
 	}
 
-	public String getQuestionSeq() {
+	public long getMaxCodeSize() {
+		return maxCodeSize;
+	}
+
+	public void setMaxCodeSize(long maxCodeSize) {
+		this.maxCodeSize = maxCodeSize;
+	}
+
+	public long getQuestionSeq() {
 		return questionSeq;
 	}
 
-	public void setQuestionSeq(String questionSeq) {
+	public void setQuestionSeq(long questionSeq) {
 		this.questionSeq = questionSeq;
+	}
+
+	public long getDeploySeq() {
+		return deploySeq;
+	}
+
+	public void setDeploySeq(long deploySeq) {
+		this.deploySeq = deploySeq;
+	}
+
+	public long getUserSeq() {
+		return userSeq;
+	}
+
+	public void setUserSeq(long userSeq) {
+		this.userSeq = userSeq;
 	}
 
 	public long getTimeout() {
@@ -59,6 +102,14 @@ public class ESPAExecuteVO {
 		this.code = code;
 	}
 	
+	public Timestamp getSubmitDt() {
+		return submitDt;
+	}
+
+	public void setSubmitDt(Timestamp submitDt) {
+		this.submitDt = submitDt;
+	}
+
 	public String getLanguage() {
 		return language;
 	}
@@ -99,12 +150,22 @@ public class ESPAExecuteVO {
 		this.error = error;
 	}
 
+	public ESPAExecuteGradingHandler getGradingHandler() {
+		return gradingHandler;
+	}
+
+	public void setGradingHandler(ESPAExecuteGradingHandler gradingHandler) {
+		this.gradingHandler = gradingHandler;
+	}
+
 	@Override
 	public String toString() {
-		return "ESPAExecuteVO [questionSeq=" + questionSeq + ", code=" + code + ", language=" + language + ", timeout="
-				+ timeout + ", banKeyword=" + Arrays.toString(banKeyword) + ", condition=" + condition + ", grading="
-				+ grading + ", isTest=" + isTest + ", error=" + error + "]";
-	} 
+		return "ESPAExecuteVO [questionSeq=" + questionSeq + ", deploySeq=" + deploySeq + ", userSeq=" + userSeq
+				+ ", code=" + code + ", submitDt=" + submitDt + ", language=" + language + ", timeout=" + timeout
+				+ ", banKeyword=" + Arrays.toString(banKeyword) + ", maxCodeSize=" + maxCodeSize + ", condition="
+				+ condition + ", grading=" + grading + ", gradingHandler=" + gradingHandler + ", isTest=" + isTest
+				+ ", error=" + error + ", resultList=" + resultList + "]";
+	}
 }
 
 

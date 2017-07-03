@@ -65,26 +65,26 @@
 			<tr>
 				<th>문제제목</th>
 				<td>
-					<input id="question_title" name="question_title" data-role="maskedtextbox" data-bind="value:selected.question_title" readonly="readonly" style="width:100%;"/>
+					<input id="question_title" name="question_title" data-role="maskedtextbox" data-bind="value:selected.question_title" readonly="readonly" style="width:100%;background:#ccc;"/>
 				</td>
 			</tr>
 			<tr>
 				<th>문제언어</th>
 				<td>
-					<input id="question_language" name="question_language" data-role="maskedtextbox" data-bind="value:selected.question_language" readonly="readonly" style="width:100%;"/>
+					<input id="question_language" name="question_language" data-role="maskedtextbox" data-bind="value:selected.question_language" readonly="readonly" style="width:100%;background:#ccc;"/>
 				</td>
 			</tr>
 			<tr>
 				<th>제출시작</th>
-				<td><input id="submit_from" name="submit_from" data-role="datetimepicker" data-bind="value:selected.submit_from" required style="width:100%;"/></td>
+				<td><input id="submit_from" name="submit_from" data-role="datetimepicker" data-bind="value:selected.submit_from" data-format="yyyy-MM-dd HH:mm tt" required style="width:100%;"/></td>
 			</tr>
 			<tr>
 				<th>제출마감</th>
-				<td><input id="submit_to" name="submit_to" data-role="datetimepicker" data-bind="value:selected.submit_to" required style="width:100%;"/></td>
+				<td><input id="submit_to" name="submit_to" data-role="datetimepicker" data-bind="value:selected.submit_to" data-format="yyyy-MM-dd HH:mm tt" required style="width:100%;"/></td>
 			</tr>
 			<tr>
 				<th>최대제출횟수</th>
-				<td><input id="submit_count" name="submit_count" data-role="numerictextbox" data-bind="value:selected.submit_count" data-format="n0" required style="width:95%;"/>회</td>
+				<td><input id="max_submit_cnt" name="max_submit_cnt" data-role="numerictextbox" data-bind="value:selected.max_submit_cnt" data-format="n0" required style="width:95%;"/>회</td>
 			</tr>
 		</tbody>
 	</table>
@@ -196,7 +196,7 @@
 	
 	function closeResultWindow(e) {
 		$("#result-window").data("kendoWindow").close();
-		$("#submit_count").data("kendoNumericTextBox").focus();
+		$("#max_submit_cnt").data("kendoNumericTextBox").focus();
 	}
 
 	$(document).ready(function () {
@@ -254,10 +254,11 @@
 							question_seq:	{ type: "number" },
 							group_name:		{ type: "string" },
 							title:			{ type: "string" },
+							status:			{ type: "string" },
 							lana_type:		{ type: "string" },
 							submit_from:	{ type: "string" },
 							submit_to:		{ type: "string" },
-							submit_count:	{ type: "number" }
+							max_submit_cnt:	{ type: "number" }
 						}  
 					}
 				},
@@ -291,11 +292,12 @@
 			columns: [
 				{ field: "deploy_seq", hidden: true },
 				{ field: "title", title: "제목", attributes : { style : "text-align: center;" } },
+				{ field: "status", title: "상태", attributes : { style : "text-align: center;" } },
 				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" } },
 				{ field: "question_seq", title: "문제ID", attributes : { style : "text-align: center;" } },
 				{ field: "question_title", title: "문제제목", attributes : { style : "text-align: center;" } },
 				{ field: "question_language", title: "언어", attributes : { style : "text-align: center;" } },
-				{ field: "submit_count", title: "허용제출횟수", attributes : { style : "text-align: center;" } },
+				{ field: "max_submit_cnt", title: "최대제출횟수", attributes : { style : "text-align: center;" } },
 				{ field : "submit_from", title : "제출시작", width : 150, attributes : {	style : "text-align: center;" },
 					template : "#= (submit_from == '') ? '' : kendo.toString(new Date(Number(submit_from)), 'yyyy-MM-dd HH:mm') #" },
 				{ field : "submit_to", title : "제출마감", width : 150, attributes : {	style : "text-align: center;" },
@@ -334,7 +336,7 @@
 				question_language	:{ type: "string" },
 				submit_from			:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm"), validation: { required: true } },           
 				submit_to			:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm"), validation: { required: true } },
-				submit_count		:{ type: "number", defaultValue: 10, validation: { required: true, min: 1 } }           
+				max_submit_cnt		:{ type: "number", defaultValue: 10, validation: { required: true, min: 1 } }           
 			}	
 		});
 		

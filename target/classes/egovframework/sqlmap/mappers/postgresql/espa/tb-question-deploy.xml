@@ -12,10 +12,13 @@
 					A.deploy_seq,
 					A.question_seq, 
 					A.group_id,
+					<![CDATA[
+					CASE WHEN A.submit_from > now() THEN '대기' WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,
+					]]>
 					B.cd_nm as group_name,
 					A.submit_from,
 					A.submit_to,
-					A.submit_count,
+					A.max_submit_cnt,
 					A.title,
 					C.title as question_title,
 					C.lang_type as question_language
@@ -39,10 +42,13 @@
 			A.deploy_seq,
 			A.question_seq, 
 			A.group_id,
+			<![CDATA[
+				CASE WHEN A.submit_from > now() THEN '대기' WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,
+			]]>
 			B.cd_nm as group_name,
 			A.submit_from,
 			A.submit_to,
-			A.submit_count,
+			A.max_submit_cnt,
 			A.title,
 			C.title as question_title,
 			C.lang_type as question_language
@@ -67,7 +73,7 @@
 			group_id, 
 			submit_from,
 			submit_to,
-			submit_count
+			max_submit_cnt
 		) VALUES (
 			nextval('sq_tb_question_deploy'), 
 			#{title}, 
@@ -75,7 +81,7 @@
 			#{group_id}, 
 			to_timestamp(#{submit_from}, 'YYYY-MM-DD HH24:MI'),
 			to_timestamp(#{submit_to}, 'YYYY-MM-DD HH24:MI'),
-			cast(#{submit_count} as integer)
+			cast(#{max_submit_cnt} as integer)
 		)
 	</insert>
 	
@@ -87,7 +93,7 @@
 			group_id = #{group_id},  
 			submit_from = to_timestamp(#{submit_from}, 'YYYY-MM-DD HH24:MI'),
 			submit_to = to_timestamp(#{submit_to}, 'YYYY-MM-DD HH24:MI'),
-			submit_count = cast(#{submit_count} as integer)
+			max_submit_cnt = cast(#{max_submit_cnt} as integer)
 		WHERE deploy_seq = cast(#{deploy_seq} as integer)
 	</update>
 	
@@ -95,4 +101,76 @@
 		DELETE FROM tb_question_deploy 
 		WHERE deploy_seq = CAST(#{deploy_seq} as integer) 
 	</delete>
+	
+	<select id="readDeployedQuestionListForSubmit" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			A.deploy_seq,
+			A.question_seq, 
+			A.group_id,
+			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			B.cd_nm as group_name,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			(select count(*) from tb_question_answer_his where user_seq = cast(#{user_seq} as integer) and deploy_seq = A.deploy_seq) as user_submit_cnt,
+			A.title,
+			C.title as question_title,
+			C.lang_type
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
+		<![CDATA[WHERE A.submit_from < now()]]>
+		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer)) 
+		ORDER BY submit_from, submit_to
+	</select>
+	
+	<select id="readDeployedQuestionDetailForSubmit" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			A.deploy_seq,
+			A.question_seq,
+			A.title,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			(SELECT COUNT(*) FROM TB_QUESTION_ANSWER_HIS WHERE USER_SEQ = CAST(#{user_seq} AS INTEGER) AND DEPLOY_SEQ = A.DEPLOY_SEQ) AS USER_SUBMIT_CNT,
+			B.TITLE AS QUESTION_TITLE,
+			B.CON_QUESTION AS QUESTION,
+			B.CON_IO AS QUESTION_IO,
+			B.CON_EXAMPLE AS QUESTION_EXAMPLE,
+			B.CON_HINT AS QUESTION_HINT,
+			B.LANG_TYPE,
+			B.TIMEOUT AS TIMEOUT,
+			B.BAN_KEYWORD AS BAN_KEYWORD,
+			B.MAX_CODESIZE AS MAX_CODESIZE,
+			C.ANSWER,
+			C.SUBMIT_DT,
+			C.USER_SEQ
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_QUESTION B ON A.QUESTION_SEQ = B.QUESTION_SEQ
+		LEFT JOIN (
+			(
+				WITH LATEST_ANSWER AS (
+					SELECT 
+						*,
+						ROW_NUMBER() OVER(ORDER BY SUBMIT_DT DESC) AS RK
+					FROM TB_QUESTION_ANSWER_HIS
+					WHERE USER_SEQ = CAST(#{user_seq} AS INTEGER)
+					AND DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
+				)
+				SELECT * FROM LATEST_ANSWER WHERE RK = 1
+			)
+		) C ON A.DEPLOY_SEQ = C.DEPLOY_SEQ 
+		WHERE A.DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
+	</select>
+	
+	<select id="readAvailableDeployedQuestion" parameterType="hashMap" resultType="integer">
+		SELECT
+			COUNT(*)
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
+		<![CDATA[WHERE A.submit_to >= now()]]>
+		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer))
+		AND A.deploy_seq = cast(#{deploy_seq} as integer)
+	</select>
 </mapper>

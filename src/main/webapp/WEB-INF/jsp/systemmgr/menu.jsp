@@ -151,12 +151,12 @@
 				}
 			},
 			columns: [
-				{ field: "menu_sq", title: "번호", width: 50, attributes: {style: "text-align: center;"} },
+				{ field: "menu_sq", title: "번호", width: 50, attributes: {style: "text-align: center;"}, hidden: true },
+				{ field: "menu_order", title: "정렬순서", width: 80, attributes: {style: "text-align: center;"} },
 				{ field: "menu_nm", title: "이름", width: 150, attributes: {style: "text-align: left;"} },
 				{ field: "menu_id", title: "아이디", width: 120, attributes: {style: "text-align: left;"}, hidden: true },
 				{ field: "menu_url", title: "URL", width: 180, attributes: {style: "text-align: left;"}, hidden: true },
-				{ field: "menu_order", title: "정렬순서", attributes: {style: "text-align: center;"} },
-				{ field: "use_yn", title: "사용여부", attributes: {style: "text-align: center;" },
+				{ field: "use_yn", title: "사용여부", width: 80, attributes: {style: "text-align: center;" },
 					template: '<input type="checkbox" #= (use_yn) ? "checked=checked" : "" # disabled="disabled" ></input>' },
 				{ title: "&nbsp;", command: [ 
 						{ name: "edit", text:"수정" },
@@ -303,11 +303,11 @@
 			columns: [
 				{ field: "parent_sq", title: "상위아이디", hidden: true, width: 50, attributes: {style: "text-align: center;"} },
 				{ field: "menu_sq", title: "seq", hidden: true },
+				{ field: "menu_order", title: "정렬순서", width: 80, attributes: {style: "text-align: center;"} },
 				{ field: "menu_nm", title: "이름", width: 150, attributes: {style: "text-align: left;"} },
 				{ field: "menu_id", title: "아이디", width: 120, attributes: {style: "text-align: left;"} },
 				{ field: "menu_url", title: "URL", width: 180, attributes: {style: "text-align: left;"} },
 				{ field: "menu_desc", title: "설명", width: 180, attributes: {style: "text-align: left;"} },
-				{ field: "menu_order", title: "정렬순서", width: 80, attributes: {style: "text-align: center;"} },
 				{ field: "use_yn", title: "사용여부", width: 80, attributes: {style: "text-align: center;" },
 					template: '<input type="checkbox" #= (use_yn) ? "checked=checked" : "" # disabled="disabled" ></input>' },
 				{ title: "&nbsp;", width: 80, attributes: {style: "text-align: left;"}, 

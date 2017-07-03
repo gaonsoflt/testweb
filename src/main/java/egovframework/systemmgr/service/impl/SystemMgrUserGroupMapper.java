@@ -8,11 +8,11 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 @Mapper("systemMgrUserGroupMapper")
 public interface SystemMgrUserGroupMapper {
 
-	public List<HashMap<String, Object>> selectNoGroupUser(HashMap<String, Object> map) throws Exception;
+	public List<HashMap<String, Object>> readNoGroupUser(HashMap<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> selectGroupUser(HashMap<String, Object> map) throws Exception;
+	public List<HashMap<String, Object>> readGroupUser(HashMap<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> selectGroupByUser(HashMap<String, Object> map) throws Exception;
+	public List<HashMap<String, Object>> readGroupByUser(HashMap<String, Object> map) throws Exception;
 	
 	public int updateInsertGroupUser(HashMap<String, Object> map) throws Exception;
 	

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.systemmgr.service.SystemMgrUserGroupService;
+import egovframework.systemmgr.service.SystemMgrUserService;
 
 @Service("systemMgrUserGroupService")
 public class SystemMgrUserGroupServiceImpl implements SystemMgrUserGroupService {
@@ -19,12 +20,16 @@ public class SystemMgrUserGroupServiceImpl implements SystemMgrUserGroupService 
 
 	@Resource(name = "systemMgrUserGroupMapper")
 	private SystemMgrUserGroupMapper userGroupMapper;
+	
+	@Resource(name = "systemMgrUserService")
+	private SystemMgrUserService userService;
+	
 
 	@Override
-	public HashMap<String, Object> readNoGroupUser(HashMap<String, Object> map) {
+	public HashMap<String, Object> getNoGroupUser(HashMap<String, Object> map) {
 		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
-			List<HashMap<String, Object>> rtnList = userGroupMapper.selectNoGroupUser(map);
+			List<HashMap<String, Object>> rtnList = userGroupMapper.readNoGroupUser(map);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", Integer.valueOf(rtnList.size()));
 		} catch (Exception e) {
@@ -35,10 +40,40 @@ public class SystemMgrUserGroupServiceImpl implements SystemMgrUserGroupService 
 	}
 
 	@Override
-	public HashMap<String, Object> readGroupUser(HashMap<String, Object> map) {
+	public HashMap<String, Object> getGroupUser(HashMap<String, Object> map) {
 		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
-			List<HashMap<String, Object>> rtnList = userGroupMapper.selectGroupUser(map);
+			List<HashMap<String, Object>> rtnList = userGroupMapper.readGroupUser(map);
+			rtnMap.put("rtnList", rtnList);
+			rtnMap.put("total", Integer.valueOf(rtnList.size()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			rtnMap.put("error", e.toString());
+		}
+		return rtnMap;
+	}
+	
+	@Override
+	public HashMap<String, Object> getGroupByUser(HashMap<String, Object> map) {
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			List<HashMap<String, Object>> rtnList = userGroupMapper.readGroupByUser(map);
+			rtnMap.put("rtnList", rtnList);
+			rtnMap.put("total", Integer.valueOf(rtnList.size()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			rtnMap.put("error", e.toString());
+		}
+		return rtnMap;
+	}
+	
+	@Override
+	public HashMap<String, Object> getGroupByLoginUser() {
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("user_seq", userService.getLoginUserInfo().getUserseq());
+		try {
+			List<HashMap<String, Object>> rtnList = userGroupMapper.readGroupByUser(param);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", Integer.valueOf(rtnList.size()));
 		} catch (Exception e) {
@@ -63,7 +98,7 @@ public class SystemMgrUserGroupServiceImpl implements SystemMgrUserGroupService 
 	}
 
 	@Override
-	public int deleteGroupUser(HashMap<String, Object> map) {
+	public int deleteGroupUser(HashMap<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		return 0;
 	}

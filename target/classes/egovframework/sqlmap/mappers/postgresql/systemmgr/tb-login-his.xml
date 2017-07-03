@@ -13,7 +13,7 @@
 						A.*,
 	              		B.user_name,
 	              		B.user_id
-						FROM tb_login_history A
+						FROM tb_login_his A
 							 LEFT OUTER JOIN TB_USER_INFO B
 							 ON A.USER_SEQ = B.USER_SEQ
 	                    WHERE 1=1 
@@ -46,7 +46,7 @@
     
     <select id="selectSystemMngLoginLogTot" parameterType="hashMap" resultType="int">
 	    SELECT COUNT(*) 
-		FROM tb_login_history A
+		FROM tb_login_his A
 		 	 LEFT OUTER JOIN TB_USER_INFO B
 		 	 ON A.USER_SEQ = B.USER_SEQ
 		WHERE 1=1
@@ -68,7 +68,7 @@
     </select>
     
     <insert id="insertLoginHistory" >
-		INSERT INTO tb_login_history (
+		INSERT INTO tb_login_his (
 			seq,
 	      	access_dt,
 	      	user_seq,
@@ -76,7 +76,7 @@
 	      	req_ip,
 	      	req_device
 		) VALUES (
-			nextval('sq_tb_login_history'),
+			nextval('sq_tb_login_his'),
 			now(),
 			CAST(#{user_seq} as integer),
 			#{log_type},

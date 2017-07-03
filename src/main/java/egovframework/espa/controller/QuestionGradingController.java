@@ -27,12 +27,6 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 	@Resource(name = "questionGradingService")
 	private QuestionGradingService gradingService;
 	
-	/**
-	 * 사용자 정보를 조회함
-	 * @param c
-	 * @param params
-	 * @return
-	 */
 	@RequestMapping(value = "/readList.do")
 	public @ResponseBody JSONPObject getGradingList(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
@@ -58,12 +52,6 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 		return new JSONPObject(c, rtnMap);
 	}
 
-	/**
-	 * 사용자 정보를 저장함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/create.do")
 	public @ResponseBody JSONPObject insertGrading(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/create.do");
@@ -86,12 +74,6 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 		return new JSONPObject(c, models);
 	}
 	
-	/**
-	 * 사용자 정보를 수정함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/update.do")
 	public @ResponseBody JSONPObject updateGrading(@RequestParam("callback") String c, @RequestParam("models") String models) {  
 		logger.debug("---------------->/update.do");
@@ -116,12 +98,6 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 	}
 	
 	
-	/**
-	 * 사용자 정보를 삭제함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/delete.do")
 	public @ResponseBody JSONPObject deleteGrading(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/delete.do");

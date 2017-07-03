@@ -1,5 +1,6 @@
 package egovframework.espa.service.impl;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,8 +27,17 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	@Autowired
 	private ConfigService config;
 	
-	@Resource(name = "questionMapper")
-	private QuestionMapper questionMapper;
+	@Resource(name = "questionMgrMapper")
+	private QuestionMgrMapper questionMapper;
+	
+	@Resource(name = "questionDeployMapper")
+	private QuestionDeployMapper deployMapper;
+	
+	@Resource(name = "questionAnswerHistoryMapper")
+	private QuestionAnswerHistoryMapper answerHisMapper;
+	
+	@Resource(name = "questionGradingHistoryMapper")
+	private QuestionGradingHistoryMapper gradingHisMapper;
 	
 	@Resource(name = "questionConditionMapper")
 	private QuestionConditionMapper conditionMapper;
@@ -36,21 +46,23 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	private QuestionGradingMapper gradingMapper;
 	
 	@Override
-	public void executeTest(HashMap<String, Object> map) throws Exception {
+	public ESPAExecuteVO executeTest(HashMap<String, Object> map) throws Exception {
 		ESPAExecuteVO executeVO = new ESPAExecuteVO();
 		HashMap<String, Object> result = ((List<HashMap<String, Object>>) questionMapper.selectQuestion(map)).get(0);
 		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(map);
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
-		executeVO.setQuestionSeq(result.get("question_seq").toString());
+		executeVO.setQuestionSeq(Long.valueOf(result.get("question_seq").toString()));
 		executeVO.setCode(result.get("test_code").toString());
 		executeVO.setLanguage(result.get("lang_type").toString());
 		executeVO.setTimeout(Long.valueOf((result.get("timeout") != null) ? result.get("timeout").toString() : "-1"));
 		executeVO.setBanKeyword((result.get("ban_keyword") != null) ? result.get("ban_keyword").toString() : "");
+		executeVO.setMaxCodeSize(Long.valueOf(result.get("max_codesize").toString()));
 		executeVO.setCondition(conditionList);
 		executeVO.setGrading(gradingList);
 		executeVO.setTest(true);
-		
-		logger.debug("[BBAEK] testcode: " + executeVO.getCode());
+		executeVO.setGradingHandler(null); // custom grading handler
+
+		logger.debug("[BBAEK] execute code: " + executeVO.getCode());
 		
 		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
 		agent.setResultHandler(new ESPAExecuteResultHandler() {
@@ -67,31 +79,53 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 			}
 		});
 		try {
-			agent.execute();
+			return agent.execute();
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 	
 	@Override
-	public void execute(HashMap<String, Object> map) throws Exception {
-		ESPAExecuteVO executeVO = new ESPAExecuteVO();
-		// TODO: 사용자가 제출한 코드를 가져 와야함
-		HashMap<String, Object> result = ((List<HashMap<String, Object>>) questionMapper.selectQuestion(map)).get(0);
-		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(map);
-		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
-		executeVO.setQuestionSeq(result.get("question_seq").toString());
-		executeVO.setCode(result.get("test_code").toString());
+	public ESPAExecuteVO execute(HashMap<String, Object> map) throws Exception {
+		final ESPAExecuteVO executeVO = new ESPAExecuteVO();
+		HashMap<String, Object> result = ((List<HashMap<String, Object>>) deployMapper.readDeployedQuestionDetailForSubmit(map)).get(0);
+		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(result);
+		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(result);
+		executeVO.setDeploySeq(Long.valueOf(result.get("deploy_seq").toString()));
+		executeVO.setUserSeq(Long.valueOf(result.get("user_seq").toString()));
+		executeVO.setCode(result.get("answer").toString());
+		executeVO.setQuestionSeq(Long.valueOf(result.get("question_seq").toString()));
+		executeVO.setSubmitDt((Timestamp) result.get("submit_dt"));
 		executeVO.setLanguage(result.get("lang_type").toString());
 		executeVO.setTimeout(Long.valueOf((result.get("timeout") != null) ? result.get("timeout").toString() : "-1"));
 		executeVO.setBanKeyword((result.get("ban_keyword") != null) ? result.get("ban_keyword").toString() : "");
+		executeVO.setMaxCodeSize(Long.valueOf(result.get("max_codesize").toString()));
 		executeVO.setCondition(conditionList);
 		executeVO.setGrading(gradingList);
 		executeVO.setTest(false);
-		logger.debug("[BBAEK] testcode: " + executeVO.getCode());
+		executeVO.setGradingHandler(null); // custom grading handler
+		
+		logger.debug("[BBAEK] execute code: " + executeVO.getCode());
 		
 		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
-		agent.execute();
+		agent.setResultHandler(new ESPAExecuteResultHandler() {
+			@Override
+			public void handleResult(List<ESPAExecuteResultVO> vl) {
+				try {
+					for (ESPAExecuteResultVO vo : vl) {
+						logger.debug("param: " + vo);
+						gradingHisMapper.insertGradingHistory(vo);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		try {
+			return agent.execute();
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 	
 }

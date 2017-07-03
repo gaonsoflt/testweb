@@ -8,12 +8,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import egovframework.espa.dao.ESPAExecuteResultVO;
-import egovframework.espa.service.impl.QuestionMapper;
+import egovframework.espa.service.impl.QuestionMgrMapper;
 
 @Service
 public class ESPAExecuteResultHandlerImpl implements ESPAExecuteResultHandler {
-	@Resource(name = "questionMapper")
-	private QuestionMapper questionMapper;	
+	@Resource(name = "questionMgrMapper")
+	private QuestionMgrMapper questionMapper;	
 	
 	@Override
 	public void handleResult(List<ESPAExecuteResultVO> vo) {

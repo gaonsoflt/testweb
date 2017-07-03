@@ -20,4 +20,11 @@ public interface QuestionDeployMapper {
 	public int updateDeploy(HashMap<String, Object> map) throws Exception;
 	
 	public int deleteDeploy(HashMap<String, Object> map) throws Exception;  
+	
+	// for student
+	public List<HashMap<String, Object>> readDeployedQuestionListForSubmit(HashMap<String, Object> map) throws Exception;
+	
+	public List<HashMap<String, Object>> readDeployedQuestionDetailForSubmit(HashMap<String, Object> map) throws Exception;
+
+	public int readAvailableDeployedQuestion(HashMap<String, Object> map) throws Exception;
 }

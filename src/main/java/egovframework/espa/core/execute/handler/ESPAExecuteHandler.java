@@ -11,9 +11,14 @@ import egovframework.espa.service.ConfigService;
 public abstract class ESPAExecuteHandler {
 	ESPAExecuteVO vo;
 	ConfigService config;
+	ESPAExecuteGradingHandler gradingHandler;
+	
+	public ESPAExecuteHandler() {
+		this.gradingHandler = new ESPAExecuteGradingHandlerImpl();
+	}
 	
 	private boolean banKeyword = false;
-	// comile, ban, condition
+	// check execution code(comile, ban, condition)
 	private boolean ready = true;
 	private ESPAExecuteException exception;
 	private List<ESPAExecuteResultVO> result;
@@ -54,5 +59,13 @@ public abstract class ESPAExecuteHandler {
 
 	public void setResult(List<ESPAExecuteResultVO> result) {
 		this.result = result;
+	}
+
+	public ESPAExecuteGradingHandler getGradingHandler() {
+		return gradingHandler;
+	}
+
+	public void setGradingHandler(ESPAExecuteGradingHandler gradingHandler) {
+		this.gradingHandler = gradingHandler;
 	}
 }

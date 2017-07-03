@@ -16,14 +16,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import egovframework.com.login.service.CmmLoginUser;
-import egovframework.systemmgr.service.SystemMgrLoginHistoryService;
+import egovframework.systemmgr.service.impl.SystemMgrLoginHistoryMapper;
 
 public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
 	Logger logger = LoggerFactory.getLogger(CustomLoginSuccessHandler.class);
 
-	@Resource(name = "systemMgrLoginHistoryService")
-	private SystemMgrLoginHistoryService systemMgrLoginLogService;
+	@Resource(name = "systemMgrLoginHistoryMapper")
+	private SystemMgrLoginHistoryMapper systemMngLoginLogMapper;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -85,7 +85,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 		logger.debug("param: " + param);
 
 		try {
-			int execute = systemMgrLoginLogService.insertLoginHistory(param);
+			int execute = systemMngLoginLogMapper.insertLoginHistory(param);
 			if (execute > 0) {
 				logger.debug("created login history");
 			} else {

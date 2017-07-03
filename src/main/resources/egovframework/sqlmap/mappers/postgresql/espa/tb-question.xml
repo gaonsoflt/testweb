@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="egovframework.espa.service.impl.QuestionMapper">
+<mapper namespace="egovframework.espa.service.impl.QuestionMgrMapper">
 
 	<select id="selectQuestionList" parameterType="hashMap" resultType="hashMap">
 		SELECT *
@@ -67,6 +67,31 @@
 				max_codesize
 			FROM tb_question
 			WHERE question_seq = cast(#{question_seq} as integer)
+		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
+	</select>
+	
+	<select id="selectQuestionByDeploySeq" parameterType="hashMap" resultType="hashMap">
+		SELECT A.*, B.USER_NAME 
+		FROM (
+			SELECT
+				question_seq, 
+				title, 
+				reg_dt, 
+				reg_usr,
+				mod_dt, 
+				mod_usr, 
+				con_question,
+				con_io,
+				con_example,
+				con_hint,
+				con_etc,
+				test_code,
+				lang_type,
+				timeout,
+				ban_keyword,
+				max_codesize
+			FROM tb_question
+			WHERE question_seq = (select question_seq from tb_question_deploy where deploy_seq = cast(#{deploy_seq} as integer))
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
 	</select>
 	

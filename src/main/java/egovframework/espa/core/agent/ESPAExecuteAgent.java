@@ -19,8 +19,8 @@ public class ESPAExecuteAgent {
 	private ESPAExecuteResultHandler resultHandler;
 	
 	public ESPAExecuteAgent(ESPAExecuteVO executeVo, ConfigService config) {
-		setExecuteVo(executeVo);
-		setConfig(config);
+		this.executeVo = executeVo;
+		this.config = config;
 	}
 	
 	public void setExecuteVo(ESPAExecuteVO executeVo) {
@@ -39,7 +39,7 @@ public class ESPAExecuteAgent {
 		this.config = config;
 	}
 
-	public void execute() throws ESPAExecuteException {
+	public ESPAExecuteVO execute() throws ESPAExecuteException {
 		ESPAExecuteHandler handler = null;
 		if(executeVo == null) {
 			throw new NullPointerException("ESPAExecuteVO is null");
@@ -56,10 +56,15 @@ public class ESPAExecuteAgent {
 		} else {
 			throw new ESPAExecuteException("not support language: " + executeVo.getLanguage(), ESPAExcuteCode.ERR_NOT_SUPPORT);
 		}
+		logger.debug("Start ESPAExecuteHandler: " + executeVo.getLanguage());
 		handler.execute();
 		
+		logger.debug("Finish ESPAExecuteHandler");
 		if(resultHandler != null) {
+			logger.debug("Handle resultHandler");
 			resultHandler.handleResult(handler.getResult());
 		}
+		executeVo.setResultList(handler.getResult());
+		return executeVo;
 	}
 }

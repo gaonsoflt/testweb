@@ -1,9 +1,6 @@
 package egovframework.systemmgr.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -32,14 +29,27 @@ public class SystemMgrUserGroupController {
 	public @ResponseBody JSONPObject readNoGroupUser(@RequestParam("callback") String c, @RequestParam("params") String params) throws Exception {
 		logger.debug("---------------->/readNoGroupUser.do");
 		logger.debug("params: " + params);
-		return new JSONPObject(c, systemMngUserGroupService.readNoGroupUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+		return new JSONPObject(c, systemMngUserGroupService.getNoGroupUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
 	}
 	
 	@RequestMapping({ "readGroupUser.do" })
 	public @ResponseBody JSONPObject readGroupUser(@RequestParam("callback") String c, @RequestParam("params") String params) throws Exception {
 		logger.debug("---------------->/readGroupUser.do");
 		logger.debug("params: " + params);
-		return new JSONPObject(c, systemMngUserGroupService.readGroupUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+		return new JSONPObject(c, systemMngUserGroupService.getGroupUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+	}
+	
+	@RequestMapping({ "readUserGroup.do" })
+	public @ResponseBody JSONPObject readUserGroup(@RequestParam("callback") String c, @RequestParam("params") String params) throws Exception {
+		logger.debug("---------------->/readUserGroup.do");
+		logger.debug("params: " + params);
+		return new JSONPObject(c, systemMngUserGroupService.getGroupByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+	}
+	
+	@RequestMapping({ "readLoginUserGroup.do" })
+	public @ResponseBody JSONPObject readLoginUserGroup(@RequestParam("callback") String c, @RequestParam("params") String params) throws Exception {
+		logger.debug("---------------->/readLoginUserGroup.do");
+		return new JSONPObject(c, systemMngUserGroupService.getGroupByLoginUser());
 	}
 	
 //	@RequestMapping({ "/update.do" })

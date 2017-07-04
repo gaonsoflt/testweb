@@ -14,7 +14,7 @@ import egovframework.systemmgr.service.SystemMgrUserService;
 
 @Service("questionAnswerService")
 public class QuestionAnswerServiceImpl extends EgovAbstractServiceImpl implements QuestionAnswerService {
-	Logger logger = LoggerFactory.getLogger(QuestionServiceImpl.class.getName());
+	Logger logger = LoggerFactory.getLogger(QuestionAnswerServiceImpl.class.getName());
 
 	@Resource(name = "questionAnswerHistoryMapper")
 	private QuestionAnswerHistoryMapper answerHisMapper;

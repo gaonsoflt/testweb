@@ -214,7 +214,7 @@
             resizable: true
         }).data("kendoWindow");
 		
-	    var crudServiceBaseUrl = "${contextPath}/mgr/question/deploy";
+	    var crudServiceBaseUrl = "${contextPath}/question/deploy";
 		$("#deploy-grid").kendoGrid({
 			dataSource: {
 				transport: {
@@ -291,9 +291,9 @@
             toolbar: kendo.template($("#toolbar-template").html()),
 			columns: [
 				{ field: "deploy_seq", hidden: true },
+				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" } },
 				{ field: "title", title: "제목", attributes : { style : "text-align: center;" } },
 				{ field: "status", title: "상태", attributes : { style : "text-align: center;" } },
-				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" } },
 				{ field: "question_seq", title: "문제ID", attributes : { style : "text-align: center;" } },
 				{ field: "question_title", title: "문제제목", attributes : { style : "text-align: center;" } },
 				{ field: "question_language", title: "언어", attributes : { style : "text-align: center;" } },
@@ -528,7 +528,7 @@
 			dataSource: {
 				transport: {
 					read	: { 
-						url: "${contextPath}/mgr/question" + "/readList.do",
+						url: "${contextPath}/question/readList.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("result-grid:dataSource:read:complete");

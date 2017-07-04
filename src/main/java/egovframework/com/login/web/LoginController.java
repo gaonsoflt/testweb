@@ -59,7 +59,7 @@ public class LoginController {
         // refresh to cached menu data
         HashMap<String, Object> param = new HashMap<String, Object>();
         param.put("USER_NO", userDetails.getUserseq());
-        menuService.refreshMenu(param);
+        menuService.refreshCachedMenu(param);
         
 //        return "redirect:/sm/user/view.do";
 //        return "redirect:/main/dashboard/view.do";

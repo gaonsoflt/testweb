@@ -24,7 +24,8 @@
 					<div class="box-body">
 						<div>
 							제출한 답안의 채점이 완료되었습니다.<br>
-							"${user_seq}"
+							${user_seq}<br>
+							결과페이지로 이동 : <Button type="button" onclick="goResultPage();">이동</Button>
 						</div>					
 					</div>
 				</div> <!-- box -->
@@ -34,6 +35,9 @@
 </div>
 
 <script>
+	function goResultPage() {
+		location.href="<c:url value='/class/question/deploy/result.do'/>"; 
+	}
 </script>
 
 <style>

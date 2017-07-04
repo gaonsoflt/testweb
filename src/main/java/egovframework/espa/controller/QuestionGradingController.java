@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.espa.service.QuestionGradingService;
 
-@RequestMapping("/mgr/question/grading")
+@RequestMapping("/question/grading")
 @Controller
 public class QuestionGradingController {
 Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName());

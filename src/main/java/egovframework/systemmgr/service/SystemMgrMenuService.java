@@ -24,5 +24,6 @@ public interface SystemMgrMenuService {
 	
 	public SystemMgrMenuVO getMenuVo(String menuId);
 	
-	public void refreshMenu(HashMap<String, Object> param) throws Exception;
+	public void refreshCachedMenu(HashMap<String, Object> param) throws Exception;
+	public void refreshCachedMenu() throws Exception;
 }

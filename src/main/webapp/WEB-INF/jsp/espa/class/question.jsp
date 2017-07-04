@@ -101,7 +101,7 @@
 					</table>
 				</td>
 				<td valign="top">
-					<form id="answer_form" action="<c:url value="/question/answer/submit.do"/>" method="post" enctype="multipart/form-data">
+					<form id="answer_form" action="<c:url value="/question/deploy/answer/submit.do"/>" method="post" enctype="multipart/form-data">
 						<input id="deploy_seq" name="deploy_seq" data-bind="value:selected.deploy_seq" type="hidden" readonly="readonly"/>
 						<div>답안제출형태</div>
 						<div>
@@ -203,12 +203,12 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question";
+		var crudServiceBaseUrl = "${contextPath}/question/deploy";
 		$("#gridList").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readDeployedQuestionListForSubmit.do",
+						url: crudServiceBaseUrl + "/readDeployedQuestionListByUser.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");
@@ -274,7 +274,7 @@
             toolbar: false,
 			columns: [
 				{ field: "deploy_seq", hidden: true },
-				{ field: "group_name", title: "배포그룹", width: "15%", attributes : { style : "text-align: center;" } },
+				{ field: "group_name", title: "배포그룹", width: "20%", attributes : { style : "text-align: center;" } },
 				{ field: "title", title: "제목", attributes : { style : "text-align: center;" } },
 				{ field: "status", title: "상태", width : "10%", attributes : { style : "text-align: center;" } },
 				{ field: "max_submit_cnt", title: "최대제출횟수", width : "8%", attributes : { style : "text-align: center;" } },
@@ -332,7 +332,7 @@
 			dataSource: new kendo.data.DataSource({
 				transport: {
 					read: {
-						url: crudServiceBaseUrl + "/readDeployedQuestionDetailForSubmit.do",
+						url: crudServiceBaseUrl + "/readDeployedQuestionDetailByUser.do",
 		    			dataType: "jsonp",
 		    			complete: function(e){ 
 		    				console.log("questionViewModel:dataSource:read:complete");

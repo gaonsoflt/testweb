@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.espa.service.QuestionMgrService;
 
-@RequestMapping("/mgr/question")
+@RequestMapping("/question")
 @Controller
 public class QuestionMgrController {
 	Logger logger = LoggerFactory.getLogger(QuestionMgrController.class.getName());

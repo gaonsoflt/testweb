@@ -201,7 +201,7 @@ $(document).ready(function() {
 				console.log(e);
 			},
 			complete: function(){
-				console.log(menuList);
+// 				console.log(menuList);
 			}
 		});
 		

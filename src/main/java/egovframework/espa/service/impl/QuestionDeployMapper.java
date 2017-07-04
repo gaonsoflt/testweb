@@ -22,9 +22,13 @@ public interface QuestionDeployMapper {
 	public int deleteDeploy(HashMap<String, Object> map) throws Exception;  
 	
 	// for student
-	public List<HashMap<String, Object>> readDeployedQuestionListForSubmit(HashMap<String, Object> map) throws Exception;
+	public List<HashMap<String, Object>> readDeployedQuestionList(HashMap<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> readDeployedQuestionDetailForSubmit(HashMap<String, Object> map) throws Exception;
+	public List<HashMap<String, Object>> readDeployedQuestionListByUser(HashMap<String, Object> map) throws Exception;
+	
+	public List<HashMap<String, Object>> readDeployedQuestionDetailByUser(HashMap<String, Object> map) throws Exception;
 
 	public int readAvailableDeployedQuestion(HashMap<String, Object> map) throws Exception;
+	
+	public List<HashMap<String, Object>> readGroupsOfAvailableDeployedQuestion(HashMap<String, Object> map) throws Exception;
 }

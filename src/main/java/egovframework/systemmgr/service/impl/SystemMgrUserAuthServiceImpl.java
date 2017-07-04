@@ -50,6 +50,7 @@ public class SystemMgrUserAuthServiceImpl implements SystemMgrUserAuthService {
 			execute = userAuthMapper.insertUserAuth(map);
 			logger.debug("insert =====================> " + execute);
 		}
+		menuService.refreshCachedMenu();
 	}
 
 	@Override

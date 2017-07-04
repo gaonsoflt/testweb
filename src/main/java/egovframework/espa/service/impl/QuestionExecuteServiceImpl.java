@@ -88,7 +88,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	@Override
 	public ESPAExecuteVO execute(HashMap<String, Object> map) throws Exception {
 		final ESPAExecuteVO executeVO = new ESPAExecuteVO();
-		HashMap<String, Object> result = ((List<HashMap<String, Object>>) deployMapper.readDeployedQuestionDetailForSubmit(map)).get(0);
+		HashMap<String, Object> result = ((List<HashMap<String, Object>>) deployMapper.readDeployedQuestionDetailByUser(map)).get(0);
 		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(result);
 		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(result);
 		executeVO.setDeploySeq(Long.valueOf(result.get("deploy_seq").toString()));
@@ -114,7 +114,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 				try {
 					for (ESPAExecuteResultVO vo : vl) {
 						logger.debug("param: " + vo);
-						gradingHisMapper.insertGradingHistory(vo);
+						gradingHisMapper.createGradingHistory(vo);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

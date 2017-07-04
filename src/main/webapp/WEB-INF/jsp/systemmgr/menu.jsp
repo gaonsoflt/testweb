@@ -271,11 +271,12 @@
 	        },  	
 	        sync: function(e) {
 				console.log("childds sync complete");
-				$.ajax({
-					type : "get",
-					url : "<c:url value='/sm/menu/notify.do'/>",
-					async : false //동기 방식
-				});
+// 				$.ajax({
+// 					type : "get",
+// 					url : "<c:url value='/sm/menu/notify.do'/>",
+// 					async : false //동기 방식
+// 				});
+		        this.read();
 				alert("정상적으로 처리되었습니다.");  
 			},  
 			batch: true               //     true: 쿼리를 한줄로,  false : row 단위로

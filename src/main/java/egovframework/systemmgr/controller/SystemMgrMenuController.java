@@ -181,17 +181,17 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 		return model; 
 	}
 	
-	@RequestMapping(value = "/notify.do")
-	public void refreshConfig() {
-		try {
-	    	CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    	HashMap<String,Object> paramMap = new HashMap<>(); 
-	    	paramMap.put("USER_NO", userDetails.getUserseq());
-			logger.debug("[BBAEK] refresh before: " + menuService.getMenuVo());
-			menuService.refreshMenu(paramMap);
-			logger.debug("[BBAEK] refresh after: " + menuService.getMenuVo());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@RequestMapping(value = "/notify.do")
+//	public void refreshConfig() {
+//		try {
+//	    	CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//	    	HashMap<String,Object> paramMap = new HashMap<>(); 
+//	    	paramMap.put("USER_NO", userDetails.getUserseq());
+//			logger.debug("[BBAEK] refresh before: " + menuService.getMenuVo());
+//			menuService.refreshMenu(paramMap);
+//			logger.debug("[BBAEK] refresh after: " + menuService.getMenuVo());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

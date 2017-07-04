@@ -102,7 +102,29 @@
 		WHERE deploy_seq = CAST(#{deploy_seq} as integer) 
 	</delete>
 	
-	<select id="readDeployedQuestionListForSubmit" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployedQuestionList" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			A.deploy_seq,
+			A.question_seq, 
+			A.group_id,
+			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			B.cd_nm as group_name,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			A.title,
+			C.title as question_title,
+			C.lang_type,
+			(select Count(*) From tb_user_group where group_id = a.group_id) as candidate,
+			(select count(distinct(user_seq)) From tb_question_answer_his where deploy_seq = a.deploy_seq) as submit_user
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
+		<![CDATA[WHERE A.submit_from < now()]]>
+		ORDER BY group_name, submit_from, submit_to
+	</select>
+	
+	<select id="readDeployedQuestionListByUser" parameterType="hashMap" resultType="hashMap">
 		SELECT
 			A.deploy_seq,
 			A.question_seq, 
@@ -120,11 +142,11 @@
 		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
 		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
 		<![CDATA[WHERE A.submit_from < now()]]>
-		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer)) 
-		ORDER BY submit_from, submit_to
+		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer))
+		ORDER BY group_name, submit_from, submit_to
 	</select>
 	
-	<select id="readDeployedQuestionDetailForSubmit" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployedQuestionDetailByUser" parameterType="hashMap" resultType="hashMap">
 		SELECT 
 			A.deploy_seq,
 			A.question_seq,
@@ -168,9 +190,20 @@
 			COUNT(*)
 		FROM TB_QUESTION_DEPLOY A 
 		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
-		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
 		<![CDATA[WHERE A.submit_to >= now()]]>
 		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer))
 		AND A.deploy_seq = cast(#{deploy_seq} as integer)
+	</select>
+	
+	<select id="readGroupsOfAvailableDeployedQuestion" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			distinct(B.cd_nm) as group_name
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+		<![CDATA[WHERE A.submit_from < now()]]>
+		<if test="user_seq != null">
+		AND group_id IN (SELECT group_id FROM tb_user_group WHERE user_seq = cast(#{user_seq} as integer))
+		</if> 
+		ORDER BY group_name
 	</select>
 </mapper>

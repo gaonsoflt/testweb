@@ -2,8 +2,22 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="egovframework.espa.service.impl.QuestionGradingHistoryMapper"> 
-
-    <insert id="insertGradingHistory"  parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
+	<select id="readLatestGradingHistoryByUser" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			*
+		FROM TB_QUESTION_GRADING_HIS
+		WHERE deploy_seq = CAST(#{deploy_seq} as integer)
+		AND user_seq = CAST(#{user_seq} as integer)
+		AND submit_dt = (
+			SELECT 
+				MAX(submit_dt) 
+			FROM TB_QUESTION_GRADING_HIS
+			WHERE deploy_seq = CAST(#{deploy_seq} as integer)
+			AND user_seq = CAST(#{user_seq} as integer)
+		)
+	</select>
+	
+    <insert id="createGradingHistory"  parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
 		INSERT INTO tb_question_grading_his(
 			deploy_seq,
 	      	user_seq,

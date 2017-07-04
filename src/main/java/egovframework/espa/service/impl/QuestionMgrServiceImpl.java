@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import egovframework.espa.service.QuestionGradingService;
 import egovframework.espa.service.ConfigService;
-import egovframework.espa.service.QuestionConditionService;
 import egovframework.espa.service.QuestionMgrService;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
@@ -28,11 +26,11 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 	@Resource(name = "questionMgrMapper")
 	private QuestionMgrMapper questionMapper;
 	
-	@Resource(name = "questionConditionService")
-	private QuestionConditionService questionConditionService;
+	@Resource(name = "questionConditionMapper")
+	private QuestionConditionMapper questionConditionMapper;
 	
-	@Resource(name = "questionGradingService")
-	private QuestionGradingService questionGradingService;
+	@Resource(name = "questionGradingMapper")
+	private QuestionGradingMapper questionGradingMapper;
 	
 	
 	@Override
@@ -75,7 +73,7 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 		for (HashMap<String, Object> param : list) {
 			logger.debug("[BBAEK] create grading param:" + param);
 			param.put("question_seq", map.get("question_seq"));
-			execute += questionGradingService.createGrading(param);
+			execute += questionGradingMapper.insertGrading(param);
 		}
 		return execute;
 	}
@@ -86,8 +84,8 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 		int execute = 0;
 		execute = questionMapper.updateQuestion(map);
 		logger.debug("[BBAEK] delete question condition/answer:" + map.get("question_seq"));
-		questionConditionService.deleteCondition(map);
-		questionGradingService.deleteGrading(map);
+		questionConditionMapper.deleteCondition(map);
+		questionGradingMapper.deleteGrading(map);
 		List<HashMap<String, Object>> list;
 //		List<HashMap<String, Object>> list = (List<HashMap<String, Object>>) map.get("condition");
 //		for (HashMap<String, Object> param : list) {
@@ -99,7 +97,7 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 		for (HashMap<String, Object> param : list) {
 			logger.debug("[BBAEK] create grading param:" + param);
 			param.put("question_seq", map.get("question_seq"));
-			execute += questionGradingService.createGrading(param);
+			execute += questionGradingMapper.insertGrading(param);
 		}
 		return execute;
 	}
@@ -108,8 +106,8 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 	public int deleteQuestion(HashMap<String, Object> map) throws Exception {
 		int execute = 0;
 		execute = questionMapper.deleteQuestion(map);
-		execute += questionConditionService.deleteCondition(map);
-		execute += questionGradingService.deleteGrading(map);
+		execute += questionConditionMapper.deleteCondition(map);
+		execute += questionGradingMapper.deleteGrading(map);
 		return execute;
 	}
 

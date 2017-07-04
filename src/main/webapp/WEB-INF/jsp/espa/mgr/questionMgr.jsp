@@ -122,7 +122,7 @@
 
 <!-- grading popup editor template -->
 <script id="popup_editor" type="text/x-kendo-template">
-	<div>
+	<div id="popup_editor">
 	    <p>채점데이터</p>
 	    <table style="width:100%;">
         	<colgroup>
@@ -132,7 +132,7 @@
         	<tr><th>문제번호</th></tr>
         	<tr>
 	            <td colspan="2">
-                	<input name="grading_order" data-bind="value:grading_order" data-type="number" data-role="numerictextbox" data-format="n0" data-min="1" data-max="100" required/>
+                	<input name="grading_order" data-role="numerictextbox" data-bind="value:grading_order" data-format="n0" data-min="1" data-max="100" required/>
             	</td>
         	</tr>
         	<tr>
@@ -421,7 +421,7 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/mgr/question",
+		var crudServiceBaseUrl = "${contextPath}/question",
 		/*** dataSource ***/
 		dataSourceDetail = new kendo.data.DataSource({
 			transport : {
@@ -758,7 +758,7 @@
 			dataSource : {
 				transport : {
 					read : {
-						url : "<c:url value='/mgr/question/getSupportLanguage.do'/>",
+						url : "<c:url value='/question/getSupportLanguage.do'/>",
 						dataType : "jsonp"
 					},
 					parameterMap : function(data, type) {
@@ -995,7 +995,7 @@
 							question_seq: { type: "number", defaultValue : getG_Seq },
 							grading_input: { type: "string", validation: { required: true } },
 							grading_output: { type: "string", validation: { required: true } },
-							grading_order: { type: "number" },
+							grading_order: { type: "number", nullable: false, validation: { required: true }, defalutValue: 0 },
 							correct: { type: "boolean", editable: false },
 							exe_time: { type: "number", editable: false }
 						}   
@@ -1041,7 +1041,16 @@
 					width: '900px',
 					height: '400px'
 				});
-            },  
+// 				if(e.model.isNew()) {
+// 					console.log("new");
+// 					temp = e.model;
+// 					if(e.model.get("grading_order") == 0) {
+// 	 					e.model.set("grading_order", Number(this.dataSource.at(this.dataSource.total()-1).get("grading_order")) + 1);
+// 					}
+// 				} else {
+// 					console.log("edit");
+// 				}
+			},  
 			change: function(e) {
             	console.log("gridGrading:grid:change");
 			},
@@ -1059,10 +1068,9 @@
 			}
 		});
 		
-		
 // 		 $("#gridGrading").delegate("tbody>tr", "dblclick", function () {
 		$("#gridGrading").delegate("tbody>tr", "click", function () {
-				if (!$(this).hasClass('k-grid-edit-row')) {
+			if (!$(this).hasClass('k-grid-edit-row')) {
 				$("#gridGrading").data("kendoGrid").editRow($(this));
 			}
 		});

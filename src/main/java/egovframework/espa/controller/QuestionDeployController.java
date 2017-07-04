@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.espa.service.QuestionDeployService;
 
-@RequestMapping("/mgr/question/deploy")
+@RequestMapping("/question/deploy")
 @Controller
 public class QuestionDeployController {
 	Logger logger = LoggerFactory.getLogger(QuestionDeployController.class.getName());
@@ -176,5 +176,30 @@ public class QuestionDeployController {
 			return new JSONPObject(c, rtnMap);
 		}
 		return new JSONPObject(c, models);
+	}
+	
+	@RequestMapping(value = "/readDeployedQuestionListByUser.do")
+	public @ResponseBody JSONPObject readDeployedQuestionListByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("---------------->/readDeployedQuestionListByUser.do");
+		logger.debug("params: " + params);
+		return new JSONPObject(c, deployService.getDeployedQuestionListByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+	}
+	
+	@RequestMapping(value = "/readDeployedQuestionDetailByUser.do")
+	public @ResponseBody JSONPObject readDeployedQuestionDetailByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("---------------->/readDeployedQuestionDetailByUser.do");
+		return new JSONPObject(c, deployService.getDeployedQuestionDetailByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+	}
+	
+	@RequestMapping(value = "/groupsByUser.do")
+	public @ResponseBody JSONPObject getGroupOfDeployedQuestionByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("---------------->/getGroupOfDeployedQuestionByUser.do");
+		return new JSONPObject(c, deployService.getGroupOfDeployedQuestionByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
+	}
+	
+	@RequestMapping(value = "/groups.do")
+	public @ResponseBody JSONPObject getGroupOfDeployedQuestion(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("---------------->/getGroupOfDeployedQuestion.do");
+		return new JSONPObject(c, deployService.getGroupOfDeployedQuestion((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
 	}
 }

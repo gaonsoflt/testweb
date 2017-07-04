@@ -50,9 +50,27 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	/*
 	 * ESPA Student
 	 */
-	@RequestMapping(value = "/question.do")
+	@RequestMapping(value = "/class/classplan.do")
+	public ModelAndView classPlan(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/class/classPlan");
+		mav.addObject("menu", menuService.getMenuVo("classPlan"));
+		return mav;
+	}
+	@RequestMapping(value = "/class/classref.do")
+	public ModelAndView classRef(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/class/classRef");
+		mav.addObject("menu", menuService.getMenuVo("classRef"));
+		return mav;
+	}
+	@RequestMapping(value = "/class/question/deploy/result.do")
+	public ModelAndView questionResult(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/class/questionResult");
+		mav.addObject("menu", menuService.getMenuVo("questionResult"));
+		return mav;
+	}
+	@RequestMapping(value = "/class/question/deploy.do")
 	public ModelAndView question(Model model) throws Exception {
-		ModelAndView mav = new ModelAndView("espa/student/question");
+		ModelAndView mav = new ModelAndView("espa/class/question");
 		mav.addObject("menu", menuService.getMenuVo("question"));
 		return mav;
 	}
@@ -77,10 +95,10 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		return mav;
 	}
 	
-	@RequestMapping(value = "/mgr/score.do")
+	@RequestMapping(value = "/mgr/question/deploy/result.do")
 	public ModelAndView mgrScore(Model model) throws Exception {
-		ModelAndView mav = new ModelAndView("espa/mgr/config");
-		mav.addObject("menu", menuService.getMenuVo("espaMgrScore"));
+		ModelAndView mav = new ModelAndView("espa/mgr/questionResultAll");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
 		return mav;
 	}
 	

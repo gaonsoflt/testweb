@@ -21,7 +21,7 @@ import egovframework.espa.service.QuestionExecuteService;
 import egovframework.espa.service.impl.QuestionDeployMapper;
 import egovframework.systemmgr.service.SystemMgrUserService;
 
-@RequestMapping("/question/answer")
+@RequestMapping("/question/deploy/answer")
 @Controller
 public class QuestionAnswerController {
 	Logger logger = LoggerFactory.getLogger(QuestionAnswerController.class.getName());
@@ -38,23 +38,17 @@ public class QuestionAnswerController {
 	@Resource(name = "systemMgrUserService")
 	private SystemMgrUserService userService;
 	
-	@RequestMapping(value = "/form.do", method = RequestMethod.GET)
-	public ModelAndView form(HttpServletRequest request,  @RequestParam("seq") int deploySeq) {
-		ModelAndView mav = new ModelAndView("espa/student/form");
-		mav.addObject("deploy_seq", deploySeq);
-		return mav;
-	}
 	
 	@RequestMapping(value = "/gradingresult.do", method = RequestMethod.GET)
 	public ModelAndView form(HttpServletRequest request,  ModelAndView model) {
-		ModelAndView mav = new ModelAndView("espa/student/gradingResult");
+		ModelAndView mav = new ModelAndView("espa/class/gradingResult");
 		logger.debug("model map: "+ model.getModelMap());
 		return mav;
 	}
 	
 	@RequestMapping(value = "/submit.do", method = RequestMethod.POST)
 	public ModelAndView submit(HttpServletRequest request, @RequestParam(value="submit_file", required=false)MultipartFile file) throws Exception {
-		ModelAndView mav = new ModelAndView("redirect:/question/answer/gradingresult.do");
+		ModelAndView mav = new ModelAndView("redirect:/question/deploy/answer/gradingresult.do");
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		param.put("deploy_seq", request.getParameter("deploy_seq"));
 		String answerType = request.getParameter("answer_type");

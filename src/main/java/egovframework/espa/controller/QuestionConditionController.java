@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.espa.service.QuestionConditionService;
 
-@RequestMapping("/mgr/question/condition")
+@RequestMapping("/question/condition")
 @Controller
 public class QuestionConditionController {
 Logger logger = LoggerFactory.getLogger(QuestionConditionController.class.getName());

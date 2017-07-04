@@ -34,11 +34,16 @@ public class StringUtil {
 		}			
 		
 		while(stA.hasMoreTokens() || stB.hasMoreTokens()) {
-			String _a = stA.nextToken();
-			String _b = stB.nextToken();
-			boolean isEquals = _a.equals(_b);
-			System.out.println("compare: " + _a + "=" + _b + ": " + isEquals);
-			if(!isEquals) {
+			try{
+				String _a = stA.nextToken();
+				String _b = stB.nextToken();
+				boolean isEquals = _a.equals(_b);
+				System.out.println("compare: " + _a + "=" + _b + ": " + isEquals);
+				if(!isEquals) {
+					return false;
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 		}

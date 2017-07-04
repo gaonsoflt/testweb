@@ -16,4 +16,12 @@ public interface QuestionDeployService {
 	public int updateDeploy(HashMap<String, Object> map) throws Exception;
 	
 	public int deleteDeploy(HashMap<String, Object> map) throws Exception;  
+	
+	public HashMap<String, Object> getDeployedQuestionListByUser(HashMap<String, Object> map);
+	
+	public HashMap<String, Object> getDeployedQuestionDetailByUser(HashMap<String, Object> map);
+	
+	public HashMap<String, Object> getGroupOfDeployedQuestionByUser(HashMap<String, Object> map);
+	
+	public HashMap<String, Object> getGroupOfDeployedQuestion(HashMap<String, Object> map);
 }

@@ -115,6 +115,7 @@
 	var G_Condition = "ALL";
 	var G_Keyword = ""; 
 	var wnd;
+	var temp;
 	
 	$(function() {
 		var searchData = [ 
@@ -170,6 +171,7 @@
 		// invisible delete button
 		$("#window .k-multiselect").css({ "display" : "inline-block" });
 		$("#group").css({ "display" : "none" });
+		$("#save-btn").css("display", "inline-block");
 		$("#delete-btn").css("display", "none");
 		
 		// open window
@@ -256,6 +258,7 @@
 							title:			{ type: "string" },
 							status:			{ type: "string" },
 							lana_type:		{ type: "string" },
+							candidate:		{ type: "number" },
 							submit_from:	{ type: "string" },
 							submit_to:		{ type: "string" },
 							max_submit_cnt:	{ type: "number" }
@@ -280,6 +283,7 @@
 			scrollable: true,
 			sortable : true,
 			mobile: true,
+			filterable: true,
 			pageable : {
 				pageSizes : true,
 				messages : {
@@ -291,16 +295,50 @@
             toolbar: kendo.template($("#toolbar-template").html()),
 			columns: [
 				{ field: "deploy_seq", hidden: true },
-				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" } },
-				{ field: "title", title: "제목", attributes : { style : "text-align: center;" } },
-				{ field: "status", title: "상태", attributes : { style : "text-align: center;" } },
-				{ field: "question_seq", title: "문제ID", attributes : { style : "text-align: center;" } },
-				{ field: "question_title", title: "문제제목", attributes : { style : "text-align: center;" } },
-				{ field: "question_language", title: "언어", attributes : { style : "text-align: center;" } },
-				{ field: "max_submit_cnt", title: "최대제출횟수", attributes : { style : "text-align: center;" } },
-				{ field : "submit_from", title : "제출시작", width : 150, attributes : {	style : "text-align: center;" },
+				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" },
+					filterable: { 
+                        dataSource: {
+                            transport: {
+                                read: {
+                                    url: "${contextPath}/question/deploy/groups.do",
+                                    dataType: "jsonp",
+                                    data: {
+                                    	field: "group_name"
+                					}
+                                },
+                                parameterMap: function(data, type) {//type =  read, create, update, destroy
+            						if (type == "read"){
+            		                   	var result = {
+            							};
+            							return { params: kendo.stringify(result) }; 
+            						}
+            					},
+                           }
+                        },
+                        multi: true 
+                    }
+				},
+				{ field: "title", title: "제목", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "status", title: "상태", attributes : { style : "text-align: center;" },
+					filterable: { 
+                        dataSource: new kendo.data.DataSource({
+                            data: [
+								{"status":"대기"},
+								{"status":"마감"},
+								{"status":"진행중"}
+							]
+                        }),
+                        multi: true 
+                    }
+				},
+				{ field: "question_seq", title: "문제ID", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "question_title", title: "문제제목", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "question_language", title: "언어", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "max_submit_cnt", title: "최대제출횟수", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "candidate", title: "응시자", width : 80, attributes : { style : "text-align: center;" }, filterable: false },
+				{ field : "submit_from", title : "제출시작", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_from == '') ? '' : kendo.toString(new Date(Number(submit_from)), 'yyyy-MM-dd HH:mm') #" },
-				{ field : "submit_to", title : "제출마감", width : 150, attributes : {	style : "text-align: center;" },
+				{ field : "submit_to", title : "제출마감", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_to == '') ? '' : kendo.toString(new Date(Number(submit_to)), 'yyyy-MM-dd HH:mm') #" }
 			],
 			editable: false,
@@ -313,7 +351,16 @@
 				G_DEPLOYSEQ = selectedItem.deploy_seq; 
 				console.log("selected item: " + G_DEPLOYSEQ + "(seq)");
 				deployViewModel.dataSource.read();
-				$("#delete-btn").css("display", "inline-block");
+				if(selectedItem.status == '마감') {
+					$("#save-btn").css("display", "none");
+					$("#delete-btn").css("display", "none");
+				} else if(selectedItem.status == '진행중') {
+					$("#save-btn").css("display", "inline-block");
+					$("#delete-btn").css("display", "none");
+				} else {
+					$("#save-btn").css("display", "inline-block");
+					$("#delete-btn").css("display", "inline-block");
+				}
 				$("#window .k-multiselect").css({ "display" : "none" });
 				$("#group").css({ "display" : "inline-block" });
                 // open window
@@ -406,10 +453,15 @@
 					}
 					deployViewModel.set("selected", _data);
 		        },
+		        requestEnd: function(e) {
+		        	console.log("deployViewModel:dataSource:requestEnd");
+		        	if(e.type != 'read' && e.response.error == null) {
+		        		alert("정상적으로 처리되었습니다.");	
+		        	} 
+		        },
 		        sync: function(e) { 
 		        	console.log("deployViewModel:dataSource:sync");
      			    console.log(this.data()[0]);
-					alert("정상적으로 처리되었습니다.");
 					closeWindow(e);
 				},
 				dataBound: function(e){ 

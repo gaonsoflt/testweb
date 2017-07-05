@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import egovframework.espa.core.agent.ESPAExecuteAgent;
+import egovframework.espa.core.execute.handler.ESPAExecuteResultHandler;
 import egovframework.espa.dao.ESPAExecuteResultVO;
 import egovframework.espa.dao.ESPAExecuteVO;
-import egovframework.espa.handler.ESPAExecuteResultHandler;
 import egovframework.espa.service.ConfigService;
 import egovframework.espa.service.QuestionExecuteService;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
@@ -46,7 +46,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	private QuestionGradingMapper gradingMapper;
 	
 	@Override
-	public ESPAExecuteVO executeTest(HashMap<String, Object> map) throws Exception {
+	public void executeTest(HashMap<String, Object> map) throws Exception {
 		ESPAExecuteVO executeVO = new ESPAExecuteVO();
 		HashMap<String, Object> result = ((List<HashMap<String, Object>>) questionMapper.selectQuestion(map)).get(0);
 		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(map);
@@ -67,11 +67,14 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
 		agent.setResultHandler(new ESPAExecuteResultHandler() {
 			@Override
-			public void handleResult(List<ESPAExecuteResultVO> vl) {
+			public void handleResult(ESPAExecuteVO vo) {
 				try {
-					for (ESPAExecuteResultVO vo : vl) {
-						logger.debug("param: " + vo);
-						gradingMapper.updateGradingTestResult(vo);
+					if(vo.getError() == null) {
+						for (ESPAExecuteResultVO result : vo.getResultList()) {
+							logger.debug("param: " + result);
+							gradingMapper.updateGradingTestResult(result);
+							//result.getException();
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -79,14 +82,14 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 			}
 		});
 		try {
-			return agent.execute();
+			agent.execute();
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 	
 	@Override
-	public ESPAExecuteVO execute(HashMap<String, Object> map) throws Exception {
+	public void execute(HashMap<String, Object> map) throws Exception {
 		final ESPAExecuteVO executeVO = new ESPAExecuteVO();
 		HashMap<String, Object> result = ((List<HashMap<String, Object>>) deployMapper.readDeployedQuestionDetailByUser(map)).get(0);
 		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(result);
@@ -110,11 +113,13 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 		ESPAExecuteAgent agent = new ESPAExecuteAgent(executeVO, config);
 		agent.setResultHandler(new ESPAExecuteResultHandler() {
 			@Override
-			public void handleResult(List<ESPAExecuteResultVO> vl) {
+			public void handleResult(ESPAExecuteVO vo) {
 				try {
-					for (ESPAExecuteResultVO vo : vl) {
-						logger.debug("param: " + vo);
-						gradingHisMapper.createGradingHistory(vo);
+					if(vo.getError() == null) {
+						for (ESPAExecuteResultVO result : vo.getResultList()) {
+							logger.debug("param: " + result);
+							gradingHisMapper.createGradingHistory(result);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -122,7 +127,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 			}
 		});
 		try {
-			return agent.execute();
+			agent.execute();
 		} catch (Exception e) {
 			throw e;
 		}

@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.common.util.FileUtil;
-import egovframework.espa.dao.ESPAExecuteVO;
 import egovframework.espa.service.QuestionAnswerService;
 import egovframework.espa.service.QuestionExecuteService;
 import egovframework.espa.service.impl.QuestionDeployMapper;
@@ -42,7 +41,7 @@ public class QuestionAnswerController {
 	@RequestMapping(value = "/gradingresult.do", method = RequestMethod.GET)
 	public ModelAndView form(HttpServletRequest request,  ModelAndView model) {
 		ModelAndView mav = new ModelAndView("espa/class/gradingResult");
-		logger.debug("model map: "+ model.getModelMap());
+//		logger.debug("model map: "+ model.getModelMap());
 		return mav;
 	}
 	
@@ -60,10 +59,11 @@ public class QuestionAnswerController {
 		// insert answer history
 		if(questionAnswerService.saveAnswer(param)) {
 			param.put("user_seq", userService.getLoginUserInfo().getUserseq());
-			ESPAExecuteVO result = executeService.execute(param);
-			result.setCode("");
-			result.setGrading(null);
-			mav.addObject("result", result);
+			executeService.execute(param);
+//			ESPAExecuteVO result = executeService.execute(param);
+//			result.setCode("");
+//			result.setGrading(null);
+//			mav.addObject("result", result);
 		}
 
 		return mav;

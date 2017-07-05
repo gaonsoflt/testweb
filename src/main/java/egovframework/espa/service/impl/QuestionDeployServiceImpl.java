@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import egovframework.espa.service.QuestionDeployService;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.systemmgr.service.SystemMgrUserService;
+import egovframework.systemmgr.service.impl.SystemMgrUserGroupMapper;
 
 
 @Service("questionDeployService")
@@ -20,6 +21,9 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	
 	@Resource(name = "questionDeployMapper")
 	private QuestionDeployMapper deployMapper;
+	
+	@Resource(name = "questionCadidateMapper")
+	private QuestionCadidateMapper candidateMapper;
 	
 	@Resource(name = "systemMgrUserService")
 	private SystemMgrUserService userService;
@@ -47,6 +51,8 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 		for (HashMap<String, Object> group : groups) {
 			map.put("group_id", group.get("cd_id"));
 			executeCnt = deployMapper.createDeploy(map);
+			logger.debug("get pk: " + map.get("deploy_seq"));
+			candidateMapper.createCandidate(map);
 		}
 		return executeCnt;
 	}

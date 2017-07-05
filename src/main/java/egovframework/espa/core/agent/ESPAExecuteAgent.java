@@ -7,8 +7,8 @@ import egovframework.espa.core.execute.ESPAExcuteCode;
 import egovframework.espa.core.execute.ESPAExecuteException;
 import egovframework.espa.core.execute.handler.ESPAExecuteHandler;
 import egovframework.espa.core.execute.handler.ESPAExecuteJavaHandler;
+import egovframework.espa.core.execute.handler.ESPAExecuteResultHandler;
 import egovframework.espa.dao.ESPAExecuteVO;
-import egovframework.espa.handler.ESPAExecuteResultHandler;
 import egovframework.espa.service.ConfigService;
 
 public class ESPAExecuteAgent {
@@ -39,7 +39,7 @@ public class ESPAExecuteAgent {
 		this.config = config;
 	}
 
-	public ESPAExecuteVO execute() throws ESPAExecuteException {
+	public void execute() throws ESPAExecuteException {
 		ESPAExecuteHandler handler = null;
 		if(executeVo == null) {
 			throw new NullPointerException("ESPAExecuteVO is null");
@@ -57,14 +57,19 @@ public class ESPAExecuteAgent {
 			throw new ESPAExecuteException("not support language: " + executeVo.getLanguage(), ESPAExcuteCode.ERR_NOT_SUPPORT);
 		}
 		logger.debug("Start ESPAExecuteHandler: " + executeVo.getLanguage());
-		handler.execute();
+		try{
+			handler.execute();
+		} catch (ESPAExecuteException e) {
+			e.printStackTrace();
+			executeVo.setError(e);
+			e.getMessage();
+		}
 		
+		executeVo.setResultList(handler.getResult());
 		logger.debug("Finish ESPAExecuteHandler");
 		if(resultHandler != null) {
 			logger.debug("Handle resultHandler");
-			resultHandler.handleResult(handler.getResult());
+			resultHandler.handleResult(executeVo);
 		}
-		executeVo.setResultList(handler.getResult());
-		return executeVo;
 	}
 }

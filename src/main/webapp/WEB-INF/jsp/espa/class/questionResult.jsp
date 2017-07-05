@@ -182,7 +182,7 @@
                                     	field: "group_name"
                 					}
                                 },
-                                parameterMap: function(data, type) {//type =  read, create, update, destroy
+                                parameterMap: function(data, type) {
             						if (type == "read"){
             		                   	var result = {
             							};
@@ -195,7 +195,17 @@
                     }
 				},
 				{ field: "title", title: "제목", attributes : { style : "text-align: center;" }, filterable: false },
-				{ field: "status", title: "상태", width : "10%", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "status", title: "상태", width : "10%", attributes : { style : "text-align: center;" },
+					filterable: { 
+                        dataSource: new kendo.data.DataSource({
+                            data: [
+								{"status":"마감"},
+								{"status":"진행중"}
+							]
+                        }),
+                        multi: true 
+                    }
+				},
 				{ field: "score", title: "점수", width : "10%", attributes : { style : "text-align: center;" }, filterable: false },
 				{ field : "submit_dt", title : "최종제출일시", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_dt == '') ? '미제출' : kendo.toString(new Date(Number(submit_dt)), 'yyyy-MM-dd HH:mm') #" },
@@ -206,7 +216,7 @@
 			],
 			editable: false,
 			noRecords: {
-				template: "현재 진행중인 문제가 없습니다."
+				template: "시험결과가 없습니다."
             },
             change: function(e) {
 				console.log("deploy-grid:change");

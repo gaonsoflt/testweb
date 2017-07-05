@@ -270,18 +270,50 @@
 			sortable : true,
 			mobile: true,
 			pageable : false,
-			filterable: false,
+			filterable: true,
             toolbar: false,
 			columns: [
 				{ field: "deploy_seq", hidden: true },
-				{ field: "group_name", title: "배포그룹", width: "20%", attributes : { style : "text-align: center;" } },
-				{ field: "title", title: "제목", attributes : { style : "text-align: center;" } },
-				{ field: "status", title: "상태", width : "10%", attributes : { style : "text-align: center;" } },
-				{ field: "max_submit_cnt", title: "최대제출횟수", width : "8%", attributes : { style : "text-align: center;" } },
-				{ field: "user_submit_cnt", title: "현재제출횟수", width : "8%", attributes : { style : "text-align: center;" } },
-				{ field : "submit_from", title : "제출시작", width : 150, attributes : {	style : "text-align: center;" },
+				{ field: "group_name", title: "배포그룹", width: "20%", attributes : { style : "text-align: center;" },
+					filterable: { 
+                        dataSource: {
+                            transport: {
+                                read: {
+                                    url: "${contextPath}/question/deploy/groups.do",
+                                    dataType: "jsonp",
+                                    data: {
+                                    	field: "group_name"
+                					}
+                                },
+                                parameterMap: function(data, type) {//type =  read, create, update, destroy
+            						if (type == "read"){
+            		                   	var result = {
+            							};
+            							return { params: kendo.stringify(result) }; 
+            						}
+            					},
+                           }
+                        },
+                        multi: true 
+                    }
+				},
+				{ field: "title", title: "제목", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "status", title: "상태", width : "10%", attributes : { style : "text-align: center;" }, 
+					filterable: { 
+                        dataSource: new kendo.data.DataSource({
+                            data: [
+								{"status":"마감"},
+								{"status":"진행중"}
+							]
+                        }),
+                        multi: true 
+                    }
+				},
+				{ field: "max_submit_cnt", title: "최대제출횟수", width : "8%", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "user_submit_cnt", title: "현재제출횟수", width : "8%", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field : "submit_from", title : "제출시작", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_from == '') ? '' : kendo.toString(new Date(Number(submit_from)), 'yyyy-MM-dd HH:mm') #" },
-				{ field : "submit_to", title : "제출마감", width : 150, attributes : {	style : "text-align: center;" },
+				{ field : "submit_to", title : "제출마감", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_to == '') ? '' : kendo.toString(new Date(Number(submit_to)), 'yyyy-MM-dd HH:mm') #" }
 			],
 			editable: false,

@@ -1,5 +1,7 @@
 package egovframework.systemmgr.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -8,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.espa.service.ConfigService;
+import egovframework.systemmgr.service.SystemMgrBBSService;
+import egovframework.systemmgr.service.SystemMgrCodeService;
 import egovframework.systemmgr.service.SystemMgrMenuService;
 
 @Controller
@@ -30,7 +36,7 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	}
 
 	@RequestMapping(value = "/dashboard.do")
-	public ModelAndView showDashboard(Model model) throws Exception {
+	public ModelAndView showDashboardView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("systemmgr/dashboard");
 		mav.addObject("menu", menuService.getMenuVo("notice"));
 		model.addAttribute("menuId", "");
@@ -41,9 +47,20 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	 * BBS
 	 */
 	@RequestMapping(value = "/bbs/notice.do")
-	public ModelAndView bbsNotice(Model model) throws Exception {
+	public ModelAndView bbsNoticeView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("bbs/notice");
 		mav.addObject("menu", menuService.getMenuVo("notice"));
+		return mav;
+	}
+	
+	@Resource(name = "systemMgrBBSService")
+	private SystemMgrBBSService bbsService;
+	@RequestMapping(value = "/bbs/board.do", method = RequestMethod.GET)
+	public ModelAndView bbsCommonView(Model model, @RequestParam(value="bbs", required=true) int bbsID)  throws Exception {
+		logger.debug("param: bbs=" + bbsID);
+		ModelAndView mav = new ModelAndView("bbs/bbs");
+		Map<String, Object> bbsInfo = bbsService.getBBSDetail(bbsID);
+		mav.addObject("bbsInfo", bbsInfo);
 		return mav;
 	}
 	
@@ -51,25 +68,25 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	 * ESPA Student
 	 */
 	@RequestMapping(value = "/class/classplan.do")
-	public ModelAndView classPlan(Model model) throws Exception {
+	public ModelAndView classPlanView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/class/classPlan");
 		mav.addObject("menu", menuService.getMenuVo("classPlan"));
 		return mav;
 	}
 	@RequestMapping(value = "/class/classref.do")
-	public ModelAndView classRef(Model model) throws Exception {
+	public ModelAndView classRefView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/class/classRef");
 		mav.addObject("menu", menuService.getMenuVo("classRef"));
 		return mav;
 	}
 	@RequestMapping(value = "/class/question/deploy/result.do")
-	public ModelAndView questionResult(Model model) throws Exception {
+	public ModelAndView questionResultView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/class/questionResult");
 		mav.addObject("menu", menuService.getMenuVo("questionResult"));
 		return mav;
 	}
 	@RequestMapping(value = "/class/question/deploy.do")
-	public ModelAndView question(Model model) throws Exception {
+	public ModelAndView questionView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/class/question");
 		mav.addObject("menu", menuService.getMenuVo("question"));
 		return mav;
@@ -79,7 +96,7 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	 * ESPA Management
 	 */
 	@RequestMapping(value = "/mgr/question.do")
-	public ModelAndView mgrQuestion(Model model) throws Exception {
+	public ModelAndView mgrQuestionView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionMgr");
 		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
 		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
@@ -89,21 +106,21 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	}
 	
 	@RequestMapping(value = "/mgr/question/deploy.do")
-	public ModelAndView mgrDeploy(Model model) throws Exception {
+	public ModelAndView mgrDeployView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionDeploy");
 		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionDeploy"));
 		return mav;
 	}
 	
 	@RequestMapping(value = "/mgr/question/deploy/result.do")
-	public ModelAndView mgrScore(Model model) throws Exception {
+	public ModelAndView mgrScoreView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionResultAll");
 		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
 		return mav;
 	}
 	
 	@RequestMapping(value = "/mgr/config.do")
-	public ModelAndView mgrConfig(Model model) throws Exception {
+	public ModelAndView mgrConfigView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/config");
 		mav.addObject("menu", menuService.getMenuVo("espaMgrConfig"));
 		return mav;
@@ -151,6 +168,13 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	public ModelAndView userView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("systemmgr/user");
 		mav.addObject("menu", menuService.getMenuVo("systemMgrUser"));
+		return mav;
+	}
+	
+	@RequestMapping(value = "/sm/bbs.do")
+	public ModelAndView bbsView(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("systemmgr/bbs");
+		mav.addObject("menu", menuService.getMenuVo("systemMgrBBS"));
 		return mav;
 	}
 }

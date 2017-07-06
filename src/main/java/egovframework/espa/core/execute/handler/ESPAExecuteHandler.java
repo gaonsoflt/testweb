@@ -30,19 +30,15 @@ public abstract class ESPAExecuteHandler {
 	private ESPAExecuteException exception;
 	private List<ESPAExecuteResultVO> result;
 	
-//	public abstract void execute() throws ESPAExecuteException;
-	public abstract boolean createSourceFile() throws ESPAExecuteException;
-	public abstract boolean compile() throws ESPAExecuteException;
-	public abstract long run() throws ESPAExecuteException;
-	public abstract boolean createInputFile(String content) throws ESPAExecuteException;
-	public abstract String readOutputFile() throws ESPAExecuteException;
+	protected abstract boolean createSourceFile() throws ESPAExecuteException;
+	protected abstract boolean compile() throws ESPAExecuteException;
+	protected abstract long run() throws ESPAExecuteException;
+	protected abstract boolean createInputFile(String content) throws ESPAExecuteException;
+	protected abstract String readOutputFile() throws ESPAExecuteException;
 
-	protected void checkCodeSize() throws ESPAExecuteException {
-	}
-	
-	protected void checkCondBanKeyword() throws ESPAExecuteException {
+	protected boolean checkCondBanKeyword(String[] keywords) throws ESPAExecuteException {
 		logger.debug("check ban_keyword");
-		for (String keyword : vo.getBanKeyword()) {
+		for (String keyword : keywords) {
 			if (!keyword.isEmpty()) {
 				boolean included = StringUtil.existString(vo.getCode(), keyword);
 
@@ -55,14 +51,24 @@ public abstract class ESPAExecuteHandler {
 			}
 		}
 		logger.debug("pass to check ban_keyword");
+		return true;
 	}
+	
+	protected boolean checkCodeSize(String code) throws ESPAExecuteException {
+		if(code.length() > vo.getMaxCodeSize()) {
+			throw new ESPAExecuteException("this size of code is too larger than the max size of code (" + vo.getMaxCodeSize() + ")", ESPAExcuteCode.ERR_CODE_SIZE);
+		}
+		logger.debug("pass to check code size");
+		return true;
+	}
+	
 	
 	public void execute() throws ESPAExecuteException {
 		long start = System.nanoTime();
 
 		// 0. check ban_keyword
-		checkCondBanKeyword();
-		checkCodeSize();
+		checkCondBanKeyword(vo.getBanKeyword());
+		checkCodeSize(vo.getCode());
 
 		// 1. create execute file(.java, .c, ccp...)
 		if(createSourceFile()) {

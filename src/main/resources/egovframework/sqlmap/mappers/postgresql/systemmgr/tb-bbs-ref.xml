@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.systemmgr.service.impl.SystemMgrBBSMapper"> 
+	<update id="createTable" parameterType="map">
+		CREATE TABLE IF NOT EXISTS tb_bbs_${table_name} (
+	        seq int4 NOT NULL,
+			title varchar(255) NOT NULL,
+			content text,
+			reg_dt timestamp,
+			reg_usr varchar(64),
+			mod_dt timestamp,
+			mod_usr varchar(64),
+			PRIMARY KEY (seq)
+  		)
+	</update>
+	
+	<update id="dropTable" parameterType="map">
+		DROP TABLE tb_bbs_${table_name}
+	</update>
+	
+	<select id="readBBSList" parameterType="map" resultType="map">
+		SELECT *
+			FROM (
+				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+				FROM (
+					SELECT
+						bbs_seq,
+						bbs_name,
+						bbs_id,
+						CASE WHEN use_attach = '1' THEN true ELSE false end use_attach,
+						reg_usr,
+						reg_dt,
+						mod_usr,
+						mod_dt
+					FROM TB_BBS_REF
+					<where>
+			       		<if test="CONDITION eq 'TITLE'">
+			       			AND title LIKE '%'||#{KEYWORD}||'%'
+			       		</if>
+		       		</where>
+				ORDER BY bbs_seq DESC
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+	</select>
+	
+	<select id="readBBSDetail" parameterType="map" resultType="map">
+		SELECT 
+			bbs_seq,
+			bbs_name,
+			bbs_id,
+			CASE WHEN use_attach = '1' THEN true ELSE false end use_attach,
+			reg_usr,
+			reg_dt,
+			mod_usr,
+			mod_dt
+		FROM TB_BBS_REF
+		WHERE bbs_seq = #{bbs_seq}
+	</select>
+	
+	<select id="readBBSListCount" parameterType="map" resultType="integer">
+		SELECT COUNT(*)
+		FROM TB_BBS_REF
+	</select>
+	
+	<insert id="createBBS">
+		INSERT INTO TB_BBS_REF (
+			bbs_seq,
+			bbs_name,
+			bbs_id,
+			use_attach,
+			reg_usr,
+			reg_dt,
+			mod_usr,
+			mod_dt
+		) VALUES (
+			nextval('sq_tb_bbs_ref'), 
+			#{bbs_name}, 
+			#{bbs_id}, 
+			CASE WHEN #{use_attach} = true THEN '1' ELSE '0' end, 
+			#{reg_usr}, 
+			now(), 
+			#{mod_usr}, 
+			now() 
+		)
+	</insert>
+	
+	<update id="updateBBS">
+		UPDATE TB_BBS_REF
+		SET
+			bbs_name = #{bbs_name},
+			use_attach = CASE WHEN #{use_attach} = true THEN '1' ELSE '0' end,
+			mod_dt = now(), 
+			mod_usr = #{mod_usr} 
+		WHERE bbs_seq = cast(#{bbs_seq} as integer)
+	</update>
+	
+	<delete id="deleteBBS">
+		DELETE FROM TB_BBS_REF
+		WHERE bbs_seq = CAST(#{bbs_seq} as integer) 
+	</delete>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.systemmgr.service.impl.SystemMgrBBSReplyMapper"> 
+	
+	<select id="readReplyListByBBS" parameterType="map" resultType="map">
+		SELECT
+			bbs_seq,
+			bbs_content_seq,
+			reply,
+			reg_usr,
+			reg_dt,
+			mod_dt,
+			reply_seq
+		FROM TB_BBS_REF
+		WHERE bbs_seq = CAST(#{bbs_seq} as integer)
+		AND bbs_content_seq = CAST(#{bbs_content_seq} as integer) 
+		ORDER BY reg_dt
+	</select>
+	
+	<insert id="createReply">
+		INSERT INTO TB_BBS_REPLY (
+			bbs_seq,
+			bbs_content_seq,
+			reply,
+			reg_usr,
+			reg_dt,
+			mod_dt,
+			reply_seq
+		) VALUES (
+			CAST(#{bbs_seq} as integer), 
+			CAST(#{bbs_content_seq} as integer), 
+			#{reply}, 
+			#{reg_usr}, 
+			now(), 
+			now(),
+			#{mod_usr}, 
+			nextval('sq_tb_bbs_reply') 
+		)
+	</insert>
+	
+	<update id="updateReply">
+		UPDATE TB_BBS_REPLY
+		SET
+			reply = #{reply},
+			mod_dt = now()
+		WHERE reply_seq = CAST(#{reply_seq} as integer) 
+	</update>
+	
+	<delete id="deleteReply">
+		DELETE FROM TB_BBS_REPLY
+		WHERE reply_seq = CAST(#{reply_seq} as integer) 
+	</delete>
+</mapper>

@@ -35,9 +35,13 @@ public class QuestionGradingHistoryServiceImpl extends EgovAbstractServiceImpl i
 			map.put("question_seq", question.get("qestion_seq"));
 			
 			List<HashMap<String, Object>> grading = gradingHisMapper.readLatestGradingHistoryByUser(map);
-			float score = QuestionUtil.calculateScore(grading);
-			question.put("submit_dt", (grading.size() > 0) ? grading.get(0).get("submit_dt") : "");
-			question.put("score", score);
+			if(grading.size() > 0) {
+				float score = QuestionUtil.calculateScore(grading);
+				question.put("submit_dt", grading.get(0).get("submit_dt"));
+				question.put("score", score);
+			} else {
+				question.put("score", 0);
+			}
 			result.add(question);
 		}
 		return result;

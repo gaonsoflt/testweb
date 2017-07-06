@@ -119,6 +119,7 @@
 			A.title,
 			C.title as question_title,
 			C.lang_type,
+			C.max_codesize,
 			(select Count(*) FROM tb_question_candidate where deploy_seq = a.deploy_seq) as candidate,
 			(select count(distinct(user_seq)) From tb_question_answer_his where deploy_seq = a.deploy_seq) as submit_user
 		FROM TB_QUESTION_DEPLOY A 
@@ -141,6 +142,7 @@
 			(select count(*) from tb_question_answer_his where user_seq = cast(#{user_seq} as integer) and deploy_seq = A.deploy_seq) as user_submit_cnt,
 			A.title,
 			C.title as question_title,
+			C.max_codesize,
 			C.lang_type
 		FROM TB_QUESTION_DEPLOY A 
 		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID

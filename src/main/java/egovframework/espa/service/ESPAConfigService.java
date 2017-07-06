@@ -14,4 +14,6 @@ public interface ESPAConfigService {
 	public int updateESPAConfig(HashMap<String, Object> map) throws Exception;
 	
 	public int deleteESPAConfig(HashMap<String, Object> map) throws Exception;
+	
+	public HashMap<String, Object> getConfigGroupList(HashMap<String, Object> map);
 }

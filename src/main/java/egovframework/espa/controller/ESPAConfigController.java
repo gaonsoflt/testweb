@@ -32,12 +32,6 @@ Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
 	@Autowired
 	private ConfigService config;
 
-	/**
-	 * 사용자 정보를 조회함
-	 * @param c
-	 * @param params
-	 * @return
-	 */
 	@RequestMapping(value = "/read.do")
 	public @ResponseBody JSONPObject readESPAConfig(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		HashMap<String, Object> paramMap = new HashMap<String, Object>();
@@ -62,13 +56,6 @@ Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
 		return new JSONPObject(c,rtnMap);
 	}
 	
-
-	/**
-	 * 사용자 정보를 저장함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/create.do")
 	public @ResponseBody JSONPObject createESPAConfig(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/create.do");
@@ -91,12 +78,6 @@ Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
 		return new JSONPObject(c, models);
 	}
 	
-	/**
-	 * 사용자 정보를 수정함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/update.do")
 	public @ResponseBody JSONPObject updateESPAConfig(@RequestParam("callback") String c, @RequestParam("models") String models) {  
 		logger.debug("---------------->/update.do");
@@ -119,13 +100,6 @@ Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
 		return new JSONPObject(c, models);
 	}
 	
-	
-	/**
-	 * 사용자 정보를 삭제함
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/delete.do")
 	public @ResponseBody JSONPObject deleteESPAConfig(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/delete.do");
@@ -158,5 +132,11 @@ Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@RequestMapping(value = "/groups.do")
+	public @ResponseBody JSONPObject getConfigGroupList(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("---------------->/getConfigGroupList.do");
+		return new JSONPObject(c, configSvc.getConfigGroupList((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
 	}
 }

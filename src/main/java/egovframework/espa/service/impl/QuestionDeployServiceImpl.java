@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import egovframework.espa.service.QuestionDeployService;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.systemmgr.service.SystemMgrUserService;
-import egovframework.systemmgr.service.impl.SystemMgrUserGroupMapper;
 
 
 @Service("questionDeployService")

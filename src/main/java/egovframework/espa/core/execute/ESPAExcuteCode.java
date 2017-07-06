@@ -2,6 +2,7 @@ package egovframework.espa.core.execute;
 
 public enum ESPAExcuteCode {
 	ERR_BAN_KW,
+	ERR_CODE_SIZE,
 	ERR_CRE_FILE,
 	ERR_TIMEOUT,
 	ERR_EXEC,

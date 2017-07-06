@@ -131,4 +131,14 @@
 		]]>
 		AND cfg_id = #{cfg_id}
 	</select>
+	
+	<select id="readConfigGroupList" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			cfg_group
+		FROM tb_espa_config
+		<![CDATA[
+		WHERE use_yn = '1'
+		]]>
+		GROUP BY cfg_group
+	</select>
 </mapper>

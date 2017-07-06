@@ -62,7 +62,7 @@ public class FileUtil {
 			String buff;
 			br = new BufferedReader(new FileReader(file));
 			while((buff = br.readLine()) != null) {
-				rtn.append(buff).append("\n");
+				rtn.append(buff).append(System.getProperty("line.separator"));
 				System.out.println(buff);
 			}
 			System.out.println("[BBAEK] read file: successed");

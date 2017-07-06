@@ -3,15 +3,21 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionGradingHistoryMapper"> 
 	<select id="readLatestGradingHistoryByUser" parameterType="hashMap" resultType="hashMap">
-		SELECT 
-			*
-		FROM TB_QUESTION_GRADING_HIS
-		WHERE deploy_seq = CAST(#{deploy_seq} as integer)
-		AND user_seq = CAST(#{user_seq} as integer)
-		AND submit_dt = (
+		SELECT
+			A.deploy_seq as deploy_seq,
+			A.user_seq as user_seq,
+			A.submit_dt,
+			B.score_rate,
+			B.grading_order,
+			B.exec_time
+		FROM TB_QUESTION_ANSWER_HIS A
+		LEFT JOIN TB_QUESTION_GRADING_HIS B ON A.DEPLOY_SEQ = B.DEPLOY_SEQ AND A.USER_SEQ = B.USER_SEQ AND A.SUBMIT_DT = B.SUBMIT_DT 
+		WHERE A.deploy_seq = CAST(#{deploy_seq} as integer)
+		AND A.user_seq = CAST(#{user_seq} as integer)
+		AND A.submit_dt = (
 			SELECT 
 				MAX(submit_dt) 
-			FROM TB_QUESTION_GRADING_HIS
+			FROM TB_QUESTION_ANSWER_HIS
 			WHERE deploy_seq = CAST(#{deploy_seq} as integer)
 			AND user_seq = CAST(#{user_seq} as integer)
 		)

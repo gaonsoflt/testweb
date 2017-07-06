@@ -243,12 +243,34 @@ var
             ],
 			columns : [ 
 				{ field : "cfg_seq", title : "seq", hidden:true }, 
-				{ field : "cfg_group", title : "변수그룹", width : "10%", attributes : { style : "text-align: center;" } }, 
-				{ field : "cfg_id", title : "변수아이디", width : "10%", attributes : { style : "text-align: center;" } }, 
-				{ field : "cfg_name", title : "변수명", width : "10%", attributes : { style : "text-align: center;" } }, 
-				{ field : "cfg_value", title : "변수값", width : "25%", attributes : { style : "text-align: center;" } }, 
-				{ field : "description", title : "설명", width : "25%", attributes : { style : "text-align: center;" } }, 
-				{ field : "use_yn", title : "사용여부", width : "5%", attributes : { style : "text-align: center;" } }, 
+				{ field : "cfg_group", title : "변수그룹", width : "10%", attributes : { style : "text-align: center;" },
+					filterable: { 
+                        dataSource: {
+                            transport: {
+                                read: {
+                                    url: "${contextPath}/mgr/config/groups.do",
+                                    dataType: "jsonp",
+                                    data: {
+                                    	field: "group_name"
+                					}
+                                },
+                                parameterMap: function(data, type) {//type =  read, create, update, destroy
+            						if (type == "read"){
+            		                   	var result = {
+            							};
+            							return { params: kendo.stringify(result) }; 
+            						}
+            					},
+                           }
+                        },
+                        multi: true 
+                    }
+				}, 
+				{ field : "cfg_id", title : "변수아이디", width : "10%", attributes : { style : "text-align: center;" }, filterable: false }, 
+				{ field : "cfg_name", title : "변수명", width : "10%", attributes : { style : "text-align: center;" }, filterable: false }, 
+				{ field : "cfg_value", title : "변수값", width : "25%", attributes : { style : "text-align: center;" }, filterable: false }, 
+				{ field : "description", title : "설명", width : "25%", attributes : { style : "text-align: center;" }, filterable: false }, 
+				{ field : "use_yn", title : "사용여부", width : "5%", attributes : { style : "text-align: center;" }, filterable: false }, 
 				{
 					command: [
 						{ name: "destroy", text: "삭제" }
@@ -284,6 +306,7 @@ var
 				}
 			},
 			resizable : true, //컬럼 크기 조절
+			filterable: true,
 			reorderable : true, //컬럼 위치 이동
 			save : function(e) {//저장전 이벤트
 				console.log("save2...............");

@@ -131,9 +131,6 @@
     <delete id="deleteMenuInfo" >
 		DELETE FROM TB_MENU_INFO
 		WHERE MENU_SQ = cast(#{menu_sq} as integer)
-		<if test="menu_id != null and menu_id != ''">
-   		AND MENU_ID = cast(#{menu_id} as integer)
-		</if>
     </delete>
     
     <delete id="deleteMenuInfoByBBS" >

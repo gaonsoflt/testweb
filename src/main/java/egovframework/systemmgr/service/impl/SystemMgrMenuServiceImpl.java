@@ -21,6 +21,9 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 	@Resource(name = "systemMgrMenuMapper")
 	private SystemMgrMenuMapper menuInfoMapper;
 	
+	@Resource(name = "systemMgrUserAuthMapper")
+	private SystemMgrUserAuthMapper authMapper;
+	
 	@Resource(name = "systemMgrUserService")
 	private SystemMgrUserService userService;
 	
@@ -81,6 +84,7 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 
 	@Override
 	public void deleteMenuInfo(Map<String, Object> map) throws Exception {
+		authMapper.deleteUserAuthByMenuSeq(map);
 		menuInfoMapper.deleteMenuInfo(map);
     	refreshCachedMenu();
 	}

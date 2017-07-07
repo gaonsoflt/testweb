@@ -2,7 +2,7 @@ package egovframework.com.cmm;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @Class Name : ComDefaultVO.java

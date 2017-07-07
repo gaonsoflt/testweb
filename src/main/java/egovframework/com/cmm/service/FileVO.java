@@ -2,7 +2,8 @@ package egovframework.com.cmm.service;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 /**
  * @Class Name : FileVO.java

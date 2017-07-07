@@ -71,6 +71,9 @@
 	</select>
 	
 	<insert id="createBBS">
+		<selectKey keyProperty="bbs_seq" resultType="integer" order="AFTER">
+			select currval('sq_tb_bbs_ref') as bbs_seq
+		</selectKey>
 		INSERT INTO TB_BBS_REF (
 			bbs_seq,
 			bbs_name,
@@ -84,7 +87,7 @@
 			nextval('sq_tb_bbs_ref'), 
 			#{bbs_name}, 
 			#{bbs_id}, 
-			CASE WHEN #{use_attach} = true THEN '1' ELSE '0' end, 
+			CASE WHEN #{use_attach} = true THEN '1' ELSE '0' end,
 			#{reg_usr}, 
 			now(), 
 			#{mod_usr}, 

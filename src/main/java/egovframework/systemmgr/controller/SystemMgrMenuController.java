@@ -1,6 +1,5 @@
 package egovframework.systemmgr.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,25 +44,16 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 	@RequestMapping(value = "/read.do")
 	public @ResponseBody JSONPObject selectMenuInfoList(@RequestParam("callback") String c, @RequestParam("params") String params) throws Exception {
 		logger.debug("----------------> /read.do");
-		HashMap<String, Object> paramMap = new HashMap<String, Object>();
-
 		logger.debug("params: " + params); 
-		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
-
-		List<HashMap<String, Object>> rtnList = null;
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
-		System.out.println(paramMap); 
-
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
-			rtnList = menuService.selectMenuInfo(paramMap);
+			List<Map<String, Object>> rtnList = menuService.selectMenuInfo(EgovWebUtil.parseJsonToMap(params));
 			System.out.println(rtnList);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", rtnList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
-			rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
-			return new JSONPObject(c, rtnMap);
 		}
 		return new JSONPObject(c, rtnMap);
 	}
@@ -78,18 +68,11 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 	@RequestMapping(value = "/create.do")
 	public @ResponseBody JSONPObject createMenuInfo(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("----------------> /create.do");
-		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-
-		logger.debug("models: " + models); 
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		List<Map<String, Object>> paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList: " + paramMapList); 
-
-		// set parameter login user area_id
-		CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
-//				paramMap.put("MENU_SQ", nextSequence());
+				Map<String, Object> paramMap = paramMapList.get(i);
 				System.out.println("paramMap: " + paramMap);
 				// insert call
 				menuService.createMenuInfo(paramMap);
@@ -112,14 +95,12 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 	@RequestMapping(value = "/update.do")
 	public @ResponseBody JSONPObject updateMenuInfo(@RequestParam("callback") String c, @RequestParam("models") String models) {  
 		logger.debug("----------------> /update.do");
-		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-		logger.debug("models:" + models); 
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		List<Map<String, Object>> paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList: " + paramMapList); 
-
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
+				Map<String, Object> paramMap = paramMapList.get(i);
+				System.out.println("paramMap: " + paramMap);
 				menuService.updateMenuInfo(paramMap);
 			}
 		} catch (Exception e) {
@@ -141,15 +122,12 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
 	@RequestMapping(value = "/delete.do")
 	public @ResponseBody JSONPObject deleteMenuInfo(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("----------------> /delete.do");
-		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-		logger.debug("models: " + models); 
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
-		
+		List<Map<String, Object>> paramMapList = EgovWebUtil.parseJsonToList(models);
+		logger.debug("paramMapList: " + paramMapList); 
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
-				logger.debug("paramMap: " + paramMap);
-				
+				Map<String, Object> paramMap = paramMapList.get(i);
+				System.out.println("paramMap: " + paramMap);
 				// delete call
 				menuService.deleteMenuInfo(paramMap);
 			}
@@ -174,7 +152,7 @@ Logger logger = LoggerFactory.getLogger(SystemMgrMenuController.class.getName())
     	CmmLoginUser userDetails = (CmmLoginUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     	paramMap.put("USER_NO", userDetails.getUserseq());
 		logger.debug("===============================pamam: " + paramMap);
-		List<SystemMgrMenuVO> rtnList = menuService.getMenuInfoByUserAuth((HashMap<String, Object>)paramMap);
+		List<SystemMgrMenuVO> rtnList = menuService.getMenuInfoByUserAuth(paramMap);
 		logger.debug("rtnList: " + rtnList);
 		model.addObject("rtnList", rtnList);
 		model.setViewName("jsonView");

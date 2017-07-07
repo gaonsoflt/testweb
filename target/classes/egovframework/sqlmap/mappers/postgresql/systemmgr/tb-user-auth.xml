@@ -17,7 +17,6 @@
   			WHERE USER_TYPE = (SELECT USER_TYPE FROM TB_USER_INFO WHERE USER_SEQ = CASE(#{USER_NO} as integer));
     </select>
   			
-  			
 	<select id="selectUserAuth" parameterType="hashMap" resultType="hashMap">
 		SELECT * 
 			FROM (
@@ -169,6 +168,11 @@
 				AND USER_GROUP = #{TYPEVALUE} 
 			</if>
 	</update>
+	
+	<delete id="deleteUserAuthByMenuSeq">
+		DELETE FROM TB_USER_AUTH
+		WHERE menu_sq = (select menu_sq from tb_menu_info WHERE menu_id = #{menu_id})
+	</delete>
 	
 	<select id="getUserAuth" parameterType="hashMap" resultType="hashMap">
 		SELECT 

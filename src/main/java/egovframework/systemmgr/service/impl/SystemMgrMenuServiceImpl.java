@@ -1,5 +1,6 @@
 package egovframework.systemmgr.service.impl;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 
 	@Override
 	public void refreshCachedMenu() throws Exception {
-		HashMap<String, Object> param = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
 		param.put("USER_NO", userService.getLoginUserInfo().getUserseq());
 		refreshCachedMenu(param);
 	}
 	
 	@Override
-	public void refreshCachedMenu(HashMap<String, Object> map) throws Exception {
+	public void refreshCachedMenu(Map<String, Object> map) throws Exception {
 		logger.debug("refresh cached menu data");
 		logger.debug("[BBAEK] refresh before: " + getMenuVo());
 		menuVo = menuInfoMapper.getMenuInfoByUserAuth(map);
@@ -54,7 +55,7 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 	}
 	
 	@Override
-	public List<SystemMgrMenuVO> getMenuInfoByUserAuth(HashMap<String, Object> map) throws Exception {
+	public List<SystemMgrMenuVO> getMenuInfoByUserAuth(Map<String, Object> map) throws Exception {
 		if(menuVo == null) {
 			refreshCachedMenu(map);
 		}
@@ -62,24 +63,24 @@ public class SystemMgrMenuServiceImpl implements SystemMgrMenuService {
 	}
 
 	@Override
-	public List<HashMap<String, Object>> selectMenuInfo(HashMap<String, Object> map) throws Exception {
+	public List<Map<String, Object>> selectMenuInfo(Map<String, Object> map) throws Exception {
 		return menuInfoMapper.selectMenuInfo(map);
 	}
 
 	@Override
-	public void createMenuInfo(HashMap<String, Object> map) throws Exception {
+	public void createMenuInfo(Map<String, Object> map) throws Exception {
 		menuInfoMapper.createMenuInfo(map);
     	refreshCachedMenu();
 	}
 
 	@Override
-	public void updateMenuInfo(HashMap<String, Object> map) throws Exception {
+	public void updateMenuInfo(Map<String, Object> map) throws Exception {
 		menuInfoMapper.updateMenuInfo(map);
     	refreshCachedMenu();
 	}
 
 	@Override
-	public void deleteMenuInfo(HashMap<String, Object> map) throws Exception {
+	public void deleteMenuInfo(Map<String, Object> map) throws Exception {
 		menuInfoMapper.deleteMenuInfo(map);
     	refreshCachedMenu();
 	}

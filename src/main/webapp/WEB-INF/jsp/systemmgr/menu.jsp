@@ -289,7 +289,7 @@
 			height: 715,
 			resizable: true,  //컬럼 크기 조절
 			reorderable: true, //컬럼 위치 이동
-			autoBind: true,
+			autoBind: false,
 			navigatable: true,
 			selectable: "row", //selectable: "multiple cell","multiple row","cell","row",
 			toolbar: [ 

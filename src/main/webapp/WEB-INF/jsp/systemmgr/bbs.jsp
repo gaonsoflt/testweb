@@ -83,13 +83,14 @@
 					model : {//가져온 값이 있음...
 						id : "bbs_seq",//id 로 insert할건지 update 할건지 판단함.
 						fields : {
-							bbs_seq : { type : "number" },
-							bbs_name : { type : "string", validation : { required : true } },
-							bbs_id: { type : "string", validation : { required : true } },
-							reg_dt : { type : "string", editable : false },
-							reg_usr : { type : "string", editable : false, defaultValue : "${userStore.username}" },
-							mod_dt : { type : "string", editable : false },
-							mod_usr : { type : "string", editable : false, defaultValue : "${userStore.username}" }
+							bbs_seq 	: { type : "number" },
+							bbs_name 	: { type : "string", validation : { required : true } },
+							bbs_id		: { type : "string", validation : { required : true } },
+							use_attach	: { type : "boolean" },
+							reg_dt 		: { type : "string", editable : false },
+							reg_usr 	: { type : "string", editable : false, defaultValue : "${userStore.username}" },
+							mod_dt 		: { type : "string", editable : false },
+							mod_usr 	: { type : "string", editable : false, defaultValue : "${userStore.username}" }
 						}
 					}
 				},
@@ -137,6 +138,7 @@
 				{ field : "bbs_seq", hidden : true, },
 				{ field : "bbs_name", title : "게시판이름", attributes : { style : "text-align: center;" } },
 				{ field : "bbs_id", title : "게시판ID", attributes : { style : "text-align: center;" } },
+				{ field : "use_attach", title: "파일사용", width : 80, attributes: {style: "text-align: center;"} },
 				{ field : "reg_usr", title : "생성자", width : 130, attributes : { style : "text-align: center;" } },
 				{ field : "mod_dt", title : "수정일", width: 150, attributes : { style : "text-align: center;" },
 					template : "#= (mod_dt == '') ? '' : kendo.toString(new Date(Number(mod_dt)), 'yyyy-MM-dd') #" 

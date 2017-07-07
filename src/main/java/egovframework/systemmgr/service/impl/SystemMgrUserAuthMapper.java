@@ -2,6 +2,7 @@ package egovframework.systemmgr.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -19,4 +20,6 @@ public interface SystemMgrUserAuthMapper {
 	public int updateUserAuth(HashMap<String, Object> map) throws Exception;
 	
 	public int insertUserAuth(HashMap<String, Object> map) throws Exception;
+	
+	public int deleteUserAuthByMenuSeq(Map<String, Object> map) throws Exception;
 }

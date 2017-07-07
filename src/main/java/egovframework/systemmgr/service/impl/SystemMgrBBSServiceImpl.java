@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.systemmgr.service.SystemMgrBBSService;
+import egovframework.systemmgr.service.SystemMgrMenuService;
 
 @Service("systemMgrBBSService")
 public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements SystemMgrBBSService {
@@ -19,6 +20,15 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 
 	@Resource(name = "systemMgrBBSMapper")
 	private SystemMgrBBSMapper bbsMapper;
+	
+	@Resource(name = "systemMgrMenuMapper")
+	private SystemMgrMenuMapper menuMapper;
+	
+	@Resource(name = "systemMgrUserAuthMapper")
+	private SystemMgrUserAuthMapper authMapper;
+	
+	@Resource(name = "systemMgrMenuService")
+	private SystemMgrMenuService menuService;
 
 	@Override
 	public Map<String, Object> getBBSList(Map<String, Object> param) throws Exception {
@@ -29,16 +39,41 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 		return rtnMap;
 	}
 
+	/*
+	 * #{menu_nm} 
+	 * #{menu_url} 
+	 * #{menu_desc}
+	 * #{menu_content}
+	 * #{menu_order} 
+	 * #{use_yn}
+	 * #{parent_sq}
+	 */
 	@Override
 	public int insertBBS(List<Map<String, Object>> params) throws Exception {
 		logger.debug("params:" + params);
 		int execute = 0;
 		for (int i = 0; i < params.size(); i++) {
 			Map<String, Object> param = params.get(i);
-			if(bbsMapper.createBBS(param) > 0) { 
-				param.put("table_name", param.get("bbs_id").toString());
-				execute += bbsMapper.createTable(param);
-			}
+			
+			logger.debug("insert bbs reference");
+			bbsMapper.createBBS(param);
+			
+			param.put("menu_id", param.get("bbs_id").toString());
+			param.put("menu_nm", param.get("bbs_name").toString());
+			param.put("menu_url", "/bbs/board.do?bbs=" + param.get("bbs_seq").toString());
+			param.put("menu_desc", param.get("bbs_name").toString());
+			param.put("menu_content", "");
+			param.put("menu_order", 1);
+			param.put("use_yn", true);
+			param.put("parent_sq", 3); // 3(bbs) = menu_seq(tb_menu_info)
+			logger.debug("insert menu for bbs");
+			menuMapper.createMenuInfo(param);
+						
+			param.put("table_name", param.get("bbs_id").toString());
+			logger.debug("created bbs table: " + param.get("bbs_id").toString());
+			bbsMapper.createTable(param);
+			
+			execute++;
 		}
 		logger.debug("execute:" + execute);
 		return execute;
@@ -63,11 +98,24 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 		for (int i = 0; i < params.size(); i++) {
 			Map<String, Object> param = params.get(i);
 			param = bbsMapper.readBBSDetail(param);
-			if(bbsMapper.deleteBBS(param) > 0) {
-				param.put("table_name", param.get("bbs_id").toString());
-				execute += bbsMapper.dropTable(param);
-			}
+			logger.debug("delete bbs reference");
+			bbsMapper.deleteBBS(param);
+			
+			String bbsID = param.get("bbs_id").toString();
+			param.put("menu_id", bbsID);
+			logger.debug("delete user auth by menu_id");
+			authMapper.deleteUserAuthByMenuSeq(param);
+			
+			logger.debug("delete menu for bbs");
+			menuMapper.deleteMenuInfoByBBS(param);
+			
+			param.put("table_name", bbsID);
+			logger.debug("delete bbs table: " + bbsID);
+			bbsMapper.dropTable(param);
+			
+			execute++;			
 		}
+		menuService.refreshCachedMenu();
 		logger.debug("execute:" + execute);
 		return execute;
 	}

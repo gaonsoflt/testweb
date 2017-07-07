@@ -3,7 +3,7 @@
 
 <mapper namespace="egovframework.systemmgr.service.impl.SystemMgrMenuMapper">
 
-	<select id="selectMenuInfo" parameterType="hashMap" resultType="hashMap">
+	<select id="selectMenuInfo" parameterType="map" resultType="map">
 		SELECT
 			MENU_SQ,
 			MENU_NM,
@@ -25,7 +25,7 @@
 		ORDER BY MENU_ORDER
     </select>
 
-	<select id="getMenuInfoByUserAuth" parameterType="hashMap" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
+	<select id="getMenuInfoByUserAuth" parameterType="map" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
 		SELECT * 
 			FROM (
 				SELECT
@@ -66,7 +66,7 @@
 			ORDER BY main_order, menu_order
     </select>
     
-    <select id="getMenuInfo" parameterType="hashMap" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
+    <select id="getMenuInfo" parameterType="map" resultType="egovframework.systemmgr.dao.SystemMgrMenuVO">
     	select
 			T.menu_id,
 			T.MENU_NM,
@@ -79,6 +79,9 @@
     </select>
     
 	<insert id="createMenuInfo" >
+		<selectKey keyProperty="menu_sq" resultType="integer" order="AFTER">
+			select currval('sq_tb_menu_info') as menu_sq
+		</selectKey>
 		INSERT INTO TB_MENU_INFO (
 			MENU_SQ			,
 			MENU_NM			,
@@ -100,12 +103,14 @@
 			<choose>
     			<when test="parent_sq != null and parent_sq != ''">
 					cast(#{parent_sq} as integer),
+					#{menu_id}
     			</when>
     			<otherwise>
       				null,
+      				currval('sq_tb_menu_info')
     			</otherwise>
 			</choose>
-			#{menu_id}
+
 		) 
 	</insert>
 
@@ -125,6 +130,14 @@
 	
     <delete id="deleteMenuInfo" >
 		DELETE FROM TB_MENU_INFO
-			WHERE MENU_SQ = cast(#{menu_sq} as integer)
+		WHERE MENU_SQ = cast(#{menu_sq} as integer)
+		<if test="menu_id != null and menu_id != ''">
+   		AND MENU_ID = cast(#{menu_id} as integer)
+		</if>
+    </delete>
+    
+    <delete id="deleteMenuInfoByBBS" >
+		DELETE FROM TB_MENU_INFO
+		WHERE MENU_SQ = (SELECT menu_sq FROM TB_MENU_INFO WHERE MENU_ID = cast(#{menu_id} as varchar))
     </delete>
 </mapper>

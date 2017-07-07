@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.espa.service.ConfigService;
 import egovframework.systemmgr.service.SystemMgrBBSService;
-import egovframework.systemmgr.service.SystemMgrCodeService;
 import egovframework.systemmgr.service.SystemMgrMenuService;
 
 @Controller
@@ -61,6 +60,7 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 		ModelAndView mav = new ModelAndView("bbs/bbs");
 		Map<String, Object> bbsInfo = bbsService.getBBSDetail(bbsID);
 		mav.addObject("bbsInfo", bbsInfo);
+		mav.addObject("menu", menuService.getMenuVo(bbsInfo.get("bbs_id").toString()));
 		return mav;
 	}
 	

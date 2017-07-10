@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.bbs.service.impl.BBSBoardMapper">
+	<select id="readBBSList" parameterType="map" resultType="map">
+		SELECT *
+			FROM (
+				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+				FROM (
+					SELECT
+					 	bbs_uid,
+					 	bbs_seq,
+						title,
+						content,
+						reg_dt,
+						reg_usr,
+						mod_dt,
+						mod_usr,
+						(select count(*) from tb_bbs_reply where bbs_uid = bbs_uid) as reply_count
+					FROM tb_bbs_board
+					WHERE bbs_seq = cast(#{bbs_seq} as integer)
+		       		<if test="CONDITION eq 'TITLE'">
+		       			AND title LIKE '%'||#{KEYWORD}||'%'
+		       		</if>
+				ORDER BY reg_dt DESC
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+	</select>
+	
+	<select id="readBBSDetail" parameterType="map" resultType="map">
+		SELECT
+			bbs_uid,
+		 	bbs_seq,
+			title,
+			content,
+			reg_dt,
+			reg_usr,
+			mod_dt,
+			mod_usr
+		FROM tb_bbs_board
+		WHERE bbs_uid = #{bbs_uid}
+	</select>
+	
+	<select id="readBBSListCount" parameterType="map" resultType="integer">
+		SELECT count(*)
+		FROM tb_bbs_board
+		WHERE bbs_seq = cast(#{bbs_seq} as integer)
+   		<if test="CONDITION eq 'TITLE'">
+   			AND title LIKE '%'||#{KEYWORD}||'%'
+   		</if>
+	</select>
+	
+	<insert id="createBBS">
+		INSERT INTO tb_bbs_board (
+			bbs_uid,
+		 	bbs_seq,
+			title,
+			content,
+			reg_dt,
+			reg_usr,
+			mod_dt,
+			mod_usr
+		) VALUES (
+			#{bbs_uid}, 
+			cast(#{bbs_seq} as integer), 
+			#{title}, 
+			#{content}, 
+			now(), 
+			#{reg_usr}, 
+			now(), 
+			#{mod_usr} 
+		)
+	</insert>
+	
+	<update id="updateBBS">
+		UPDATE tb_bbs_board
+		SET 
+			title = #{title},
+			content = #{content},
+			mod_dt = now(), 
+			mod_usr = #{mod_usr} 
+		WHERE bbs_uid = #{bbs_uid}
+	</update>
+	
+	<delete id="deleteBBS">
+		DELETE FROM tb_bbs_board 
+		WHERE bbs_uid = #{bbs_uid}
+	</delete>
+	
+	<delete id="deleteBBSBoard">
+		DELETE FROM tb_bbs_board 
+		WHERE bbs_seq = #{bbs_seq}
+	</delete>
+</mapper>

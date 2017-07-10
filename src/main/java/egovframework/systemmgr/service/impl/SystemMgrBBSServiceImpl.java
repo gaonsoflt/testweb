@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import egovframework.bbs.service.impl.BBSBoardMapper;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.systemmgr.service.SystemMgrBBSService;
 import egovframework.systemmgr.service.SystemMgrMenuService;
@@ -20,6 +21,9 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 
 	@Resource(name = "systemMgrBBSMapper")
 	private SystemMgrBBSMapper bbsMapper;
+	
+	@Resource(name = "bBSBoardMapper")
+	private BBSBoardMapper boardMapper;
 	
 	@Resource(name = "systemMgrMenuMapper")
 	private SystemMgrMenuMapper menuMapper;
@@ -69,9 +73,9 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 			logger.debug("insert menu for bbs");
 			menuMapper.createMenuInfo(param);
 						
-			param.put("table_name", param.get("bbs_id").toString());
-			logger.debug("created bbs table: " + param.get("bbs_id").toString());
-			bbsMapper.createTable(param);
+//			param.put("table_name", param.get("bbs_id").toString());
+//			logger.debug("created bbs table: " + param.get("bbs_id").toString());
+//			bbsMapper.createTable(param);
 			
 			execute++;
 		}
@@ -109,9 +113,13 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 			logger.debug("delete menu for bbs");
 			menuMapper.deleteMenuInfoByBBS(param);
 			
-			param.put("table_name", bbsID);
-			logger.debug("delete bbs table: " + bbsID);
-			bbsMapper.dropTable(param);
+			// TODO: delete board, file and reply
+//			logger.debug("delete board");
+//			boardMapper.deleteBBSBoard(param);
+			
+//			param.put("table_name", bbsID);
+//			logger.debug("delete bbs table: " + bbsID);
+//			bbsMapper.dropTable(param);
 			
 			execute++;			
 		}

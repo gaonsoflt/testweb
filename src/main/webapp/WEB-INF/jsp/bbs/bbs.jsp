@@ -14,17 +14,10 @@
 			<li class="active">${menu.menu_nm}</li>
 		</ol>
 	</section>
-	<!-- Main content -->
 	<section class="content">
 		<div class="row">
-			<!-- 내용 -->
 			<div class="col-xs-12">
-
-				<!-- table 하나 -->
 				<div class="box">
-					<!-- <div class="box-header">
-                  <h3 class="box-title"><i class="fa fa-tag"></i>사용자관리</h3>
-                </div> -->
 					<div class="box-body">
 						<!-- jQuery Plug-Ins Widget Initialization -->
 						<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
@@ -35,9 +28,7 @@
 							<input id="in_user" /> 
 							<button id="searchBtn" type="button">조회</button>
 						</p>
-						${bbsInfo.bbs_seq}<p>
 						<div id="gridList"></div>
-			            <div id="details"></div>
 					</div>
 				</div> <!-- box -->
 			</div> <!-- col-xs-12 -->
@@ -54,28 +45,40 @@
 	<table style="width:100%;">
 		<colgroup>
 			<col width="50%">
-			<col width="50%">
+			<col width="40%">
 		</colgroup>
 		<tbody>
-			<tr><th colspan="2">제목</th></tr>
-			<tr><td colspan="2"><input id="title" class="bind_input" name="title" data-bind="value:selected.title" style="width:100%;" required/></td></tr>
 			<tr>
-				<th>게시시작</th>
-				<th>게시종료</th>
+				<td>
+					<div style="width:100%;">
+						<div>제목</div>
+						<div><input id="title" class="bind_input" name="title" data-bind="value:selected.title" style="width:100%;" required/></div>
+						<div>내용</div>
+						<div><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></div>
+					</div>
+				</td>
+				<td valign="top">
+					<div>
+						<div>첨부파일</div> 
+						<input type="file"/>
+					</div>
+					<div style="width:100%;">
+						<div>댓글</div>
+						<c:if test="${userStore.username != null}">
+							<textarea rows="3" cols="80" id="reply" name="reply" placeholder="댓글을 입력하세요."></textarea>
+							<button type="button" id="writeReply">댓글 등록</button>
+						</c:if>
+						<div id="reply-list"></div>
+					</div>
+				</td>
 			</tr>
-			<tr>
-				<td><input id="expose-from" class="bind_input" name="expose-from" data-bind="value:selected.expose_from" style="width:100%;"/></td>
-				<td><input id="expose-to" class="bind_input" name="expose-to" data-bind="value:selected.expose_to" style="width:100%;"/></td>
-			</tr>
-			<tr><th colspan="2">내용</th>	</tr>
-			<tr><td colspan="2"><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></td></tr>
 		</tbody>
 	</table>
 </div>
 
 <script type="text/x-kendo-template" id="toolbar-template">
 	<div id="toolbar" style="float:left;">
-		<a href="\\#" class="k-pager-refresh k-link k-button" id="add-btn" title="Create" onclick="return onClick(this);">추가</a>
+		<a href="\\#" class="k-pager-refresh k-link k-button" id="add-btn" title="Create" onclick="return onClick(this);">등록</a>
 	</div>
 </script>                
             
@@ -83,8 +86,8 @@
 	/* DropDownList Template */
 	var codelist = "_USER_TYPE_";
 	var codeModles = "";
-	var noticeViewModel;
-	var noticeModel;
+	var bbsViewModel;
+	var bbsModel;
 	var wnd;
 	
 	var today = kendo.date.today();
@@ -129,7 +132,7 @@
 
 	var G_Condition = "ALL";
 	var G_Keyword = ""; 
-	var G_NoticeSeq = 0;
+	var G_SEQ = 0;
 	
 	$(function() {
 		var searchData = [ 
@@ -231,14 +234,10 @@
 		// invisible delete button
 		$("#delete-btn").css("display", "none");
 		
-		// init data
-		$("#expose-from").data("kendoDateTimePicker").value();
-		$("#expose-to").data("kendoDateTimePicker").value();
-		
 		// open window
 		wnd.center().open();		
-		noticeViewModel.set("selected", new noticeModel());
-		noticeViewModel.dataSource.insert(0, noticeViewModel.selected);
+		bbsViewModel.set("selected", new bbsModel());
+		bbsViewModel.dataSource.insert(0, bbsViewModel.selected);
 		return false;
 	}
 	
@@ -246,27 +245,75 @@
 		var id = e.id;
 		console.log(id + " is clicked");
 		if(id == 'add-btn') {
-			console.log("add noticeViewModel");
+			console.log("add bbsViewModel");
 			addNew(e);
 		} 
     }
 	
 	function closeWindow(e) {
 		wnd.close();
-		G_NoticeSeq = 0;
+		G_SEQ = 0;
 		$("#gridList").data("kendoGrid").dataSource.read();
 	}
 	
+	function updateReply(){
+		$("#reply").val() = "";
+        $.ajax({
+            type: "get",
+            url: "<c:url value='/bbs/board/reply/readList.do'/>",
+            data: "buid=" + G_SEQ,
+            success: function(result){
+            	console.log(result);
+            	temp = result;
+                $("#reply-list").html(convertJSONToTag(result));
+            }
+        });
+    }
+	
+	function convertJSONToTag(item, index) {
+		var data = "<table><tbody>";
+		item.forEach(function(v, i) {
+			console.log(i + ":" + v);
+			data += "<tr><td>";
+			data += v.reg_usr + kendo.toString(new Date(Number(v.mod_dt)), 'yyyy-MM-dd hh:mm:ss');
+			data += "<br>" + v.reply;
+			data += "</td></tr>";
+		});
+		data += "</tbody></table>";
+		return data;
+	}
+	
 	$(document).ready(function() {
+		
+		$("#writeReply").click(function() {
+			console.log("writeReply");
+			var replyText = $("#reply").val();
+			if(replyText != '') {
+				$.ajax({
+					type : "post",
+					url : "<c:url value='/bbs/board/reply/create.do'/>",
+					data : {
+						"text" : replyText,
+						"buid" : G_SEQ,
+						"pSeq" : 0
+					},
+					success : function(data, status) {
+						if(data.success) {
+							alert("댓글이 등록되었습니다.");
+						}
+						updateReply();
+					}
+				});
+			}
+		});
+		
 		/*************************/
 		/* deatils window
 		/*************************/
 		wnd = $("#window").kendoWindow({
-            title: "글쓰기",
-            width: 600,
+            title: "",
+            width: 1000,
             actions: [
-				"Pin",
-				"Minimize",
 				"Maximize",
 				"Close"
 			],
@@ -275,138 +322,103 @@
             resizable: true
         }).data("kendoWindow");
 		
-		/*************************/
-		/* dataSgridListDetail */
-		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/bbs/notice",
-		/*** dataSource ***/
-		dataSourceDetail = new kendo.data.DataSource({
-			transport : {
-				read : { 
-					url : crudServiceBaseUrl + "/readList.do", 
-					dataType : "jsonp",
-					complete: function(e){ 
-				    	console.log("/readList.do...................");
-				    }
-				},
-				create : {
-					url : crudServiceBaseUrl + "/create.do", 
-					dataType : "jsonp",
-					complete: function(e){ 
-				    	console.log("/create.do...................");
-				    }
-				},
-				destory : {
-					url : crudServiceBaseUrl + "/delete.do", 
-					dataType : "jsonp",
-					complete: function(e){ 
-				    	console.log("/delete.do...................");
-				    }
-				},
-				update : {
-					url : crudServiceBaseUrl + "/update.do", 
-					dataType : "jsonp",
-					complete: function(e){ 
-				    	console.log("/update.do...................");
-				    }
-				},
-				parameterMap : function(data, type) {//type =  read, create, update, destroy
-					if (type == "read") {
-						var result = {
-							PAGESIZE : data.pageSize,
-							SKIP : data.skip,
-							PAGE : data.page,
-							TAKE : data.take,
-							CONDITION : G_Condition,
-							KEYWORD : G_Keyword
-						};
-						return { params : kendo.stringify(result) };
-					}
-
-					if (type !== "read"
-							&& data.models) {
-						return {
-							models : kendo.stringify(data.models)
-						};
-					}
-				}
-			},//transport end...
-			schema : {
-				data : function(response) {
-					console.log(response.rtnList);
-					return response.rtnList; 
-				},
-				total : function(response) { return response.total; },
-				errors : function(response) { return response.error; },
-				parse : function(response) {
-					/*
-					var list = response.rtnList;
-					if (typeof list != "undefined") {
-						$.each(list, function(idx, elem) {
-							var loginDate = new Date(elem.LOGIN_DT);
-							var year = loginDate.getFullYear();
-							var month = (loginDate.getMonth() + 1);
-							var day = loginDate.getDate();
-							loginDate = year + "" + (month > 9 ? month : "0" + month) + "" + (day > 9 ? day : "0" + day);
-							elem.access_dt = loginDate;
-						});
-					}*/
-					return response;
-				},
-				model : {//가져온 값이 있음...
-					id : "notice_seq",
-					fields : {
-						notice_seq : { type : "number", editable : false }, //data type of the field {Number|String|Boolean|Date} default is String
-						title : { type : "string", editable : false },
-						reg_dt : { type : "string", editable : false },
-						reg_usr : { type : "string", editable : false },
-						expose_from : { type : "string", editable : false },
-						expose_to : { type : "string", editable : false }
-					}
-				}
-			},
-			error : function(e) {
-				console.log(e.errors);
-				alert(e.errors);
-			},
-			change : function(e) {
-				//alert("change...........");
-				/* var data = this.data();
-				console.log(data.length);
-				alert(data.length+"건 처리하였습니다."); */
-			},
-			sync : function(e) {
-				console.log("sync complete");
-				alert("정상적으로 처리되었습니다.");
-			},
-			serverPaging : true, // 서버 사이드 페이징 활성화
-			serverFiltering : false,
-			serverSorting : false, // 서버 사이드 정렬 활성화          sort[0][field]=필드명, sort[0][dir]=asc|desc 요청 파라메터 전달
-			//autoSync: true,          //     자동 저장
-			batch : true, //     true: 쿼리를 한줄로,  false : row 단위로
-			page : 1, //     반환할 페이지
-			pageSize : 15, //     반환할 항목 수
-			skip : 0, //     건너뛸 항목 수
-			take : 15
-		});//datasource gridList end...
-
+		var crudServiceBaseUrl = "${contextPath}/bbs/board";
 		/*************************/
 		/***    gridList     ***/
 		/*************************/
 		$("#gridList").kendoGrid({
 			autoBind : true,
-			dataSource : dataSourceDetail,
+			dataSource : {
+				transport : {
+					read : { 
+						url : crudServiceBaseUrl + "/readList.do", 
+						dataType : "jsonp",
+						complete: function(e){ 
+					    	console.log("gridList:dataSource:read:complete");
+					    }
+					},
+					parameterMap : function(data, type) {//type =  read, create, update, destroy
+						if (type == "read") {
+							var result = {
+								PAGESIZE : data.pageSize,
+								SKIP : data.skip,
+								PAGE : data.page,
+								TAKE : data.take,
+								bbs_seq : "${bbsInfo.bbs_seq}",
+								CONDITION : G_Condition,
+								KEYWORD : G_Keyword
+							};
+							return { params : kendo.stringify(result) };
+						}
+
+						if (type !== "read"
+								&& data.models) {
+							return {
+								models : kendo.stringify(data.models)
+							};
+						}
+					}
+				},//transport end...
+				schema : {
+					data : function(response) {
+						console.log(response.rtnList);
+						return response.rtnList; 
+					},
+					total : function(response) { return response.total; },
+					errors : function(response) { return response.error; },
+					parse : function(response) { return response; },
+					model : {//가져온 값이 있음...
+						id : "bbs_uid",
+						fields : {
+							bbs_uid: { type : "string", editable : false },
+							rnum : { type : "number", editable : false },
+							title : { type : "string", editable : false },
+							content : { type : "string", editable : false },
+							reply_count: { type : "number", editable : false },
+							reg_dt : { type : "string", editable : false },
+							reg_usr : { type : "string", editable : false },
+							mod_dt : { type : "string", editable : false },
+							mod_usr : { type : "string", editable : false }
+						}
+					}
+				},
+				error : function(e) {
+					console.log(e.errors);
+					alert(e.errors);
+				},
+				change : function(e) {
+					//alert("change...........");
+					/* var data = this.data();
+					console.log(data.length);
+					alert(data.length+"건 처리하였습니다."); */
+				},
+				sync : function(e) {
+					console.log("sync complete");
+					alert("정상적으로 처리되었습니다.");
+				},
+				serverPaging : true, // 서버 사이드 페이징 활성화
+				serverFiltering : false,
+				serverSorting : false, // 서버 사이드 정렬 활성화          sort[0][field]=필드명, sort[0][dir]=asc|desc 요청 파라메터 전달
+				//autoSync: true,          //     자동 저장
+				batch : true, //     true: 쿼리를 한줄로,  false : row 단위로
+				page : 1, //     반환할 페이지
+				pageSize : 15, //     반환할 항목 수
+				skip : 0, //     건너뛸 항목 수
+				take : 15
+			},
 			navigatable : true,
 			pageable : true,
 			height : 710,
             toolbar: kendo.template($("#toolbar-template").html()),
 			columns : [
-				{ field : "notice_seq", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
+				{ field : "bbs_uid", title : "uid", hidden: true },
+				{ field : "rnum", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
-				{ field : "title", title : "제목", attributes : { style : "text-align: center;" } },
+				{ field : "title", title : "제목", attributes : { style : "text-align: left;" },
+					template : "#= title # [#=reply_count#]"},
 				{ field : "reg_usr", title : "글쓴이", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "reg_dt", title : "등록일", width : 150, attributes : {	style : "text-align: center;" },
-					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd') #" }
+					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd hh:mm') #" }
 				// Todo: 조회수 필드 추가 예정 
 				/* 
 				{ field : "expose_from", title : "게시시작", attributes : {	style : "text-align: center;" },
@@ -418,14 +430,14 @@
 				*/
 			],
 			change: function(e) {
-        		// find notice_seq value in selected row  	
+        		// find seq value in selected row  	
 				var selectedItem = this.dataItem(this.select());
-				G_NoticeSeq = selectedItem.notice_seq;
-				console.log("selected item: " + G_NoticeSeq + "(seq)");
+				G_SEQ = selectedItem.bbs_uid;
+				console.log("selected item: " + G_SEQ + "(seq)");
                 console.log(selectedItem);
                 console.log("showDetails");
-        		// read noticeViewModel by G_NoticeSeq 
-        		noticeViewModel.dataSource.read();
+        		// read bbsViewModel by G_SEQ 
+        		bbsViewModel.dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
                 // open window
         		wnd.center().open();
@@ -434,10 +446,7 @@
 			selectable : "row", //selectable: "multiple cell","multiple row","cell","row",
 			scrollable : true,
 			mobile : true,
-			excel : {
-				allPages : true,
-				fileName : "접속이력.xlsx",
-			},
+			excel : false,
 			noRecords : {
 				template: "검색된 결과가 없습니다."
 			},
@@ -460,23 +469,22 @@
 		/*
 		 * view model for window data 
 		 */
-		noticeModel = kendo.data.Model.define({
-			id: "notice_seq",
+		bbsModel = kendo.data.Model.define({
+			id: "bbs_uid",
 			fields: {
-				notice_seq	:{ type: "number" },
+				bbs_uid		:{ type: "string" },
+				bbs_seq		:{ type: "string", defaultValue: "${bbsInfo.bbs_seq}" },
 				title		:{ type: "string" },
 				content		:{ type: "string" },
 				mod_dt		:{ type: "string" },
 				mod_usr		:{ type: "string" },           
 				reg_dt		:{ type: "string" },
-				reg_usr		:{ type: "string" },           
-				expose_from	:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm") },           
-				expose_to	:{ defaultValue: kendo.toString(new Date(), "yyyy-MM-dd HH:mm") }
+				reg_usr		:{ type: "string" }           
 			}
 		});
 		
 	    /*** dataSource ***/
-		noticeViewModel = kendo.observable({
+		bbsViewModel = kendo.observable({
 			dataSource: new kendo.data.DataSource({
 				transport: {
 					read: {
@@ -492,30 +500,28 @@
 					parameterMap: function(data, type) {//type =  read, create, update, destroy
 						if (type == "read"){
 		                   	var result = {
-								notice_seq: G_NoticeSeq
+								bbs_seq : "${bbsInfo.bbs_seq}",
+								bbs_uid : G_SEQ
 							};
 							return { params: kendo.stringify(result) }; 
 						}
 		               
 						if (type !== "read" && data.models) {
-							// if using kendo.stringify, converte datetime from UTC timezone
-							data.models[0].expose_from = kendo.toString(data.models[0].expose_from, "yyyy-MM-dd HH:mm");
-							data.models[0].expose_to= kendo.toString(data.models[0].expose_to, "yyyy-MM-dd HH:mm");
 							return { models: kendo.stringify(data.models) };
 						}
 					}
 				},
 				batch: true,
 				schema: {
-					model: noticeModel,
+					model: bbsModel,
 					data: function(response) {
 						console.log("viewmodel data: ");
-						console.log(response.rtnList);
-						return response.rtnList;
+						console.log(response);
+						return response;
 					},
 					total: function(response) {
-						console.log("viewmodel total: " + response.total);
-						return response.total;
+						console.log("viewmodel total: " + 1);
+						return 1;
 					},
 					errors: function(response) {
 						console.log("viewmodel error: " + response.error);
@@ -535,18 +541,27 @@
 		            var _data = this.data()[0];
 					console.log(_data);
 					if(typeof _data != "undefined") {
-						_data.expose_from = new Date(Number(_data.expose_from));
-						_data.expose_to = new Date(Number(_data.expose_to));
 					} else {
 						
 					}
-					noticeViewModel.set("selected", _data);
+					bbsViewModel.set("selected", _data);
 		        },
+		        requestStart : function(e) {
+				},
+				requestEnd : function(e) {
+					console.log("deployViewModel:dataSource:requestEnd");
+		        	if(e.type != 'read' && e.response.error == null) {
+		        		alert("정상적으로 처리되었습니다.");
+						closeWindow(e);
+		        	} else if(e.type != 'read' && e.response.error != null) {
+		        		e.preventDefault();
+						this.cancelChanges();
+		        		alert("문제가 발생하여 정상적으로 처리되지 않았습니다.");
+		        	}
+				},
 		        sync: function(e) { 
 		        	console.log("viewmodel save data: ");
      			    console.log(this.data()[0]);
-					alert("정상적으로 처리되었습니다.");
-					closeWindow(e);
 				},
 				dataBound: function(e){ 
 					console.log("viewmodel dataBound");
@@ -563,8 +578,8 @@
             hasChanges: false,
             save: function (e) {
 				console.log("kendo.observable:save");
-				noticeViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-	        	noticeViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
+				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
+	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
 	        	// convert tag for editor
 	        	if( typeof $("#content").val() != "undefined" ){
 	        		var inData = $("#content").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
@@ -593,36 +608,147 @@
 		});
 	    
 	    // binding data to window
-		kendo.bind($("#window"), noticeViewModel);
+		kendo.bind($("#window"), bbsViewModel);
+	    
+// 		replyModel = kendo.data.Model.define({
+// 			id: "reply_seq",
+// 			fields: {
+// 				reply_seq			:{ type: "number" },
+// 				parent_reply_seq	:{ type: "number" },
+// 				bbs_uid				:{ type: "string", defaultValue: G_SEQ },
+// 				reply				:{ type: "string" },
+// 				mod_dt				:{ type: "string" },
+// 				mod_usr				:{ type: "string" },           
+// 				reg_dt				:{ type: "string" },
+// 				reg_usr				:{ type: "string" }           
+// 			}
+// 		});
+		
+// 	    /*** dataSource ***/
+// 		replyViewModel = kendo.observable({
+// 			dataSource: new kendo.data.DataSource({
+// 				transport: {
+// 					read: {
+// 						url: crudServiceBaseUrl + "/reply/read.do",
+// 		    			dataType: "jsonp",
+// 		    			complete: function(e){ 
+// 		    				console.log("complete /read.do...................");
+// 		    			}
+// 					},
+// // 					update: { url: crudServiceBaseUrl + "/update.do", dataType: "jsonp" },
+// 					destroy: { url: crudServiceBaseUrl + "/reply/delete.do", dataType: "jsonp" },
+// 					create: { url: crudServiceBaseUrl + "/reply/create.do", dataType: "jsonp" },
+// 					parameterMap: function(data, type) {//type =  read, create, update, destroy
+// 						if (type == "read"){
+// 		                   	var result = {
+// 								bbs_seq : "${bbsInfo.bbs_seq}",
+// 								bbs_uid : G_SEQ
+// 							};
+// 							return { params: kendo.stringify(result) }; 
+// 						}
+		               
+// 						if (type !== "read" && data.models) {
+// 							return { models: kendo.stringify(data.models) };
+// 						}
+// 					}
+// 				},
+// 				batch: true,
+// 				schema: {
+// 					model: bbsModel,
+// 					data: function(response) {
+// 						console.log("viewmodel data: ");
+// 						console.log(response);
+// 						return response;
+// 					},
+// 					total: function(response) {
+// 						console.log("viewmodel total: " + 1);
+// 						return 1;
+// 					},
+// 					errors: function(response) {
+// 						console.log("viewmodel error: " + response.error);
+// 						return response.error;
+// 					},
+// 					parse: function(response) {
+// 						console.log("viewmodel parse: ");
+//                     	return response;
+// 					}
+// 				},
+// 		        error : function(e) {
+// 			    	console.log('viewmodel error: ');
+// 			    	console.log(e)
+// 		        },
+// 		        change : function(e) {
+// 		        	console.log("viewmodel change: set selected :");
+// 		            var _data = this.data()[0];
+// 					console.log(_data);
+// 					if(typeof _data != "undefined") {
+// 					} else {
+						
+// 					}
+// 					bbsViewModel.set("selected", _data);
+// 		        },
+// 		        requestStart : function(e) {
+// 				},
+// 				requestEnd : function(e) {
+// 					console.log("deployViewModel:dataSource:requestEnd");
+// 		        	if(e.type != 'read' && e.response.error == null) {
+// 		        		alert("저장되었습니다.");
+// 		        	} else if(e.type != 'read' && e.response.error != null) {
+// 		        		e.preventDefault();
+// 						this.cancelChanges();
+// 		        		alert("저장되지 않았습니다.");
+// 		        	}
+// 				},
+// 		        sync: function(e) { 
+// 		        	console.log("viewmodel save data: ");
+//      			    console.log(this.data()[0]);
+// 				},
+// 				dataBound: function(e){ 
+// 					console.log("viewmodel dataBound");
+// 				}
+// 			}),
+// 			error : function(e) {
+//             	console.log("kendo.observable:error" + e.errors);
+//             },
+//             change: function(e) {
+//             	console.log("kendo.observable:change");
+//             },
+//             batch: true,
+//             selected: null,
+//             hasChanges: false,
+//             save: function (e) {
+// 				console.log("kendo.observable:save");
+// 				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
+// 	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
+// 	        	// convert tag for editor
+// 	        	if( typeof $("#reply").val() != "undefined" ){
+// 	        		var inData = $("#reply").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
+// 		        	if(inData.length < 1 || inData == null){
+// 							alert("내용을 입력해주세요.");
+// 				    	   	e.preventDefault();	
+// 			        } else {
+// 		            	this.dataSource.sync();
+// 			        }//if
+// 	        	}//undefined
+//             },
+//             remove: function(e) {
+//             	console.log("kendo.observable:remove");
+//                 if (confirm("삭제하시겠습니까?")) {
+//                 	console.log("remove");
+//                     this.dataSource.remove(this.dataSource.data()[0]);
+//                     this.dataSource.sync();
+// 					closeWindow();
+//                 }
+//             },
+//             cancel: function(e) {
+//             	console.log("kendo.observable:cancel");
+//                 this.dataSource.cancelChanges();
+//                 closeWindow();
+//             }
+// 		});
+// 		kendo.bind($("#reply-view"), replyViewModel);
+
 	    		
-// 	    $("#cancel-btn").kendoButton({ icon: "cancel" });
-// 	    $("#save-btn").kendoButton({ icon: "pencil" });
-// 	    $("#delete-btn").kendoButton({ icon: "close" });
-	    
-	    $("#expose-from").kendoDateTimePicker({
-			culture: "ko-KR",
-	    	mask: "0000-00-00 00:00",
-	    	format: 'yyyy-MM-dd HH:mm',
-	    	parseFormats: ["yyyy-MM-dd HH:mm"],
-			change: function(e) {
-				var dt = kendo.toString(this.value(), "yyyy-MM-dd HH:mm");
-				console.log("expose-from change: " + dt);
-				noticeViewModel.dataSource.at(0).set("expose_from", this.value());
-			}
-	    });
-	    
-	    $("#expose-to").kendoDateTimePicker({
-	    	culture: "ko-KR",
-	    	mask: "0000-00-00 00:00",
-	    	format: 'yyyy-MM-dd HH:mm',
-	    	parseFormats: ["yyyy-MM-dd HH:mm"],
-			change: function(e) {
-				var dt = kendo.toString(this.value(), "yyyy-MM-dd HH:mm");
-				console.log("expose-to change: " + dt);
-				noticeViewModel.dataSource.at(0).set("expose_to", this.value());
-			}
-	    });
-	    
 		$("#content").kendoEditor({
 			resizable: {
 	        	content: true,
@@ -632,7 +758,6 @@
 		});
 
 		invokeUserAuth($("#add-btn"), 'kendoButton', 'C');
-
 		invokeUserAuth($("#save-btn"), 'kendoButton', 'U');
 		invokeUserAuth($("#delete-btn"), 'kendoButton', 'U');
 
@@ -652,5 +777,6 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
 </style>
 <%@ include file="../inc/footer.jsp"%>

@@ -54,6 +54,7 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	
 	@Resource(name = "systemMgrBBSService")
 	private SystemMgrBBSService bbsService;
+	
 	@RequestMapping(value = "/bbs/board.do", method = RequestMethod.GET)
 	public ModelAndView bbsCommonView(Model model, @RequestParam(value="bbs", required=true) int bbsID)  throws Exception {
 		logger.debug("param: bbs=" + bbsID);

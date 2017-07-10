@@ -155,7 +155,7 @@
 			],
 			editable : {
 				mode : "inline",
-				confirmation : "선택한 행을 삭제하시겠습니까?\n저장 버튼 클릭시 완전히 삭제됩니다."
+				confirmation : "선택한 게시판을 정말 삭제하시겠습니까?\n삭제 시 관련된 모든 게시물이 삭제됩니다."
 			},
 			sortable : true,
 			selectable : true, //selectable: "multiple cell","multiple row","cell","row",

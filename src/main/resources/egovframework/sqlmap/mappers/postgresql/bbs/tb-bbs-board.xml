@@ -7,17 +7,18 @@
 				SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
 				FROM (
 					SELECT
-					 	bbs_uid,
-					 	bbs_seq,
-						title,
-						content,
-						reg_dt,
-						reg_usr,
-						mod_dt,
-						mod_usr,
-						(select count(*) from tb_bbs_reply where bbs_uid = bbs_uid) as reply_count
-					FROM tb_bbs_board
-					WHERE bbs_seq = cast(#{bbs_seq} as integer)
+					 	A.bbs_uid,
+					 	A.bbs_seq,
+						A.title,
+						A.content,
+						A.reg_dt,
+						A.reg_usr,
+						A.mod_dt,
+						A.mod_usr,
+						case when B.recnt isnull then 0 else B.recnt end as recnt
+					FROM tb_bbs_board A
+					left join (select bbs_uid, count(bbs_uid) as recnt from tb_bbs_reply group by bbs_uid) B on A.bbs_uid = B.bbs_uid  
+    				WHERE bbs_seq = cast(#{bbs_seq} as integer)
 		       		<if test="CONDITION eq 'TITLE'">
 		       			AND title LIKE '%'||#{KEYWORD}||'%'
 		       		</if>

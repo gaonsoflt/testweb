@@ -73,8 +73,9 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 						for (ESPAExecuteResultVO result : vo.getResultList()) {
 							logger.debug("param: " + result);
 							gradingMapper.updateGradingTestResult(result);
-							//result.getException();
 						}
+					} else {
+						answerHisMapper.updateAnswerError(vo);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -120,6 +121,8 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 							logger.debug("param: " + result);
 							gradingHisMapper.createGradingHistory(result);
 						}
+					} else {
+						answerHisMapper.updateAnswerError(vo);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

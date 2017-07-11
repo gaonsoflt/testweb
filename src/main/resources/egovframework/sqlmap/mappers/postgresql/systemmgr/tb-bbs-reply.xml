@@ -47,5 +47,6 @@
 	<delete id="deleteReply">
 		DELETE FROM TB_BBS_REPLY
 		WHERE reply_seq = CAST(#{reply_seq} as integer) 
+		AND reg_usr = #{reg_usr}
 	</delete>
 </mapper>

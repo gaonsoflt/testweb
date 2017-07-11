@@ -23,7 +23,7 @@
 		)
 	</select>
 	
-    <insert id="createGradingHistory"  parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
+    <insert id="createGradingHistory" parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
 		INSERT INTO tb_question_grading_his(
 			deploy_seq,
 	      	user_seq,

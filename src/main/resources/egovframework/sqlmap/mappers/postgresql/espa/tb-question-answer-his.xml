@@ -15,5 +15,15 @@
 			#{answer},
 			now()
 		) 
-	</insert> 
+	</insert>
+	 
+    <update id="updateAnswerError" parameterType="egovframework.espa.dao.ESPAExecuteVO">
+    	UPDATE tb_question_answer_his 
+    	SET 
+    		err_code = #{errCode},
+    		err_msg = #{errMsg}
+    	WHERE deploy_seq = CAST(#{deploySeq} as integer)
+		AND user_seq = CAST(#{userSeq} as integer)
+		AND submit_dt = #{submitDt}
+	</update>
 </mapper>

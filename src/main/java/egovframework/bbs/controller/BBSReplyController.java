@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
 import egovframework.bbs.service.BBSReplyService;
-import egovframework.com.cmm.EgovWebUtil;
 
 @RequestMapping("/bbs/board/reply")
 @Controller
@@ -49,7 +46,7 @@ Logger logger = LoggerFactory.getLogger(BBSReplyController.class.getName());
 		return rtnList;
 	}
 	
-	@RequestMapping(value = "/create.do")
+	@RequestMapping(value = "/create.do", method = RequestMethod.POST)
 	public ModelAndView create(HttpServletRequest request) {
 		logger.debug("---------------->/create.do");
 		HashMap<String, Object> param = new HashMap<String, Object>();
@@ -59,8 +56,11 @@ Logger logger = LoggerFactory.getLogger(BBSReplyController.class.getName());
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("jsonView");
 		try {
-			replyService.createBBSReply(param);
-			mav.addObject("success", true);
+			if(replyService.createBBSReply(param) > 0) {
+				mav.addObject("success", true);
+			} else {
+				mav.addObject("success", false);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav.addObject("success", false);
@@ -70,21 +70,22 @@ Logger logger = LoggerFactory.getLogger(BBSReplyController.class.getName());
 	
 	
 	@RequestMapping(value = "/delete.do")
-	public @ResponseBody JSONPObject delete(@RequestParam("callback") String c, @RequestParam("models") String models) {
+	public ModelAndView delete(@RequestParam("seq") int seq) {
 		logger.debug("---------------->/delete.do");
-		logger.debug("models:" + models); 
-		List<Map<String, Object>> paramMapList = EgovWebUtil.parseJsonToList(models);
+		Map<String, Object> param = new HashMap<>();
+		param.put("reply_seq", seq);
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("jsonView");
 		try {
-			for(int i = 0; i < paramMapList.size(); i++){
-				Map<String, Object> param = paramMapList.get(i);
-				replyService.deleteBBSReply(param);
+			if(replyService.deleteBBSReply(param) > 0) {
+				mav.addObject("success", true);
+			} else {
+				mav.addObject("success", false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Map<String, Object> rtnMap = new HashMap<String, Object>();
-			rtnMap.put("error", e.toString());
-			return new JSONPObject(c, rtnMap);
+			mav.addObject("success", false);
 		}
-		return new JSONPObject(c, models);
+		return mav;
 	}
 }

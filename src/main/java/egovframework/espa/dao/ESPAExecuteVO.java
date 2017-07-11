@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import egovframework.espa.core.execute.ESPAExcuteCode;
+import egovframework.espa.core.execute.ESPAExecuteException;
 import egovframework.espa.core.execute.handler.ESPAExecuteGradingHandler;
 
 public class ESPAExecuteVO {
@@ -21,7 +23,9 @@ public class ESPAExecuteVO {
 	private List<HashMap<String, Object>> grading;
 	private ESPAExecuteGradingHandler gradingHandler;
 	private boolean isTest;
-	private Exception error;
+	private ESPAExecuteException error;
+	private ESPAExcuteCode errCode;
+	private String errMsg;
 	
 	//execute result
 	private List<ESPAExecuteResultVO> resultList;
@@ -142,14 +146,24 @@ public class ESPAExecuteVO {
 		this.isTest = isTest;
 	}
 
-	public Exception getError() {
+	public ESPAExecuteException getError() {
 		return error;
 	}
 	
-	public void setError(Exception error) {
+	public void setError(ESPAExecuteException error) {
 		this.error = error;
+		this.errCode = error.getErrCode();
+		this.errMsg = error.getMessage();
+	}
+	
+	public ESPAExcuteCode getErrCode() {
+		return errCode;
 	}
 
+	public String getErrMsg() {
+		return errMsg;
+	}
+	
 	public ESPAExecuteGradingHandler getGradingHandler() {
 		return gradingHandler;
 	}

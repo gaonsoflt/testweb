@@ -26,22 +26,27 @@ public class BBSReplyServiceImpl extends EgovAbstractServiceImpl implements BBSR
 	
 	@Override
 	public List<Map<String, Object>> getBBSReplyList(Map<String, Object> param) throws Exception {
+		logger.debug("param: " + param);
 		return replyMapper.readReplyListByBBS(param);
 	}
 
 	@Override
 	public int getBBSReplyListCount(Map<String, Object> param) throws Exception {
+		logger.debug("param: " + param);
 		return replyMapper.readReplyListCountByBBS(param);
 	}
 
 	@Override
 	public int createBBSReply(Map<String, Object> param) throws Exception {
 		param.put("reg_usr", userService.getLoginUserInfo().getUsername());
+		logger.debug("param: " + param);
 		return replyMapper.createReply(param);
 	}
 
 	@Override
 	public int deleteBBSReply(Map<String, Object> param) throws Exception {
+		param.put("reg_usr", userService.getLoginUserInfo().getUsername());
+		logger.debug("param: " + param);
 		return replyMapper.deleteReply(param);
 	}
 }

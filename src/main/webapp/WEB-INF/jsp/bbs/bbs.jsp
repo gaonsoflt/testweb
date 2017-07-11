@@ -28,6 +28,7 @@
 							<input id="in_user" /> 
 							<button id="searchBtn" type="button">조회</button>
 						</p>
+						<button type="button">글쓰기</button>
 						<div id="gridList"></div>
 					</div>
 				</div> <!-- box -->
@@ -58,17 +59,20 @@
 					</div>
 				</td>
 				<td valign="top">
-					<div>
-						<div>첨부파일</div> 
-						<input type="file"/>
-					</div>
-					<div style="width:100%;">
+					<c:if test="${bbsInfo.use_attach == true}">
+						<div>
+							<div>첨부파일</div>
+							<input type="file" class="file"/>
+							<div id="file-list" style="border:2px solid #c9c9c9;min-height:50px"></div>
+						</div>
+					</c:if>
+					<div id="reply" style="width:100%;">
 						<div>댓글</div>
 						<c:if test="${userStore.username != null}">
-							<textarea rows="3" cols="80" id="reply" name="reply" placeholder="댓글을 입력하세요."></textarea>
+							<textarea rows="3" cols="80" id="replyText" name="replyText" placeholder="댓글을 입력하세요."></textarea>
 							<button type="button" id="writeReply">댓글 등록</button>
 						</c:if>
-						<div id="reply-list"></div>
+						<div id="reply-list" style="overflow:scroll;height:350px;"></div>
 					</div>
 				</td>
 			</tr>
@@ -199,8 +203,7 @@
 		$("#searchBtn").kendoButton({
 			icon : "search",
 			click : function(e) {
-				var gridList = $("#gridList").data("kendoGrid");
-				gridList.dataSource.read();
+				$("#gridList").data("kendoGrid").dataSource.read();
 			}
 		});
 	
@@ -228,12 +231,67 @@
 				G_Keyword = this.value();
 			}
 		});
+	    
+	    $('input.file').MultiFile({
+            max: 10, //업로드 최대 파일 갯수 (지정하지 않으면 무한대)
+//             accept: 'jpg|png|gif', //허용할 확장자(지정하지 않으면 모든 확장자 허용)
+            maxfile: 2048, //각 파일 최대 업로드 크기
+            maxsize: 20480,  //전체 파일 최대 업로드 크기
+            STRING: { //Multi-lingual support : 메시지 수정 가능
+                remove : "삭제", //추가한 파일 제거 문구, 이미태그를 사용하면 이미지사용가능
+                duplicate : "$file 은 이미 선택된 파일입니다.", 
+                denied : "$ext 는(은) 업로드 할수 없는 파일확장자입니다.",
+                selected:'$file 을 선택했습니다.', 
+                toomuch: "업로드할 수 있는 최대크기를 초과하였습니다.($size)", 
+                toomany: "업로드할 수 있는 최대 갯수는 $max개 입니다.",
+                toobig: "파일($file) 크기가 너무 큽니다. (max $size)"
+            },
+            list:"#file-list" //파일목록을 출력할 요소 지정가능
+
+            //각각의 이벤트에 따라 스크립 처리를 할수있다.
+            /*
+            ,onFileRemove: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileRemove - ' + value + '</li>')
+            },
+            afterFileRemove: function(element, value, master_element) {
+              $('#afile3-list').append('<li>afterFileRemove - ' + value + '</li>')
+            },
+            onFileAppend: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileAppend - ' + value + '</li>')
+            },
+            afterFileAppend: function(element, value, master_element) {
+              $('#afile3-list').append('<li>afterFileAppend - ' + value + '</li>')
+            },
+            onFileSelect: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileSelect - ' + value + '</li>')
+            },
+            afterFileSelect: function(element, value, master_element) {
+              $('#afile3-list').append('<li>afterFileSelect - ' + value + '</li>')
+            },
+            onFileInvalid: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileInvalid - ' + value + '</li>')
+            },
+            onFileDuplicate: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileDuplicate - ' + value + '</li>')
+            },
+            onFileTooMany: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileTooMany - ' + value + '</li>')
+            },
+            onFileTooBig: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileTooBig - ' + value + '</li>')
+            },
+            onFileTooMuch: function(element, value, master_element) {
+              $('#afile3-list').append('<li>onFileTooMuch - ' + value + '</li>')
+            }
+            */
+
+          });
 	});
-	
+
 	function addNew(e) {
 		// invisible delete button
 		$("#delete-btn").css("display", "none");
-		
+		$("#reply").css("display", "none");
 		// open window
 		wnd.center().open();		
 		bbsViewModel.set("selected", new bbsModel());
@@ -257,7 +315,7 @@
 	}
 	
 	function updateReply(){
-		$("#reply").val() = "";
+		$("#replyText").val("");
         $.ajax({
             type: "get",
             url: "<c:url value='/bbs/board/reply/readList.do'/>",
@@ -270,12 +328,32 @@
         });
     }
 	
+	function deleteReply(seq){
+		if (confirm("삭제하시겠습니까?")) {
+			$.ajax({
+				type : "get",
+				url : "<c:url value='/bbs/board/reply/delete.do'/>",
+				data : {
+					"seq" : seq
+				},
+				success : function(data, status) {
+					if(data.success) {
+						alert("삭제되었습니다.");
+					}
+					updateReply();
+				}
+			});
+		}
+    }
+	
 	function convertJSONToTag(item, index) {
 		var data = "<table><tbody>";
 		item.forEach(function(v, i) {
-			console.log(i + ":" + v);
 			data += "<tr><td>";
-			data += v.reg_usr + kendo.toString(new Date(Number(v.mod_dt)), 'yyyy-MM-dd hh:mm:ss');
+			data += v.reg_usr + " / " + kendo.toString(new Date(Number(v.mod_dt)), 'yyyy-MM-dd hh:mm:ss');
+			if(v.reg_usr == "${userStore.username}") {
+				data += " <a href='javascript:deleteReply(" + v.reply_seq + ")'>삭제</a>";
+			}
 			data += "<br>" + v.reply;
 			data += "</td></tr>";
 		});
@@ -287,7 +365,7 @@
 		
 		$("#writeReply").click(function() {
 			console.log("writeReply");
-			var replyText = $("#reply").val();
+			var replyText = $("#replyText").val();
 			if(replyText != '') {
 				$.ajax({
 					type : "post",
@@ -319,7 +397,11 @@
 			],
             modal: true,
             visible: false,
-            resizable: true
+            resizable: true,
+            open: function(e) {
+            	updateReply();
+            	$('input:file').MultiFile('reset'); 
+            }
         }).data("kendoWindow");
 		
 		var crudServiceBaseUrl = "${contextPath}/bbs/board";
@@ -374,7 +456,7 @@
 							rnum : { type : "number", editable : false },
 							title : { type : "string", editable : false },
 							content : { type : "string", editable : false },
-							reply_count: { type : "number", editable : false },
+							recnt: { type : "number", editable : false },
 							reg_dt : { type : "string", editable : false },
 							reg_usr : { type : "string", editable : false },
 							mod_dt : { type : "string", editable : false },
@@ -415,7 +497,7 @@
 				{ field : "rnum", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: left;" },
-					template : "#= title # [#=reply_count#]"},
+					template : "#= title # [#= recnt#]"},
 				{ field : "reg_usr", title : "글쓴이", width : 150, attributes : { style : "text-align: center;" } },
 				{ field : "reg_dt", title : "등록일", width : 150, attributes : {	style : "text-align: center;" },
 					template : "#= (reg_dt == '') ? '' : kendo.toString(new Date(Number(reg_dt)), 'yyyy-MM-dd hh:mm') #" }
@@ -439,6 +521,7 @@
         		// read bbsViewModel by G_SEQ 
         		bbsViewModel.dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
+        		$("#reply").css("display", "inline-block");
                 // open window
         		wnd.center().open();
 			},
@@ -609,145 +692,6 @@
 	    
 	    // binding data to window
 		kendo.bind($("#window"), bbsViewModel);
-	    
-// 		replyModel = kendo.data.Model.define({
-// 			id: "reply_seq",
-// 			fields: {
-// 				reply_seq			:{ type: "number" },
-// 				parent_reply_seq	:{ type: "number" },
-// 				bbs_uid				:{ type: "string", defaultValue: G_SEQ },
-// 				reply				:{ type: "string" },
-// 				mod_dt				:{ type: "string" },
-// 				mod_usr				:{ type: "string" },           
-// 				reg_dt				:{ type: "string" },
-// 				reg_usr				:{ type: "string" }           
-// 			}
-// 		});
-		
-// 	    /*** dataSource ***/
-// 		replyViewModel = kendo.observable({
-// 			dataSource: new kendo.data.DataSource({
-// 				transport: {
-// 					read: {
-// 						url: crudServiceBaseUrl + "/reply/read.do",
-// 		    			dataType: "jsonp",
-// 		    			complete: function(e){ 
-// 		    				console.log("complete /read.do...................");
-// 		    			}
-// 					},
-// // 					update: { url: crudServiceBaseUrl + "/update.do", dataType: "jsonp" },
-// 					destroy: { url: crudServiceBaseUrl + "/reply/delete.do", dataType: "jsonp" },
-// 					create: { url: crudServiceBaseUrl + "/reply/create.do", dataType: "jsonp" },
-// 					parameterMap: function(data, type) {//type =  read, create, update, destroy
-// 						if (type == "read"){
-// 		                   	var result = {
-// 								bbs_seq : "${bbsInfo.bbs_seq}",
-// 								bbs_uid : G_SEQ
-// 							};
-// 							return { params: kendo.stringify(result) }; 
-// 						}
-		               
-// 						if (type !== "read" && data.models) {
-// 							return { models: kendo.stringify(data.models) };
-// 						}
-// 					}
-// 				},
-// 				batch: true,
-// 				schema: {
-// 					model: bbsModel,
-// 					data: function(response) {
-// 						console.log("viewmodel data: ");
-// 						console.log(response);
-// 						return response;
-// 					},
-// 					total: function(response) {
-// 						console.log("viewmodel total: " + 1);
-// 						return 1;
-// 					},
-// 					errors: function(response) {
-// 						console.log("viewmodel error: " + response.error);
-// 						return response.error;
-// 					},
-// 					parse: function(response) {
-// 						console.log("viewmodel parse: ");
-//                     	return response;
-// 					}
-// 				},
-// 		        error : function(e) {
-// 			    	console.log('viewmodel error: ');
-// 			    	console.log(e)
-// 		        },
-// 		        change : function(e) {
-// 		        	console.log("viewmodel change: set selected :");
-// 		            var _data = this.data()[0];
-// 					console.log(_data);
-// 					if(typeof _data != "undefined") {
-// 					} else {
-						
-// 					}
-// 					bbsViewModel.set("selected", _data);
-// 		        },
-// 		        requestStart : function(e) {
-// 				},
-// 				requestEnd : function(e) {
-// 					console.log("deployViewModel:dataSource:requestEnd");
-// 		        	if(e.type != 'read' && e.response.error == null) {
-// 		        		alert("저장되었습니다.");
-// 		        	} else if(e.type != 'read' && e.response.error != null) {
-// 		        		e.preventDefault();
-// 						this.cancelChanges();
-// 		        		alert("저장되지 않았습니다.");
-// 		        	}
-// 				},
-// 		        sync: function(e) { 
-// 		        	console.log("viewmodel save data: ");
-//      			    console.log(this.data()[0]);
-// 				},
-// 				dataBound: function(e){ 
-// 					console.log("viewmodel dataBound");
-// 				}
-// 			}),
-// 			error : function(e) {
-//             	console.log("kendo.observable:error" + e.errors);
-//             },
-//             change: function(e) {
-//             	console.log("kendo.observable:change");
-//             },
-//             batch: true,
-//             selected: null,
-//             hasChanges: false,
-//             save: function (e) {
-// 				console.log("kendo.observable:save");
-// 				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-// 	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
-// 	        	// convert tag for editor
-// 	        	if( typeof $("#reply").val() != "undefined" ){
-// 	        		var inData = $("#reply").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-// 		        	if(inData.length < 1 || inData == null){
-// 							alert("내용을 입력해주세요.");
-// 				    	   	e.preventDefault();	
-// 			        } else {
-// 		            	this.dataSource.sync();
-// 			        }//if
-// 	        	}//undefined
-//             },
-//             remove: function(e) {
-//             	console.log("kendo.observable:remove");
-//                 if (confirm("삭제하시겠습니까?")) {
-//                 	console.log("remove");
-//                     this.dataSource.remove(this.dataSource.data()[0]);
-//                     this.dataSource.sync();
-// 					closeWindow();
-//                 }
-//             },
-//             cancel: function(e) {
-//             	console.log("kendo.observable:cancel");
-//                 this.dataSource.cancelChanges();
-//                 closeWindow();
-//             }
-// 		});
-// 		kendo.bind($("#reply-view"), replyViewModel);
-
 	    		
 		$("#content").kendoEditor({
 			resizable: {
@@ -778,5 +722,15 @@
 	text-overflow: ellipsis;
 }
 
+#dropzone {
+    border:2px dotted #3292A2;
+    width:100%;
+    height:70px;
+    color:#92AAB0;
+    text-align:center;
+    font-size:24px;
+    padding-top:12px;
+    margin-top:10px;
+}
 </style>
 <%@ include file="../inc/footer.jsp"%>

@@ -64,7 +64,7 @@ body {
   -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
   -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
   transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
-  margin-left: 230px;
+  margin-left: 240px;
   z-index: 820;
 }
 .layout-top-nav .content-wrapper,

@@ -61,7 +61,6 @@
     
     <script src="<c:url value='/resource/js/comm/jquery.modal.js'/>" type="text/javascript"></script>
   	<link rel="stylesheet" href="<c:url value='/resource/css/jquery.modal.css'/>" type="text/css" media="screen" />
-    
     <!-- Common Kendo UI CSS for web widgets and widgets for data visualization. -->
     <link href="<c:url value='/resource/kendoui/styles/kendo.common.min.css'/>" rel="stylesheet" />
     <!-- (Optional) RTL CSS for Kendo UI widgets for the web. Include only in right-to-left applications. -->
@@ -71,7 +70,7 @@
     <!-- (Optional) Kendo UI Hybrid CSS. Include only if you will use the mobile devices features. -->
     <link href="<c:url value='/resource/kendoui/styles/kendo.default.mobile.min.css'/>" rel="stylesheet" type="text/css" />		
     <!-- jQuery JavaScript -->
-    <%-- <script src="<c:url value='/resource/kendoui/js/jquery.min.js'/>"></script> --%>
+    <script src="<c:url value='/resource/kendoui/js/jquery.min.js'/>"></script>
     <!-- Kendo UI combined JavaScript -->
     <script charset="UTF-8"  src="<c:url value='/resource/kendoui/js/kendo.all.min.js'/>"></script>
     <!-- kendo 엑셀 Excel Export Is Not Working in Internet Explorer and Safari -->
@@ -84,6 +83,10 @@
 	<script src="<c:url value='/resource/js/codemirror/codemirror.js'/>" type="text/javascript"></script>
 	<script src="<c:url value='/resource/js/codemirror/javascript.js'/>" type="text/javascript"></script>
 	<link href="<c:url value='/resource/css/codemirror/codemirror.css'/>" rel="stylesheet" />
+	
+	<!--CDN방식-->
+	<script src="<c:url value='/resource/js/multifile/jQuery.MultiFile.min.js'/>" type="text/javascript" language="javascript"></script>
+
 	
 	<style>
 	.k-header .k-link{

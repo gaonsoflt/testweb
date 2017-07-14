@@ -5,7 +5,7 @@
 	
 	<select id="readReplyListByBBS" parameterType="map" resultType="map">
 		SELECT
-			bbs_uid,
+			board_id,
 			reply,
 			reg_usr,
 			reg_dt,
@@ -13,7 +13,7 @@
 			reply_seq,
 			parent_reply_seq
 		FROM TB_BBS_REPLY
-		WHERE bbs_uid = #{bbs_uid}
+		WHERE board_id = #{board_id}
 		ORDER BY reg_dt DESC
 	</select>
 	
@@ -21,13 +21,13 @@
 		SELECT
 			count(*)
 		FROM TB_BBS_REPLY
-		WHERE bbs_uid = #{bbs_uid}
+		WHERE board_id = #{board_id}
 	</select>
 	
 	<insert id="createReply">
 		INSERT INTO TB_BBS_REPLY (
 			reply_seq,
-			bbs_uid,
+			board_id,
 			reply,
 			parent_reply_seq,
 			reg_usr,
@@ -35,7 +35,7 @@
 			mod_dt
 		) VALUES (
 			nextval('sq_tb_bbs_reply'), 
-			#{bbs_uid},
+			#{board_id},
 			#{reply}, 
 			cast(#{parent_reply_seq} as integer),
 			#{reg_usr}, 
@@ -47,6 +47,10 @@
 	<delete id="deleteReply">
 		DELETE FROM TB_BBS_REPLY
 		WHERE reply_seq = CAST(#{reply_seq} as integer) 
-		AND reg_usr = #{reg_usr}
+	</delete>
+	
+	<delete id="deleteReplyByBoard">
+		DELETE FROM TB_BBS_REPLY
+		WHERE board_id = #{board_id} 
 	</delete>
 </mapper>

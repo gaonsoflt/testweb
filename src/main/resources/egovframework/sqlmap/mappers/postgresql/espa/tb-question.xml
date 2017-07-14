@@ -3,7 +3,7 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionMgrMapper">
 
-	<select id="selectQuestionList" parameterType="hashMap" resultType="hashMap">
+	<select id="selectQuestionList" parameterType="map" resultType="map">
 		SELECT *
 		FROM (
 			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*, B.user_name
@@ -33,6 +33,7 @@
 		       			AND lang_type LIKE '%'||#{KEYWORD}||'%'
 		       		</if>
 				</where>
+				ORDER BY question_seq DESC
 			) A LEFT JOIN TB_USER_INFO B ON B.USER_ID = A.REG_USR 
 		) A
 		WHERE 1 = 1
@@ -42,10 +43,9 @@
 			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
     	]]>
 		</if>
-		ORDER BY question_seq DESC
 	</select>
 	
-	<select id="selectQuestion" parameterType="hashMap" resultType="hashMap">
+	<select id="selectQuestion" parameterType="map" resultType="map">
 		SELECT A.*, B.USER_NAME 
 		FROM (
 			SELECT
@@ -70,7 +70,7 @@
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
 	</select>
 	
-	<select id="selectQuestionByDeploySeq" parameterType="hashMap" resultType="hashMap">
+	<select id="selectQuestionByDeploySeq" parameterType="map" resultType="map">
 		SELECT A.*, B.USER_NAME 
 		FROM (
 			SELECT
@@ -95,7 +95,7 @@
 		) A LEFT JOIN tb_user_info B ON B.user_id = A.reg_usr
 	</select>
 	
-	<select id="selectQuestionAllCount" parameterType="hashMap" resultType="integer">
+	<select id="selectQuestionAllCount" parameterType="map" resultType="integer">
 		SELECT COUNT(*)
 		FROM (
 			SELECT

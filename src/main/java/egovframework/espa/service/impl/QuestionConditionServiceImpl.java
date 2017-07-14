@@ -1,6 +1,6 @@
 package egovframework.espa.service.impl;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -18,22 +18,22 @@ public class QuestionConditionServiceImpl extends EgovAbstractServiceImpl implem
 	private QuestionConditionMapper conditionMapper;
 	
 	@Override
-	public List<HashMap<String, Object>> getConditionList(HashMap<String, Object> map) throws Exception {
+	public List<Map<String, Object>> getConditionList(Map<String, Object> map) throws Exception {
 		return conditionMapper.selectConditionList(map);
 	}
 
 	@Override
-	public int createCondition(HashMap<String, Object> map) throws Exception {
+	public int createCondition(Map<String, Object> map) throws Exception {
 		return conditionMapper.insertCondition(map);
 	}
 
 	@Override
-	public int updateCondition(HashMap<String, Object> map) throws Exception {
+	public int updateCondition(Map<String, Object> map) throws Exception {
 		return conditionMapper.updateCondition(map);
 	}
 
 	@Override
-	public int deleteCondition(HashMap<String, Object> map) throws Exception {
+	public int deleteCondition(Map<String, Object> map) throws Exception {
 		return conditionMapper.deleteCondition(map);
 	}
 }

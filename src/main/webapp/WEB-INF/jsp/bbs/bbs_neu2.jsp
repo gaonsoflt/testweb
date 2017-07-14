@@ -392,9 +392,9 @@
 					errors : function(response) { return response.error; },
 					parse : function(response) { return response; },
 					model : {//가져온 값이 있음...
-						id : "bbs_uid",
+						id : "board_id",
 						fields : {
-							bbs_uid: { type : "string", editable : false },
+							board_id: { type : "string", editable : false },
 							rnum : { type : "number", editable : false },
 							title : { type : "string", editable : false },
 							content : { type : "string", editable : false },
@@ -435,7 +435,7 @@
 			height : 710,
             toolbar: kendo.template($("#toolbar-template").html()),
 			columns : [
-				{ field : "bbs_uid", title : "uid", hidden: true },
+				{ field : "board_id", title : "uid", hidden: true },
 				{ field : "rnum", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: left;" },
@@ -456,7 +456,7 @@
 			change: function(e) {
         		// find seq value in selected row  	
 				var selectedItem = this.dataItem(this.select());
-				G_SEQ = selectedItem.bbs_uid;
+				G_SEQ = selectedItem.board_id;
 				console.log("selected item: " + G_SEQ + "(seq)");
                 console.log(selectedItem);
                 console.log("showDetails");
@@ -494,9 +494,9 @@
 		 * view model for window data 
 		 */
 		bbsModel = kendo.data.Model.define({
-			id: "bbs_uid",
+			id: "board_id",
 			fields: {
-				bbs_uid		:{ type: "string" },
+				board_id		:{ type: "string" },
 				bbs_seq		:{ type: "string", defaultValue: "${bbsInfo.bbs_seq}" },
 				title		:{ type: "string" },
 				content		:{ type: "string" },
@@ -525,7 +525,7 @@
 						if (type == "read"){
 		                   	var result = {
 								bbs_seq : "${bbsInfo.bbs_seq}",
-								bbs_uid : G_SEQ
+								board_id : G_SEQ
 							};
 							return { params: kendo.stringify(result) }; 
 						}
@@ -639,7 +639,7 @@
 // 			fields: {
 // 				reply_seq			:{ type: "number" },
 // 				parent_reply_seq	:{ type: "number" },
-// 				bbs_uid				:{ type: "string", defaultValue: G_SEQ },
+// 				board_id				:{ type: "string", defaultValue: G_SEQ },
 // 				reply				:{ type: "string" },
 // 				mod_dt				:{ type: "string" },
 // 				mod_usr				:{ type: "string" },           
@@ -666,7 +666,7 @@
 // 						if (type == "read"){
 // 		                   	var result = {
 // 								bbs_seq : "${bbsInfo.bbs_seq}",
-// 								bbs_uid : G_SEQ
+// 								board_id : G_SEQ
 // 							};
 // 							return { params: kendo.stringify(result) }; 
 // 						}

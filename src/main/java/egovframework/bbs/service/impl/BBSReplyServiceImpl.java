@@ -45,7 +45,6 @@ public class BBSReplyServiceImpl extends EgovAbstractServiceImpl implements BBSR
 
 	@Override
 	public int deleteBBSReply(Map<String, Object> param) throws Exception {
-		param.put("reg_usr", userService.getLoginUserInfo().getUsername());
 		logger.debug("param: " + param);
 		return replyMapper.deleteReply(param);
 	}

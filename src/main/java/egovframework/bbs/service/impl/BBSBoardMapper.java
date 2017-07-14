@@ -9,17 +9,17 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 @Mapper("bBSBoardMapper")
 public interface BBSBoardMapper {
 	
-	public List<Map<String, Object>> readBBSList(Map<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readBoard(Map<String, Object> map) throws Exception;
 	
-	public Map<String, Object> readBBSDetail(Map<String, Object> map) throws Exception;
+	public Map<String, Object> readBoardItem(Map<String, Object> map) throws Exception;
 	
-	public int readBBSListCount(Map<String, Object> map) throws Exception;
+	public int readBoardCount(Map<String, Object> map) throws Exception;
 	
-	public int createBBS(Map<String, Object> map) throws Exception;
+	public int createBoardItem(Map<String, Object> map) throws Exception;
 	
-	public int updateBBS(Map<String, Object> map) throws Exception;
+	public int updateBoardItem(Map<String, Object> map) throws Exception;
 	
-	public int deleteBBS(Map<String, Object> map) throws Exception;
+	public int deleteBoardItem(Map<String, Object> map) throws Exception;
 	
-	public int deleteBBSBoard(Map<String, Object> map) throws Exception; 
+	public int deleteBoard(Map<String, Object> map) throws Exception; 
 }

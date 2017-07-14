@@ -3,7 +3,7 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionConditionMapper">
 
-	<select id="selectConditionList" parameterType="hashMap" resultType="hashMap">
+	<select id="selectConditionList" parameterType="map" resultType="map">
 		SELECT A.*, C.cd_nm as lang_name 
 		FROM (
 			SELECT

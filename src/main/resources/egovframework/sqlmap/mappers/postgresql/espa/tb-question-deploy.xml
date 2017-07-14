@@ -3,7 +3,7 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionDeployMapper">
 
-	<select id="readDeployList" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployList" parameterType="map" resultType="map">
 		SELECT *
 		FROM (
 			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
@@ -38,7 +38,7 @@
 		ORDER BY group_name, submit_from, submit_to
 	</select>
 	
-	<select id="readDeploy" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeploy" parameterType="map" resultType="map">
 		SELECT
 			A.deploy_seq,
 			A.question_seq, 
@@ -59,7 +59,7 @@
 		WHERE deploy_seq = CAST(#{deploy_seq} as integer) 
 	</select>
 	
-	<select id="readDeployAllCount" parameterType="hashMap" resultType="integer">
+	<select id="readDeployAllCount" parameterType="map" resultType="integer">
 		SELECT count(*)
 		FROM TB_QUESTION_DEPLOY A 
 		inner join tb_code_master B on A.group_id = B.cd_id
@@ -106,7 +106,7 @@
 		WHERE deploy_seq = CAST(#{deploy_seq} as integer) 
 	</delete>
 	
-	<select id="readDeployedQuestionList" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployedQuestionList" parameterType="map" resultType="map">
 		SELECT
 			A.deploy_seq,
 			A.question_seq, 
@@ -128,8 +128,31 @@
 		<![CDATA[WHERE A.submit_from < now()]]>
 		ORDER BY group_name, submit_from, submit_to
 	</select>
+		
+	<select id="readDeployedQuestionDetail" parameterType="map" resultType="map">
+		SELECT 
+			A.deploy_seq,
+			A.question_seq,
+			A.title,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			B.TITLE AS QUESTION_TITLE,
+			B.CON_QUESTION AS QUESTION,
+			B.CON_IO AS QUESTION_IO,
+			B.CON_EXAMPLE AS QUESTION_EXAMPLE,
+			B.CON_HINT AS QUESTION_HINT,
+			B.LANG_TYPE,
+			B.TIMEOUT AS TIMEOUT,
+			B.BAN_KEYWORD AS BAN_KEYWORD,
+			B.MAX_CODESIZE AS MAX_CODESIZE
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_QUESTION B ON A.QUESTION_SEQ = B.QUESTION_SEQ
+		WHERE A.DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
+	</select>
 	
-	<select id="readDeployedQuestionListByUser" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployedQuestionListByUser" parameterType="map" resultType="map">
 		SELECT
 			A.deploy_seq,
 			A.question_seq, 
@@ -152,7 +175,7 @@
 		ORDER BY group_name, submit_from, submit_to
 	</select>
 	
-	<select id="readDeployedQuestionDetailByUser" parameterType="hashMap" resultType="hashMap">
+	<select id="readDeployedQuestionDetailByUser" parameterType="map" resultType="map">
 		SELECT 
 			A.deploy_seq,
 			A.question_seq,
@@ -191,7 +214,7 @@
 		WHERE A.DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
 	</select>
 	
-	<select id="readAvailableDeployedQuestion" parameterType="hashMap" resultType="integer">
+	<select id="readAvailableDeployedQuestion" parameterType="map" resultType="integer">
 		SELECT
 			COUNT(*)
 		FROM TB_QUESTION_DEPLOY A 
@@ -201,7 +224,7 @@
 		AND A.deploy_seq = cast(#{deploy_seq} as integer)
 	</select>
 	
-	<select id="readGroupsOfAvailableDeployedQuestion" parameterType="hashMap" resultType="hashMap">
+	<select id="readGroupsOfAvailableDeployedQuestion" parameterType="map" resultType="map">
 		SELECT
 			distinct(B.cd_nm) as group_name
 		FROM TB_QUESTION_DEPLOY A 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.systemmgr.service.impl.SystemMgrSignupUserMapper">
+	<select id="readSignupUserList" parameterType="map" resultType="map">
+		SELECT *
+		FROM (
+			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+			FROM (
+				SELECT
+					A.USER_ID,
+					A.USER_NAME,
+					'' AS PASSWORD,
+					A.PHONE,
+					A.BIRTHDAY,
+					CASE WHEN A.APPROVAL = '1' THEN true ELSE false end APPROVAL,
+					A.EMAIL,
+					A.REG_DT
+				FROM TB_SIGNUP_USER
+				ORDER BY REG_DT
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+	       AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+	       AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+	</select>
+	
+	<select id="existUserID" parameterType="map" resultType="integer">
+		SELECT COUNT(A.*)
+		FROM (
+			SELECT USER_ID 
+			FROM TB_USER_INFO 
+			WHERE USER_ID = #{user_id}
+			UNION ALL 
+			SELECT USER_ID
+			FROM TB_SIGNUP_USER 
+			WHERE USER_ID = #{user_id}
+			AND APPROVAL = '1'
+		) A
+	</select>
+
+	<select id="readSignupUserListCount" parameterType="map" resultType="integer">
+		SELECT COUNT(*)
+		FROM TB_SIGNUP_USER
+	</select>
+
+	<insert id="createSignupUser">
+		INSERT INTO TB_SIGNUP_USER (
+			USER_ID,
+			USER_NAME,
+			PASSWORD,
+			PHONE,
+			BIRTHDAY,
+			APPROVAL,
+			EMAIL,
+			CONFIRM_UUID,
+			CONFIRM,
+			REG_DT
+		) VALUES (
+			#{user_id},
+			#{user_name},
+			#{password},
+			#{phone},
+			#{birthday},
+			'0',
+			#{email},
+			#{confirm_uuid},
+			'0',
+			now()
+		)
+	</insert>
+	
+	<update id="confirmEmail">
+		UPDATE TB_SIGNUP_USER
+		SET
+			CONFIRM = '1'
+		WHERE CONFIRM_UUID = #{confirm_uuid}
+		AND CONFIRM = '0'
+	</update>
+
+	<update id="approvalSignupUser">
+		UPDATE TB_USER_INFO
+		SET
+			PASSWORD = #{password}
+		WHERE USER_SEQ = cast(#{user_seq} as integer)
+	</update>
+
+	<delete id="deleteSignupUser">
+		DELETE 
+		FROM TB_SIGNUP_USER
+		WHERE USER_NAME = cast(#{user_seq} as integer)
+	</delete>
+</mapper>

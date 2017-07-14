@@ -3,7 +3,7 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionGradingMapper">
 
-	<select id="selectGradingList" parameterType="hashMap" resultType="hashMap">
+	<select id="selectGradingList" parameterType="map" resultType="map">
 		SELECT 
 			question_seq,
 			grading_input,

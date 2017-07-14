@@ -64,7 +64,7 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 			
 			param.put("menu_id", param.get("bbs_id").toString());
 			param.put("menu_nm", param.get("bbs_name").toString());
-			param.put("menu_url", "/bbs/board.do?bbs=" + param.get("bbs_seq").toString());
+			param.put("menu_url", "/bbs/board.do?bid=" + param.get("bbs_seq").toString());
 			param.put("menu_desc", param.get("bbs_name").toString());
 			param.put("menu_content", "");
 			param.put("menu_order", 1);
@@ -115,7 +115,7 @@ public class SystemMgrBBSServiceImpl extends EgovAbstractServiceImpl implements 
 			
 			// TODO: delete board, file and reply
 //			logger.debug("delete board");
-//			boardMapper.deleteBBSBoard(param);
+//			boardMapper.deleteBoard(param);
 			
 //			param.put("table_name", bbsID);
 //			logger.debug("delete bbs table: " + bbsID);

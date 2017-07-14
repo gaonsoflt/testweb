@@ -53,9 +53,9 @@
 						</div>
 						<div class="col-xs-6 text-right va-b pr5">
 							<div class="login-links">
-								<a href="<c:url value='/index.do'/>" class="active" title="Sign In">Sign In</a> 
+								<a href="<c:url value='/index.do'/>" class="active" title="Sign In"><spring:message code="login.signin" text="default text" /></a> 
 								<span class="text-white"> | </span> 
-								<a href="javascript:signup()" class="" title="Register">Register</a>
+								<a href="<c:url value='/signup.do'/>" class="" title="Sign Up"><spring:message code="signup.signup" text="default text" /></a>
 							</div>
 						</div>
 					</div>
@@ -67,18 +67,18 @@
 							<div class="panel-body bg-light p30">
 								<div class="row">
 									<div class="section">
-										<label for="username" class="field-label text-muted fs18 mb10">Username</label> 
+										<label for="username" class="field-label text-muted fs18 mb10"><spring:message code="login.userID" text="default text" /></label> 
 										<label for="username" class="field prepend-icon"> 
-											<input name="j_username" type="text" value="admin" class="gui-input" placeholder="Enter username"> 
+											<input name="j_username" type="text" value="admin" class="gui-input" placeholder="<spring:message code="login.input.userID" text="default text" />"> 
 											<label for="j_username" class="field-icon">
 												<i class="fa fa-user"></i>
 											</label>
 										</label>
 									</div>
 									<div class="section">
-										<label for="username" class="field-label text-muted fs18 mb10">Password</label> 
+										<label for="username" class="field-label text-muted fs18 mb10"><spring:message code="login.password" text="default text" /></label> 
 										<label for="password" class="field prepend-icon"> 
-											<input name="j_password" type="password" value="a1234" class="gui-input" placeholder="Enter password"> 
+											<input name="j_password" type="password" value="a1234" class="gui-input" placeholder="<spring:message code="login.input.password" text="default text" />"> 
 											<label for="j_password" class="field-icon"> 
 												<i class="fa fa-lock"></i>
 											</label>
@@ -105,10 +105,10 @@
 							</div>
 							<!-- end .form-body section -->
 							<div class="panel-footer clearfix p10 ph15">
-								<button type="submit" class="button btn-primary mr10 pull-right">SignIn</button>
+								<button type="submit" class="button btn-primary mr10 pull-right"><spring:message code="login.signin" text="default text" /></button>
 								<label class="switch ib switch-primary pull-left input-align mt10">
 									<input type="checkbox" name="remember" id="remember" checked>
-									<label for="remember" data-on="YES" data-off="NO"></label> <span>Remember me</span>
+									<label for="remember" data-on="YES" data-off="NO"></label> <span><spring:message code="login.rememberme" text="default text" /></span>
 								</label>
 							</div>
 							<!-- end .form-footer section -->
@@ -157,10 +157,6 @@
 				},
 			});
 		});
-
-		function signup() {
-			alert("Preparing for Register form");
-		}
 	</script>
 	<!-- END: PAGE SCRIPTS -->
 </body>

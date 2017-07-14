@@ -28,14 +28,14 @@ Logger logger = LoggerFactory.getLogger(BBSReplyController.class.getName());
 	private BBSReplyService replyService;
 	
 	@RequestMapping(value = "/readList.do", method = RequestMethod.GET)
-	public @ResponseBody List<Map<String, Object>> readList(@RequestParam("buid") String bbsUID) {
+	public @ResponseBody List<Map<String, Object>> readList(@RequestParam("buid") String boardID) {
 //		logger.debug("params:" + params); 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rtnList = new ArrayList<>();
 		try {
 //			Map<String, Object> param = EgovWebUtil.parseJsonToMap(params);
 			Map<String, Object> param = new HashMap<>();
-			param.put("bbs_uid", bbsUID);
+			param.put("board_id", boardID);
 			rtnList = replyService.getBBSReplyList(param);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", replyService.getBBSReplyListCount(param));
@@ -51,7 +51,7 @@ Logger logger = LoggerFactory.getLogger(BBSReplyController.class.getName());
 		logger.debug("---------------->/create.do");
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		param.put("reply", request.getParameter("text"));
-		param.put("bbs_uid", request.getParameter("buid"));
+		param.put("board_id", request.getParameter("buid"));
 		param.put("parent_reply_seq", request.getParameter("pSeq"));
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("jsonView");

@@ -1,7 +1,7 @@
 package egovframework.espa.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,14 +27,14 @@ public class QuestionGradingHistoryServiceImpl extends EgovAbstractServiceImpl i
 	private SystemMgrUserService userService;
 	
 	@Override
-	public List<HashMap<String, Object>> getGradingResultListByUser(HashMap<String, Object> map) throws Exception {
-		List<HashMap<String, Object>> result = new ArrayList<>();
+	public List<Map<String, Object>> getGradingResultListByUser(Map<String, Object> map) throws Exception {
+		List<Map<String, Object>> result = new ArrayList<>();
 		map.put("user_seq", userService.getLoginUserInfo().getUserseq());
-		for (HashMap<String, Object> question : deployMapper.readDeployedQuestionListByUser(map)) {
+		for (Map<String, Object> question : deployMapper.readDeployedQuestionListByUser(map)) {
 			map.put("deploy_seq", question.get("deploy_seq"));
 			map.put("question_seq", question.get("qestion_seq"));
 			
-			List<HashMap<String, Object>> grading = gradingHisMapper.readLatestGradingHistoryByUser(map);
+			List<Map<String, Object>> grading = gradingHisMapper.readLatestGradingHistoryByUser(map);
 			if(grading.size() > 0) {
 				float score = QuestionUtil.calculateScore(grading);
 				question.put("submit_dt", grading.get(0).get("submit_dt"));
@@ -48,14 +48,31 @@ public class QuestionGradingHistoryServiceImpl extends EgovAbstractServiceImpl i
 	}
 	
 	@Override
-	public List<HashMap<String, Object>> getGradingResultList(HashMap<String, Object> map) throws Exception {
-		List<HashMap<String, Object>> result = deployMapper.readDeployedQuestionList(map);
+	public List<Map<String, Object>> getGradingResultList(Map<String, Object> map) throws Exception {
+		List<Map<String, Object>> result = deployMapper.readDeployedQuestionList(map);
 		return result;
 	}
 
 	@Override
-	public List<HashMap<String, Object>> getUserGrading(HashMap<String, Object> map) throws Exception {
+	public List<Map<String, Object>> getUserGrading(Map<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getGradingResultOfUserList(Map<String, Object> map) throws Exception {
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (Map<String, Object> resultUser : gradingHisMapper.readGradingResultUserList(map)) {
+			List<Map<String, Object>> grading = gradingHisMapper.readLatestGradingHistoryByUser(resultUser);
+			if(grading.size() > 0) {
+				float score = QuestionUtil.calculateScore(grading);
+				resultUser.put("submit_dt", grading.get(0).get("submit_dt"));
+				resultUser.put("score", score);
+			} else {
+				resultUser.put("score", 0);
+			}
+			result.add(resultUser);
+		}
+		return result;
 	}
 }

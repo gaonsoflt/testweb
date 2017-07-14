@@ -10,11 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.espa.service.ConfigService;
+import egovframework.espa.service.QuestionDeployService;
+import egovframework.espa.service.QuestionMgrService;
 import egovframework.systemmgr.service.SystemMgrBBSService;
 import egovframework.systemmgr.service.SystemMgrMenuService;
 
@@ -55,7 +56,7 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	@Resource(name = "systemMgrBBSService")
 	private SystemMgrBBSService bbsService;
 	
-	@RequestMapping(value = "/bbs/board.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/bbs/board.do")
 	public ModelAndView bbsCommonView(Model model, @RequestParam(value="bbs", required=true) int bbsID)  throws Exception {
 		logger.debug("param: bbs=" + bbsID);
 		ModelAndView mav = new ModelAndView("bbs/bbs");
@@ -99,11 +100,28 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	@RequestMapping(value = "/mgr/question.do")
 	public ModelAndView mgrQuestionView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionMgr");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestion"));
+		return mav; 
+	}
+	
+	@Resource(name = "questionMgrService")
+	private QuestionMgrService questionService;
+	
+	@RequestMapping(value = "/mgr/question/form.do")
+	public ModelAndView formView(Model model, @RequestParam(value="id", required=false)String seq)  throws Exception {
+		logger.debug("param: question_seq=" + seq);
+		ModelAndView mav = new ModelAndView("espa/mgr/questionMgrForm");
+		try {
+			long _seq = Long.valueOf(seq);
+			mav.addObject("questionInfo", questionService.getQuestion(_seq).get(0));
+		}catch (Exception e) {
+			
+		}
 		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
 		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
 		mav.addObject("default_max_codesize", config.getEspaConfigVoValue("DEFAULT_MAX_CODESIZE"));
 		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestion"));
-		return mav; 
+		return mav;
 	}
 	
 	@RequestMapping(value = "/mgr/question/deploy.do")
@@ -114,8 +132,21 @@ Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 	}
 	
 	@RequestMapping(value = "/mgr/question/deploy/result.do")
-	public ModelAndView mgrScoreView(Model model) throws Exception {
+	public ModelAndView mgrResultView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionResultAll");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
+		return mav;
+	}
+	
+	
+	@Resource(name = "questionDeployService")
+	private QuestionDeployService deployService;
+	
+	@RequestMapping(value = "/mgr/question/deploy/result/detail.do")
+	public ModelAndView mgrResultDetailView(Model model, @RequestParam(value="deploy", required=false)String seq)  throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/questionResult");
+		mav.addObject("deploy_seq", seq);
+		mav.addObject("depQuesInfo", deployService.getDeployedQuestionDetail(Long.valueOf(seq)));
 		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
 		return mav;
 	}

@@ -27,24 +27,17 @@ public class QuestionDeployController {
 	@Resource(name = "questionDeployService")
 	private QuestionDeployService deployService;
 
-	/**
-	 * 사용자 정보를 조회함
-	 * 
-	 * @param c
-	 * @param params
-	 * @return
-	 */
 	@RequestMapping(value = "/readList.do")
 	public @ResponseBody JSONPObject getDeployList(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
-		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 		logger.debug("params:" + params);
-		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
-		List<HashMap<String, Object>> rtnList = null;
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		paramMap = EgovWebUtil.parseJsonToMap(params);
+		List<Map<String, Object>> rtnList = null;
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 
 		try {
-			rtnList = (List<HashMap<String, Object>>) deployService.getDeployList(paramMap);
+			rtnList = deployService.getDeployList(paramMap);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", deployService.getDeployAllCount(paramMap));
 
@@ -59,26 +52,19 @@ public class QuestionDeployController {
 		return new JSONPObject(c, rtnMap);
 	}
 
-	/**
-	 * 사용자 정보를 조회함
-	 * 
-	 * @param c
-	 * @param params
-	 * @return
-	 */
 	@RequestMapping(value = "/read.do")
 	public @ResponseBody JSONPObject getDeploy(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
-		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 		logger.debug("params:" + params);
-		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
-		List<HashMap<String, Object>> rtnList = null;
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		paramMap = EgovWebUtil.parseJsonToMap(params);
+		List<Map<String, Object>> rtnList = null;
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 
 		try {
 			// rtnMap = (HashMap<String, Object>)
 			// noticeService.getDeploy(paramMap).get(0);
-			rtnList = (List<HashMap<String, Object>>) deployService.getDeploy(paramMap);
+			rtnList = deployService.getDeploy(paramMap);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", rtnList.size());
 
@@ -93,85 +79,63 @@ public class QuestionDeployController {
 		return new JSONPObject(c, rtnMap);
 	}
 
-	/**
-	 * 사용자 정보를 저장함
-	 * 
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/create.do")
 	public @ResponseBody JSONPObject insertDeploy(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/create.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("models:" + models);
 		logger.debug("paramMapList:" + paramMapList);
 
 		try {
 			for (int i = 0; i < paramMapList.size(); i++) {
-				deployService.createDeploy((HashMap<String, Object>) paramMapList.get(i));
+				deployService.createDeploy(paramMapList.get(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
 		return new JSONPObject(c, models);
 	}
-
-	/**
-	 * 사용자 정보를 수정함
-	 * 
-	 * @param c
-	 * @param models
-	 * @return
-	 */
+	
 	@RequestMapping(value = "/update.do")
 	public @ResponseBody JSONPObject updateDeploy(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/update.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-
 		logger.debug("models:" + models);
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList:" + paramMapList);
 
 		try {
 			for (int i = 0; i < paramMapList.size(); i++) {
-				deployService.updateDeploy((HashMap<String, Object>) paramMapList.get(i));
+				deployService.updateDeploy(paramMapList.get(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
 		return new JSONPObject(c, models);
 	}
 
-	/**
-	 * 사용자 정보를 삭제함
-	 * 
-	 * @param c
-	 * @param models
-	 * @return
-	 */
 	@RequestMapping(value = "/delete.do")
 	public @ResponseBody JSONPObject deleteDeploy(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/delete.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 		logger.debug("models:" + models);
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList:" + paramMapList);
 
 		try {
 			for (int i = 0; i < paramMapList.size(); i++) {
-				deployService.deleteDeploy((HashMap<String, Object>) paramMapList.get(i));
+				deployService.deleteDeploy(paramMapList.get(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
@@ -182,24 +146,24 @@ public class QuestionDeployController {
 	public @ResponseBody JSONPObject readDeployedQuestionListByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		logger.debug("---------------->/readDeployedQuestionListByUser.do");
 		logger.debug("params: " + params);
-		return new JSONPObject(c, deployService.getDeployedQuestionListByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+		return new JSONPObject(c, deployService.getDeployedQuestionListByUser(EgovWebUtil.parseJsonToMap(params)));
 	}
 	
 	@RequestMapping(value = "/readDeployedQuestionDetailByUser.do")
 	public @ResponseBody JSONPObject readDeployedQuestionDetailByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		logger.debug("---------------->/readDeployedQuestionDetailByUser.do");
-		return new JSONPObject(c, deployService.getDeployedQuestionDetailByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)));
+		return new JSONPObject(c, deployService.getDeployedQuestionDetailByUser(EgovWebUtil.parseJsonToMap(params)));
 	}
 	
 	@RequestMapping(value = "/groupsByUser.do")
 	public @ResponseBody JSONPObject getGroupOfDeployedQuestionByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		logger.debug("---------------->/getGroupOfDeployedQuestionByUser.do");
-		return new JSONPObject(c, deployService.getGroupOfDeployedQuestionByUser((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
+		return new JSONPObject(c, deployService.getGroupOfDeployedQuestionByUser(EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
 	}
 	
 	@RequestMapping(value = "/groups.do")
 	public @ResponseBody JSONPObject getGroupOfDeployedQuestion(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		logger.debug("---------------->/getGroupOfDeployedQuestion.do");
-		return new JSONPObject(c, deployService.getGroupOfDeployedQuestion((HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
+		return new JSONPObject(c, deployService.getGroupOfDeployedQuestion(EgovWebUtil.parseJsonToMap(params)).get("rtnList"));
 	}
 }

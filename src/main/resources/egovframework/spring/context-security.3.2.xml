@@ -9,6 +9,12 @@
     <http pattern="/resource/**" security="none" />
     <http pattern="/index.do" security="none" />
     <http pattern="/com/login/login.do" security="none" />
+    <http pattern="/signup.do" security="none" />
+    <http pattern="/signup/register.do" security="none" />
+    <http pattern="/signup/complete.do" security="none" />
+    <http pattern="/signup/confirm.do" security="none" />
+    <http pattern="/signup/confirmed.do" security="none" />
+    <http pattern="/signup/unconfirmed.do" security="none" />
     <http pattern="/appinf/**" security="none" />
     <http pattern="/hp/**" security="none" />
     <http pattern="/index.jsp" security="none" />

@@ -1,8 +1,8 @@
 package egovframework.espa.service.impl;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -46,11 +46,11 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	private QuestionGradingMapper gradingMapper;
 	
 	@Override
-	public void executeTest(HashMap<String, Object> map) throws Exception {
+	public void executeTest(Map<String, Object> map) throws Exception {
 		ESPAExecuteVO executeVO = new ESPAExecuteVO();
-		HashMap<String, Object> result = ((List<HashMap<String, Object>>) questionMapper.selectQuestion(map)).get(0);
-		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(map);
-		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(map);
+		Map<String, Object> result = (questionMapper.selectQuestion(map)).get(0);
+		List<Map<String, Object>> conditionList = conditionMapper.selectConditionList(map);
+		List<Map<String, Object>> gradingList = gradingMapper.selectGradingList(map);
 		executeVO.setQuestionSeq(Long.valueOf(result.get("question_seq").toString()));
 		executeVO.setCode(result.get("test_code").toString());
 		executeVO.setLanguage(result.get("lang_type").toString());
@@ -90,11 +90,11 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	}
 	
 	@Override
-	public void execute(HashMap<String, Object> map) throws Exception {
+	public void execute(Map<String, Object> map) throws Exception {
 		final ESPAExecuteVO executeVO = new ESPAExecuteVO();
-		HashMap<String, Object> result = ((List<HashMap<String, Object>>) deployMapper.readDeployedQuestionDetailByUser(map)).get(0);
-		List<HashMap<String, Object>> conditionList = (List<HashMap<String, Object>>) conditionMapper.selectConditionList(result);
-		List<HashMap<String, Object>> gradingList = (List<HashMap<String, Object>>) gradingMapper.selectGradingList(result);
+		Map<String, Object> result = (deployMapper.readDeployedQuestionDetailByUser(map)).get(0);
+		List<Map<String, Object>> conditionList = conditionMapper.selectConditionList(result);
+		List<Map<String, Object>> gradingList = gradingMapper.selectGradingList(result);
 		executeVO.setDeploySeq(Long.valueOf(result.get("deploy_seq").toString()));
 		executeVO.setUserSeq(Long.valueOf(result.get("user_seq").toString()));
 		executeVO.setCode(result.get("answer").toString());

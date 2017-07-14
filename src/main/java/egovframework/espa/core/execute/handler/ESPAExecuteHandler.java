@@ -1,8 +1,8 @@
 package egovframework.espa.core.execute.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ public abstract class ESPAExecuteHandler {
 		logger.debug("create input/output file size: " + vo.getGrading().size());
 		for (int i = 0; i < vo.getGrading().size(); i++) {
 			ESPAExecuteResultVO result = new ESPAExecuteResultVO();
-			HashMap<String, Object> grading = vo.getGrading().get(i);
+			Map<String, Object> grading = vo.getGrading().get(i);
 			result.setQuestionSeq(Long.valueOf(vo.getQuestionSeq()));
 			result.setGradingSeq(Long.valueOf(grading.get("grading_seq").toString()));
 			result.setGradingOrder(Long.valueOf(grading.get("grading_order").toString()));

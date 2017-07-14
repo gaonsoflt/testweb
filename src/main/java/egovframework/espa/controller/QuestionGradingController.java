@@ -30,14 +30,14 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 	@RequestMapping(value = "/readList.do")
 	public @ResponseBody JSONPObject getGradingList(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
-		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 		logger.debug("params:" + params); 
-		paramMap = (HashMap<String, Object>) EgovWebUtil.parseJsonToMap(params);
-		List<HashMap<String, Object>> rtnList = null;
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		paramMap = EgovWebUtil.parseJsonToMap(params);
+		List<Map<String, Object>> rtnList = null;
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		
 		try {
-			rtnList = (List<HashMap<String, Object>>) gradingService.getGradingList(paramMap);
+			rtnList = gradingService.getGradingList(paramMap);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", rtnList.size());
 			
@@ -56,18 +56,18 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 	public @ResponseBody JSONPObject insertGrading(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/create.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("models:" + models); 
 		logger.debug("paramMapList:" + paramMapList); 
 
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
+				Map<String, Object> paramMap = paramMapList.get(i);
 				gradingService.createGrading(paramMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
@@ -80,17 +80,17 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 
 		logger.debug("models:" + models); 
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList:" + paramMapList); 
 
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
+				Map<String, Object> paramMap = paramMapList.get(i);
 				gradingService.updateGrading(paramMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}
@@ -103,17 +103,17 @@ Logger logger = LoggerFactory.getLogger(QuestionGradingController.class.getName(
 		logger.debug("---------------->/delete.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 		logger.debug("models:" + models); 
-		paramMapList = (ArrayList<Map<String, Object>>) EgovWebUtil.parseJsonToList(models);
+		paramMapList = EgovWebUtil.parseJsonToList(models);
 		logger.debug("paramMapList:" + paramMapList); 
 
 		try {
 			for(int i=0; i < paramMapList.size(); i++){
-				HashMap<String, Object> paramMap = (HashMap<String, Object>)paramMapList.get(i);
+				Map<String, Object> paramMap = paramMapList.get(i);
 				gradingService.deleteGrading(paramMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+			Map<String, Object> rtnMap = new HashMap<String, Object>();
 			rtnMap.put("error", e.toString());
 			return new JSONPObject(c, rtnMap);
 		}

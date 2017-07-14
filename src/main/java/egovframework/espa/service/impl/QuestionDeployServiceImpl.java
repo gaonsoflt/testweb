@@ -2,6 +2,7 @@ package egovframework.espa.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -28,26 +29,26 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	private SystemMgrUserService userService;
 	
 	@Override
-	public List<HashMap<String, Object>> getDeployList(HashMap<String, Object> map) throws Exception {
+	public List<Map<String, Object>> getDeployList(Map<String, Object> map) throws Exception {
 		return deployMapper.readDeployList(map);
 	}
 
 	@Override
-	public List<HashMap<String, Object>> getDeploy(HashMap<String, Object> map) throws Exception {
+	public List<Map<String, Object>> getDeploy(Map<String, Object> map) throws Exception {
 		return deployMapper.readDeploy(map);
 	}
 
 	@Override
-	public int getDeployAllCount(HashMap<String, Object> map) throws Exception {
+	public int getDeployAllCount(Map<String, Object> map) throws Exception {
 		return deployMapper.readDeployAllCount(map);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public int createDeploy(HashMap<String, Object> map) throws Exception {
+	public int createDeploy(Map<String, Object> map) throws Exception {
 		int executeCnt = 0;
-		List<HashMap<String, Object>> groups = (List<HashMap<String, Object>>) map.get("groups");
-		for (HashMap<String, Object> group : groups) {
+		List<Map<String, Object>> groups = (List<Map<String, Object>>) map.get("groups");
+		for (Map<String, Object> group : groups) {
 			map.put("group_id", group.get("cd_id"));
 			executeCnt = deployMapper.createDeploy(map);
 			logger.debug("get pk: " + map.get("deploy_seq"));
@@ -57,22 +58,22 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	}
 
 	@Override
-	public int updateDeploy(HashMap<String, Object> map) throws Exception {
+	public int updateDeploy(Map<String, Object> map) throws Exception {
 		return deployMapper.updateDeploy(map);
 	}
 
 	@Override
-	public int deleteDeploy(HashMap<String, Object> map) throws Exception {
+	public int deleteDeploy(Map<String, Object> map) throws Exception {
 		return deployMapper.deleteDeploy(map);
 	}
 
 	@Override
-	public HashMap<String, Object> getGroupOfDeployedQuestionByUser(HashMap<String, Object> map) {
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+	public Map<String, Object> getGroupOfDeployedQuestionByUser(Map<String, Object> map) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
 			map.put("user_seq", userService.getLoginUserInfo().getUserseq());
 			logger.debug("params: " + map);
-			List<HashMap<String, Object>> rtnList = deployMapper.readGroupsOfAvailableDeployedQuestion(map);
+			List<Map<String, Object>> rtnList = deployMapper.readGroupsOfAvailableDeployedQuestion(map);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", Integer.valueOf(rtnList.size()));
 		} catch (Exception e) {
@@ -83,11 +84,11 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	}
 	
 	@Override
-	public HashMap<String, Object> getGroupOfDeployedQuestion(HashMap<String, Object> map) {
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+	public Map<String, Object> getGroupOfDeployedQuestion(Map<String, Object> map) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
 			logger.debug("params: " + map);
-			List<HashMap<String, Object>> rtnList = deployMapper.readGroupsOfAvailableDeployedQuestion(map);
+			List<Map<String, Object>> rtnList = deployMapper.readGroupsOfAvailableDeployedQuestion(map);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", Integer.valueOf(rtnList.size()));
 		} catch (Exception e) {
@@ -98,11 +99,11 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	}
 
 	@Override
-	public HashMap<String, Object> getDeployedQuestionListByUser(HashMap<String, Object> map) {
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeployedQuestionListByUser(Map<String, Object> map) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
 			map.put("user_seq", userService.getLoginUserInfo().getUserseq());
-			List<HashMap<String, Object>> rtnList = deployMapper.readDeployedQuestionListByUser(map);
+			List<Map<String, Object>> rtnList = deployMapper.readDeployedQuestionListByUser(map);
 			rtnMap.put("rtnList", rtnList);
 			rtnMap.put("total", Integer.valueOf(rtnList.size()));
 		} catch (Exception e) {
@@ -113,12 +114,26 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	}
 
 	@Override
-	public HashMap<String, Object> getDeployedQuestionDetailByUser(HashMap<String, Object> map) {
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeployedQuestionDetailByUser(Map<String, Object> map) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
 		try {
 			map.put("user_seq", userService.getLoginUserInfo().getUserseq());
 			logger.debug("params: " + map);
 			rtnMap = deployMapper.readDeployedQuestionDetailByUser(map).get(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			rtnMap.put("error", e.toString());
+		}
+		return rtnMap;
+	}
+	
+	@Override
+	public Map<String, Object> getDeployedQuestionDetail(long seq) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			rtnMap.put("deploy_seq", seq);
+			logger.debug("params: deploy_seq=" + seq);
+			rtnMap = deployMapper.readDeployedQuestionDetail(rtnMap).get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			rtnMap.put("error", e.toString());

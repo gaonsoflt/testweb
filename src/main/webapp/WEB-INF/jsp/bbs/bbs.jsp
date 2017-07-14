@@ -28,7 +28,7 @@
 							<input id="in_user" /> 
 							<button id="searchBtn" type="button">조회</button>
 						</p>
-						<button type="button">글쓰기</button>
+						<button type="button" onclick="location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}'"><spring:message code="button.add"/></button>
 						<div id="gridList"></div>
 					</div>
 				</div> <!-- box -->
@@ -40,12 +40,12 @@
 <div id="window" style="display:none;">
 	<div>
 		<button id="delete-btn" data-role="button" data-icon="close" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
-		<button id="save-btn" data-role="button" data-icon="pencil" data-bind="click: save" style="float:right;margin:10px 10px 0 0;">저장</button>
-		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
+		<button id="modify-btn" data-role="button" data-icon="pencil" data-bind="click: modify" style="float:right;margin:10px 10px 0 0;">수정</button>
+		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">닫기</button>
 	</div>
 	<table style="width:100%;">
 		<colgroup>
-			<col width="50%">
+			<col width="60%">
 			<col width="40%">
 		</colgroup>
 		<tbody>
@@ -53,7 +53,7 @@
 				<td>
 					<div style="width:100%;">
 						<div>제목</div>
-						<div><input id="title" class="bind_input" name="title" data-bind="value:selected.title" style="width:100%;" required/></div>
+						<div><input name="title" data-bind="value:selected.title" style="width:100%;" readonly="readonly"/></div>
 						<div>내용</div>
 						<div><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></div>
 					</div>
@@ -62,7 +62,6 @@
 					<c:if test="${bbsInfo.use_attach == true}">
 						<div>
 							<div>첨부파일</div>
-							<input type="file" class="file"/>
 							<div id="file-list" style="border:2px solid #c9c9c9;min-height:50px"></div>
 						</div>
 					</c:if>
@@ -72,7 +71,7 @@
 							<textarea rows="3" cols="80" id="replyText" name="replyText" placeholder="댓글을 입력하세요."></textarea>
 							<button type="button" id="writeReply">댓글 등록</button>
 						</c:if>
-						<div id="reply-list" style="overflow:scroll;height:350px;"></div>
+						<div id="reply-list" style="overflow:scroll;height:350px"></div>
 					</div>
 				</td>
 			</tr>
@@ -231,61 +230,6 @@
 				G_Keyword = this.value();
 			}
 		});
-	    
-	    $('input.file').MultiFile({
-            max: 10, //업로드 최대 파일 갯수 (지정하지 않으면 무한대)
-//             accept: 'jpg|png|gif', //허용할 확장자(지정하지 않으면 모든 확장자 허용)
-            maxfile: 2048, //각 파일 최대 업로드 크기
-            maxsize: 20480,  //전체 파일 최대 업로드 크기
-            STRING: { //Multi-lingual support : 메시지 수정 가능
-                remove : "삭제", //추가한 파일 제거 문구, 이미태그를 사용하면 이미지사용가능
-                duplicate : "$file 은 이미 선택된 파일입니다.", 
-                denied : "$ext 는(은) 업로드 할수 없는 파일확장자입니다.",
-                selected:'$file 을 선택했습니다.', 
-                toomuch: "업로드할 수 있는 최대크기를 초과하였습니다.($size)", 
-                toomany: "업로드할 수 있는 최대 갯수는 $max개 입니다.",
-                toobig: "파일($file) 크기가 너무 큽니다. (max $size)"
-            },
-            list:"#file-list" //파일목록을 출력할 요소 지정가능
-
-            //각각의 이벤트에 따라 스크립 처리를 할수있다.
-            /*
-            ,onFileRemove: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileRemove - ' + value + '</li>')
-            },
-            afterFileRemove: function(element, value, master_element) {
-              $('#afile3-list').append('<li>afterFileRemove - ' + value + '</li>')
-            },
-            onFileAppend: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileAppend - ' + value + '</li>')
-            },
-            afterFileAppend: function(element, value, master_element) {
-              $('#afile3-list').append('<li>afterFileAppend - ' + value + '</li>')
-            },
-            onFileSelect: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileSelect - ' + value + '</li>')
-            },
-            afterFileSelect: function(element, value, master_element) {
-              $('#afile3-list').append('<li>afterFileSelect - ' + value + '</li>')
-            },
-            onFileInvalid: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileInvalid - ' + value + '</li>')
-            },
-            onFileDuplicate: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileDuplicate - ' + value + '</li>')
-            },
-            onFileTooMany: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileTooMany - ' + value + '</li>')
-            },
-            onFileTooBig: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileTooBig - ' + value + '</li>')
-            },
-            onFileTooMuch: function(element, value, master_element) {
-              $('#afile3-list').append('<li>onFileTooMuch - ' + value + '</li>')
-            }
-            */
-
-          });
 	});
 
 	function addNew(e) {
@@ -362,7 +306,6 @@
 	}
 	
 	$(document).ready(function() {
-		
 		$("#writeReply").click(function() {
 			console.log("writeReply");
 			var replyText = $("#replyText").val();
@@ -390,7 +333,7 @@
 		/*************************/
 		wnd = $("#window").kendoWindow({
             title: "",
-            width: 1000,
+            width: 1100,
             actions: [
 				"Maximize",
 				"Close"
@@ -400,7 +343,8 @@
             resizable: true,
             open: function(e) {
             	updateReply();
-            	$('input:file').MultiFile('reset'); 
+            	$('.k-editor-toolbar').hide();
+				$($('#content').data().kendoEditor.body).attr('contenteditable', false);
             }
         }).data("kendoWindow");
 		
@@ -450,9 +394,9 @@
 					errors : function(response) { return response.error; },
 					parse : function(response) { return response; },
 					model : {//가져온 값이 있음...
-						id : "bbs_uid",
+						id : "board_id",
 						fields : {
-							bbs_uid: { type : "string", editable : false },
+							board_id: { type : "string", editable : false },
 							rnum : { type : "number", editable : false },
 							title : { type : "string", editable : false },
 							content : { type : "string", editable : false },
@@ -491,9 +435,9 @@
 			navigatable : true,
 			pageable : true,
 			height : 710,
-            toolbar: kendo.template($("#toolbar-template").html()),
+            toolbar: false,
 			columns : [
-				{ field : "bbs_uid", title : "uid", hidden: true },
+				{ field : "board_id", title : "uid", hidden: true },
 				{ field : "rnum", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
 				// Todo: 제목 길이 제한 
 				{ field : "title", title : "제목", attributes : { style : "text-align: left;" },
@@ -514,7 +458,7 @@
 			change: function(e) {
         		// find seq value in selected row  	
 				var selectedItem = this.dataItem(this.select());
-				G_SEQ = selectedItem.bbs_uid;
+				G_SEQ = selectedItem.board_id;
 				console.log("selected item: " + G_SEQ + "(seq)");
                 console.log(selectedItem);
                 console.log("showDetails");
@@ -553,9 +497,9 @@
 		 * view model for window data 
 		 */
 		bbsModel = kendo.data.Model.define({
-			id: "bbs_uid",
+			id: "board_id",
 			fields: {
-				bbs_uid		:{ type: "string" },
+				board_id	:{ type: "string" },
 				bbs_seq		:{ type: "string", defaultValue: "${bbsInfo.bbs_seq}" },
 				title		:{ type: "string" },
 				content		:{ type: "string" },
@@ -584,7 +528,7 @@
 						if (type == "read"){
 		                   	var result = {
 								bbs_seq : "${bbsInfo.bbs_seq}",
-								bbs_uid : G_SEQ
+								board_id : G_SEQ
 							};
 							return { params: kendo.stringify(result) }; 
 						}
@@ -659,20 +603,9 @@
             batch: true,
             selected: null,
             hasChanges: false,
-            save: function (e) {
-				console.log("kendo.observable:save");
-				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
-	        	// convert tag for editor
-	        	if( typeof $("#content").val() != "undefined" ){
-	        		var inData = $("#content").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-		        	if(inData.length < 1 || inData == null){
-							alert("내용을 입력해주세요.");
-				    	   	e.preventDefault();	
-			        } else {
-		            	this.dataSource.sync();
-			        }//if
-	        	}//undefined
+            modify: function (e) {
+				console.log("kendo.observable:modify");
+				location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}&board=' + G_SEQ;
             },
             remove: function(e) {
             	console.log("kendo.observable:remove");

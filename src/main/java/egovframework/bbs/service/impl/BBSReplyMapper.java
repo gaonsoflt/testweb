@@ -16,4 +16,6 @@ public interface BBSReplyMapper {
 	public int createReply(Map<String, Object> map) throws Exception;
 	
 	public int deleteReply(Map<String, Object> map) throws Exception;
+	
+	public int deleteReplyByBoard(Map<String, Object> map) throws Exception;
 }

@@ -1,6 +1,6 @@
 package egovframework.espa.service.impl;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -9,26 +9,28 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 @Mapper("questionDeployMapper")
 public interface QuestionDeployMapper {
 	
-	public List<HashMap<String, Object>> readDeployList(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeployList(Map<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> readDeploy(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeploy(Map<String, Object> map) throws Exception;
 
-	public int readDeployAllCount(HashMap<String, Object> map) throws Exception;
+	public int readDeployAllCount(Map<String, Object> map) throws Exception;
 	
-	public int createDeploy(HashMap<String, Object> map) throws Exception;
+	public int createDeploy(Map<String, Object> map) throws Exception;
 	
-	public int updateDeploy(HashMap<String, Object> map) throws Exception;
+	public int updateDeploy(Map<String, Object> map) throws Exception;
 	
-	public int deleteDeploy(HashMap<String, Object> map) throws Exception;  
+	public int deleteDeploy(Map<String, Object> map) throws Exception;  
 	
 	// for student
-	public List<HashMap<String, Object>> readDeployedQuestionList(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeployedQuestionList(Map<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> readDeployedQuestionListByUser(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeployedQuestionDetail(Map<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> readDeployedQuestionDetailByUser(HashMap<String, Object> map) throws Exception;
-
-	public int readAvailableDeployedQuestion(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeployedQuestionListByUser(Map<String, Object> map) throws Exception;
 	
-	public List<HashMap<String, Object>> readGroupsOfAvailableDeployedQuestion(HashMap<String, Object> map) throws Exception;
+	public List<Map<String, Object>> readDeployedQuestionDetailByUser(Map<String, Object> map) throws Exception;
+	
+	public int readAvailableDeployedQuestion(Map<String, Object> map) throws Exception;
+	
+	public List<Map<String, Object>> readGroupsOfAvailableDeployedQuestion(Map<String, Object> map) throws Exception;
 }

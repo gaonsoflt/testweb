@@ -2,7 +2,7 @@ package egovframework.espa.dao;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import egovframework.espa.core.execute.ESPAExcuteCode;
@@ -19,8 +19,8 @@ public class ESPAExecuteVO {
 	private long timeout;
 	private String[] banKeyword;
 	private long maxCodeSize;
-	private List<HashMap<String, Object>> condition;
-	private List<HashMap<String, Object>> grading;
+	private List<Map<String, Object>> condition;
+	private List<Map<String, Object>> grading;
 	private ESPAExecuteGradingHandler gradingHandler;
 	private boolean isTest;
 	private ESPAExecuteException error;
@@ -122,19 +122,19 @@ public class ESPAExecuteVO {
 		this.language = language;
 	}
 
-	public List<HashMap<String, Object>> getCondition() {
+	public List<Map<String, Object>> getCondition() {
 		return condition;
 	}
 	
-	public void setCondition(List<HashMap<String, Object>> condition) {
+	public void setCondition(List<Map<String, Object>> condition) {
 		this.condition = condition;
 	}
 	
-	public List<HashMap<String, Object>> getGrading() {
+	public List<Map<String, Object>> getGrading() {
 		return grading;
 	}
 	
-	public void setGrading(List<HashMap<String, Object>> grading) {
+	public void setGrading(List<Map<String, Object>> grading) {
 		this.grading = grading;
 	}
 	

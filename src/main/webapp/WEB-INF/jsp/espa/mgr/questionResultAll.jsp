@@ -35,21 +35,14 @@
 		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
 	</div>
 	<table style="width:100%">
-		<colgroup>
-			<col width="50%">
-			<col width="50%">
-		</colgroup>
+<!-- 		<colgroup> -->
+<!-- 			<col width="50%"> -->
+<!-- 			<col width="50%"> -->
+<!-- 		</colgroup> -->
 		<tbody>
 			<tr>
 				<td>
-					<table style="width:100%;">
-						<colgroup>
-							<col width="20%">
-							<col width="80%">
-						</colgroup>
-						<tbody>
-						</tbody>
-					</table>
+					<div id="grid-result"></div>
 				</td>
 			</tr>
 		</tbody>
@@ -57,43 +50,7 @@
 </div>
 
 <script>
-	/* DropDownList Template */
-	var questionViewModel;
-	var questionModel;
-	var wnd;
-	var G_Seq = 0;
-	
 	$(document).ready(function() {
-		
-		/*************************/
-		/* deatils window
-		/*************************/
-		wnd = $("#window").kendoWindow({
-            title: "제출",
-            width: 900,
-            height: 800,
-            actions: [
-				"Maximize",
-				"Close"
-			],
-            modal: true,
-            visible: false,
-            resizable: true,
-            open: function() {
-            	console.log("window.open");
-        		// read question detail
-				questionViewModel.dataSource.read();
-				document.getElementById("answer_type").checked = true;
-				$("#submit_editor").css({ "display" : "block" });
-				$("form .k-upload").css({ "display" : "none" });
-            },
-            close: function() {
-            	console.log("window.close");
-        		G_Seq = 0;
-        		$("#gridList").data("kendoGrid").dataSource.read();
-            }
-        }).data("kendoWindow");
-
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
@@ -221,10 +178,9 @@
             change: function(e) {
 				console.log("deploy-grid:change");
 				var selectedItem = this.dataItem(this.select());
-				G_Seq = selectedItem.deploy_seq; 
-				console.log("selected item: " + G_Seq + "(seq)");
-                // open window
-//         		wnd.center().open();
+				var seq = selectedItem.deploy_seq; 
+				console.log("selected item: " + seq + "(seq)");
+				location.href='${contextPath}/mgr/question/deploy/result/detail.do?deploy=' + seq;
             },
             dataBound: function(e) {
             	console.log("deploy-grid:dataBound");

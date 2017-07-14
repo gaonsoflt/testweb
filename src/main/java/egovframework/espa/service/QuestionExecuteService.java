@@ -1,11 +1,9 @@
 package egovframework.espa.service;
 
-import java.util.HashMap;
-
-import egovframework.espa.dao.ESPAExecuteVO;
+import java.util.Map;
 
 public interface QuestionExecuteService {
 
-	public void executeTest(HashMap<String, Object> map) throws Exception;
-	public void execute(HashMap<String, Object> map) throws Exception;
+	public void executeTest(Map<String, Object> map) throws Exception;
+	public void execute(Map<String, Object> map) throws Exception;
 }

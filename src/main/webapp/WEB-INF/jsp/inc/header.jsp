@@ -84,10 +84,14 @@
 	<script src="<c:url value='/resource/js/codemirror/javascript.js'/>" type="text/javascript"></script>
 	<link href="<c:url value='/resource/css/codemirror/codemirror.css'/>" rel="stylesheet" />
 	
+	<!-- multifile -->
 	<!--CDN방식-->
 	<script src="<c:url value='/resource/js/multifile/jQuery.MultiFile.min.js'/>" type="text/javascript" language="javascript"></script>
 
-	
+	<!-- style neuboard -->
+    <!-- Custom styles for this theme -->
+<%--     <link rel="stylesheet" href="<c:url value='/resource/style/neuboard/assets/css/main.css'/>"> --%>
+    
 	<style>
 	.k-header .k-link{
 		text-align: center;

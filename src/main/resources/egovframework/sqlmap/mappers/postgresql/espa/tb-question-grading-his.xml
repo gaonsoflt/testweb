@@ -2,7 +2,7 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="egovframework.espa.service.impl.QuestionGradingHistoryMapper"> 
-	<select id="readLatestGradingHistoryByUser" parameterType="hashMap" resultType="hashMap">
+	<select id="readLatestGradingHistoryByUser" parameterType="map" resultType="map">
 		SELECT
 			A.deploy_seq as deploy_seq,
 			A.user_seq as user_seq,
@@ -21,6 +21,27 @@
 			WHERE deploy_seq = CAST(#{deploy_seq} as integer)
 			AND user_seq = CAST(#{user_seq} as integer)
 		)
+	</select>
+	
+	<select id="readGradingResultUserList" parameterType="map" resultType="map">
+		SELECT 
+			A.deploy_seq,
+			A.user_seq,
+			C.user_name,
+			C.user_id,
+			B.submit_dt,
+			(SELECT count(*) FROM tb_question_answer_his WHERE user_seq = A.user_seq AND deploy_seq = A.deploy_seq) as user_submit_cnt
+		FROM tb_question_candidate A
+		LEFT JOIN (SELECT
+				deploy_seq,
+				user_seq,
+				MAX(submit_dt) as submit_dt
+			FROM tb_question_answer_his
+			WHERE deploy_seq = cast(#{deploy_seq} as integer)
+			GROUP BY deploy_seq, user_seq
+		)B ON A.user_seq = B.user_seq 
+		LEFT JOIN (SELECT user_seq, user_name, user_id FROM tb_user_info) C ON A.user_seq = C.user_seq
+		WHERE A.deploy_seq = cast(#{deploy_seq} as integer)
 	</select>
 	
     <insert id="createGradingHistory" parameterType="egovframework.espa.dao.ESPAExecuteResultVO">

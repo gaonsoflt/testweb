@@ -23,6 +23,52 @@
 		)
 	</select>
 	
+	<select id="readDeployedQuestinResultList" parameterType="map" resultType="map">
+		SELECT
+			A.deploy_seq,
+			A.question_seq, 
+			A.group_id,
+			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			B.cd_nm as group_name,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			A.title,
+			C.title as question_title,
+			C.lang_type,
+			C.max_codesize,
+			(select Count(*) FROM tb_question_candidate where deploy_seq = a.deploy_seq) as candidate,
+			(select count(distinct(user_seq)) From tb_question_answer_his where deploy_seq = a.deploy_seq) as submit_user
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+		INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
+		<![CDATA[WHERE A.submit_from < now()]]>
+		ORDER BY group_name, submit_from, submit_to
+	</select>
+	
+	<select id="readDeployedQuestionResult" parameterType="map" resultType="map">
+		SELECT 
+			A.deploy_seq,
+			A.question_seq,
+			A.title,
+			A.submit_from,
+			A.submit_to,
+			A.max_submit_cnt,
+			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			B.TITLE AS QUESTION_TITLE,
+			B.CON_QUESTION AS QUESTION,
+			B.CON_IO AS QUESTION_IO,
+			B.CON_EXAMPLE AS QUESTION_EXAMPLE,
+			B.CON_HINT AS QUESTION_HINT,
+			B.LANG_TYPE,
+			B.TIMEOUT AS TIMEOUT,
+			B.BAN_KEYWORD AS BAN_KEYWORD,
+			B.MAX_CODESIZE AS MAX_CODESIZE
+		FROM TB_QUESTION_DEPLOY A 
+		INNER JOIN TB_QUESTION B ON A.QUESTION_SEQ = B.QUESTION_SEQ
+		WHERE A.DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
+	</select>
+	
 	<select id="readGradingResultUserList" parameterType="map" resultType="map">
 		SELECT 
 			A.deploy_seq,

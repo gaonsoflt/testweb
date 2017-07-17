@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.common.service.CommonService;
-import egovframework.dgms.service.MngCodeService;
 import egovframework.systemmgr.service.SystemMgrUserAuthService;
 import egovframework.systemmgr.service.SystemMgrUserService;
 
@@ -33,9 +32,6 @@ public class SystemMgrUserAuthController {
 	
 	@Resource(name = "systemMgrUserService")
 	private SystemMgrUserService systemMngUserService;
-	
-	@Resource(name = "mngCodeService")
-	private MngCodeService mngCodeService;
 	
 	@Resource(name = "commonService")
 	private CommonService commonService;

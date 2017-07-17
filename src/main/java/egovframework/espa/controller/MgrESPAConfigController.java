@@ -23,8 +23,8 @@ import egovframework.espa.service.ESPAConfigService;
 
 @RequestMapping("/mgr/config")
 @Controller
-public class ESPAConfigController {
-Logger logger = LoggerFactory.getLogger(ESPAConfigController.class.getName());
+public class MgrESPAConfigController {
+Logger logger = LoggerFactory.getLogger(MgrESPAConfigController.class.getName());
     
 	@Resource(name = "eSPAConfigService")
 	private ESPAConfigService configSvc;

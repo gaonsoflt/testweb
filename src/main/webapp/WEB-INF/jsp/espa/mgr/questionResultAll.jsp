@@ -54,12 +54,12 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question/deploy/result";
+		var crudServiceBaseUrl = "${contextPath}/mgr/question/deploy/result";
 		$("#gridList").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readGradingResultList.do",
+						url: crudServiceBaseUrl + "/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");
@@ -132,7 +132,7 @@
                         dataSource: {
                             transport: {
                                 read: {
-                                    url: "${contextPath}/question/deploy/groups.do",
+                                    url: "${contextPath}/mgr/question/deploy/groups.do",
                                     dataType: "jsonp",
                                     data: {
                                     	field: "group_name"

@@ -119,21 +119,7 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 		try {
 			map.put("user_seq", userService.getLoginUserInfo().getUserseq());
 			logger.debug("params: " + map);
-			rtnMap = deployMapper.readDeployedQuestionDetailByUser(map).get(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			rtnMap.put("error", e.toString());
-		}
-		return rtnMap;
-	}
-	
-	@Override
-	public Map<String, Object> getDeployedQuestionDetail(long seq) {
-		Map<String, Object> rtnMap = new HashMap<String, Object>();
-		try {
-			rtnMap.put("deploy_seq", seq);
-			logger.debug("params: deploy_seq=" + seq);
-			rtnMap = deployMapper.readDeployedQuestionDetail(rtnMap).get(0);
+			rtnMap = deployMapper.readDeployedQuestionDetailByUser(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			rtnMap.put("error", e.toString());

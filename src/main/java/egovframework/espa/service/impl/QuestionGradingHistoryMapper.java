@@ -13,5 +13,9 @@ public interface QuestionGradingHistoryMapper {
 	
 	public List<Map<String, Object>> readGradingResultUserList(Map<String, Object> map) throws Exception;
 	
+	public List<Map<String, Object>> readDeployedQuestinResultList(Map<String, Object> map) throws Exception;
+	
+	public List<Map<String, Object>> readDeployedQuestionResult(Map<String, Object> map) throws Exception;
+	
 	public int createGradingHistory(ESPAExecuteResultVO vo) throws Exception;
 }

@@ -129,12 +129,12 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question/deploy/result";
+		var crudServiceBaseUrl = "${contextPath}/mgr/question/deploy/result";
 		$("#gridList").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readGradingResultOfUserList.do",
+						url: crudServiceBaseUrl + "/detail/users.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");
@@ -167,6 +167,7 @@
 							user_name		: { type: "string" },
 							user_id			: { type: "string" },
 							submit_dt		: { type: "string" },
+							score			: { type: "number" },
 							user_submit_cnt : { type: "number" }
 						}  
 					}
@@ -197,7 +198,7 @@
 				{ field: "user_id", title: "아이디", attributes : { style : "text-align: center;" }, filterable: false },
 				{ field: "user_name", title: "이름", attributes : { style : "text-align: center;" }, filterable: false },
 				{ field: "user_submit_cnt", title: "제출횟수", attributes : { style : "text-align: center;" }, filterable: false },
-				{ field: "exec_time", title: "실행시간", attributes : { style : "text-align: center;" }, filterable: false },
+// 				{ field: "exec_time", title: "실행시간", attributes : { style : "text-align: center;" }, filterable: false },
 				{ field: "score", title: "점수", attributes : { style : "text-align: center;" }, filterable: false },
 				{ field : "submit_dt", title : "제출일시", width : 150, attributes : {	style : "text-align: center;" }, filterable: false,
 					template : "#= (submit_dt == '') ? '미제출' : kendo.toString(new Date(Number(submit_dt)), 'yyyy-MM-dd HH:mm') #" }
@@ -210,6 +211,7 @@
 				console.log("deploy-grid:change");
 				var selectedItem = this.dataItem(this.select());
 				G_Seq = selectedItem.deploy_seq; 
+				console.log("submit_dt:" + selectedItem.submit_dt);
 				console.log("selected item: " + G_Seq + "(seq)");
                 // open window
 //         		wnd.center().open();

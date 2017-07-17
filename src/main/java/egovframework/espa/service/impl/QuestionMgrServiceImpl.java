@@ -75,7 +75,7 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 		int execute = 0;
 		execute = questionMapper.insertQuestion(map);
 		logger.debug("[BBAEK] get pk:" + map);
-		List<Map<String, Object>> list;
+//		List<Map<String, Object>> list;
 //		if(map.get("condition") != null) {
 //			list = (List<Map<String, Object>>) map.get("condition");
 //			for (Map<String, Object> param : list) {
@@ -85,14 +85,14 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 //			}
 //		}
 		
-		if(map.get("grading") != null) {
-			list = (List<Map<String, Object>>) map.get("grading");
-			for (Map<String, Object> param : list) {
-				logger.debug("[BBAEK] create grading param:" + param);
-				param.put("question_seq", map.get("question_seq"));
-				execute += questionGradingMapper.insertGrading(param);
-			}
-		}
+//		if(map.get("grading") != null) {
+//			list = (List<Map<String, Object>>) map.get("grading");
+//			for (Map<String, Object> param : list) {
+//				logger.debug("[BBAEK] create grading param:" + param);
+//				param.put("question_seq", map.get("question_seq"));
+//				execute += questionGradingMapper.insertGrading(param);
+//			}
+//		}
 		return execute;
 	}
 
@@ -113,15 +113,15 @@ public class QuestionMgrServiceImpl extends EgovAbstractServiceImpl implements Q
 //			}
 //		}
 		
-		if(map.get("grading") != null) {
-			questionGradingMapper.deleteGrading(map);
-			list = (List<Map<String, Object>>) map.get("grading");
-			for (Map<String, Object> param : list) {
-				logger.debug("[BBAEK] create grading param:" + param);
-				param.put("question_seq", map.get("question_seq"));
-				execute += questionGradingMapper.insertGrading(param);
-			}
-		}
+//		if(map.get("grading") != null) {
+//			questionGradingMapper.deleteGrading(map);
+//			list = (List<Map<String, Object>>) map.get("grading");
+//			for (Map<String, Object> param : list) {
+//				logger.debug("[BBAEK] create grading param:" + param);
+//				param.put("question_seq", map.get("question_seq"));
+//				execute += questionGradingMapper.insertGrading(param);
+//			}
+//		}
 		return execute;
 	}
 

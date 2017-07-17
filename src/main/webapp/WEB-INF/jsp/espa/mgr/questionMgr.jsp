@@ -187,16 +187,16 @@
 		/*************************/
 		/***    gridList     ***/
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question";
+		var crudServiceBaseUrl = "${contextPath}/mgr/question";
 		$("#gridList").kendoGrid({
 			autoBind : true,
 			dataSource : {
 				transport : {
 					read : { 
-						url : crudServiceBaseUrl + "/readList.do", 
+						url : crudServiceBaseUrl + "/list.do", 
 						dataType : "jsonp",
 						complete: function(e){ 
-					    	console.log("/readList.do...................");
+					    	console.log("/list.do...................");
 					    }
 					},
 					parameterMap : function(data, type) {//type =  read, create, update, destroy

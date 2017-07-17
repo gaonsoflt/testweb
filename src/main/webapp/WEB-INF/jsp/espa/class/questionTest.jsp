@@ -101,7 +101,7 @@
 					</table>
 				</td>
 				<td valign="top">
-					<form id="answer_form" action="<c:url value="/question/deploy/answer/submit.do"/>" method="post" enctype="multipart/form-data">
+					<form id="answer_form" action="<c:url value="/cls/question/test/submit.do"/>" method="post" enctype="multipart/form-data">
 						<input id="deploy_seq" name="deploy_seq" data-bind="value:selected.deploy_seq" type="hidden" readonly="readonly"/>
 						<div>답안제출형태</div>
 						<div>
@@ -203,12 +203,12 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question/deploy";
+		var crudServiceBaseUrl = "${contextPath}/cls/question/test";
 		$("#gridList").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readDeployedQuestionListByUser.do",
+						url: crudServiceBaseUrl + "/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");
@@ -279,7 +279,7 @@
                         dataSource: {
                             transport: {
                                 read: {
-                                    url: "${contextPath}/question/deploy/groups.do",
+                                    url: "${contextPath}/mgr/question/deploy/groups.do",
                                     dataType: "jsonp",
                                     data: {
                                     	field: "group_name"
@@ -364,7 +364,7 @@
 			dataSource: new kendo.data.DataSource({
 				transport: {
 					read: {
-						url: crudServiceBaseUrl + "/readDeployedQuestionDetailByUser.do",
+						url: crudServiceBaseUrl + "/detail.do",
 		    			dataType: "jsonp",
 		    			complete: function(e){ 
 		    				console.log("questionViewModel:dataSource:read:complete");

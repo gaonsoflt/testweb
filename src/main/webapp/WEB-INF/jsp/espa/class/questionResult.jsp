@@ -97,12 +97,12 @@
 		/*************************/
 		/* dataSgridListDetail */
 		/*************************/
-		var crudServiceBaseUrl = "${contextPath}/question/deploy/result";
+		var crudServiceBaseUrl = "${contextPath}/class/question/deploy/result";
 		$("#gridList").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readGradingResultListByUser.do",
+						url: crudServiceBaseUrl + "/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");

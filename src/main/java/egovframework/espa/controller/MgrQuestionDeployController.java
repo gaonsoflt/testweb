@@ -19,16 +19,16 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.espa.service.QuestionDeployService;
 
-@RequestMapping("/question/deploy")
+@RequestMapping("/mgr/question/deploy")
 @Controller
-public class QuestionDeployController {
-	Logger logger = LoggerFactory.getLogger(QuestionDeployController.class.getName());
+public class MgrQuestionDeployController {
+	Logger logger = LoggerFactory.getLogger(MgrQuestionDeployController.class.getName());
 
 	@Resource(name = "questionDeployService")
 	private QuestionDeployService deployService;
 
-	@RequestMapping(value = "/readList.do")
-	public @ResponseBody JSONPObject getDeployList(@RequestParam("callback") String c, @RequestParam("params") String params) {
+	@RequestMapping(value = "/list.do")
+	public @ResponseBody JSONPObject list(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		logger.debug("params:" + params);
@@ -53,7 +53,7 @@ public class QuestionDeployController {
 	}
 
 	@RequestMapping(value = "/read.do")
-	public @ResponseBody JSONPObject getDeploy(@RequestParam("callback") String c, @RequestParam("params") String params) {
+	public @ResponseBody JSONPObject read(@RequestParam("callback") String c, @RequestParam("params") String params) {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		logger.debug("params:" + params);
@@ -80,7 +80,7 @@ public class QuestionDeployController {
 	}
 
 	@RequestMapping(value = "/create.do")
-	public @ResponseBody JSONPObject insertDeploy(@RequestParam("callback") String c, @RequestParam("models") String models) {
+	public @ResponseBody JSONPObject createDeploy(@RequestParam("callback") String c, @RequestParam("models") String models) {
 		logger.debug("---------------->/create.do");
 		List<Map<String, Object>> paramMapList = new ArrayList<Map<String, Object>>();
 		paramMapList = EgovWebUtil.parseJsonToList(models);
@@ -140,19 +140,6 @@ public class QuestionDeployController {
 			return new JSONPObject(c, rtnMap);
 		}
 		return new JSONPObject(c, models);
-	}
-	
-	@RequestMapping(value = "/readDeployedQuestionListByUser.do")
-	public @ResponseBody JSONPObject readDeployedQuestionListByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
-		logger.debug("---------------->/readDeployedQuestionListByUser.do");
-		logger.debug("params: " + params);
-		return new JSONPObject(c, deployService.getDeployedQuestionListByUser(EgovWebUtil.parseJsonToMap(params)));
-	}
-	
-	@RequestMapping(value = "/readDeployedQuestionDetailByUser.do")
-	public @ResponseBody JSONPObject readDeployedQuestionDetailByUser(@RequestParam("callback") String c, @RequestParam("params") String params) {
-		logger.debug("---------------->/readDeployedQuestionDetailByUser.do");
-		return new JSONPObject(c, deployService.getDeployedQuestionDetailByUser(EgovWebUtil.parseJsonToMap(params)));
 	}
 	
 	@RequestMapping(value = "/groupsByUser.do")

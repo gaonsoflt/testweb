@@ -22,15 +22,12 @@ public interface QuestionDeployMapper {
 	public int deleteDeploy(Map<String, Object> map) throws Exception;  
 	
 	// for student
-	public List<Map<String, Object>> readDeployedQuestionList(Map<String, Object> map) throws Exception;
-	
-	public List<Map<String, Object>> readDeployedQuestionDetail(Map<String, Object> map) throws Exception;
-	
 	public List<Map<String, Object>> readDeployedQuestionListByUser(Map<String, Object> map) throws Exception;
 	
-	public List<Map<String, Object>> readDeployedQuestionDetailByUser(Map<String, Object> map) throws Exception;
+	public Map<String, Object> readDeployedQuestionDetailByUser(Map<String, Object> map) throws Exception;
 	
 	public int readAvailableDeployedQuestion(Map<String, Object> map) throws Exception;
 	
 	public List<Map<String, Object>> readGroupsOfAvailableDeployedQuestion(Map<String, Object> map) throws Exception;
+	
 }

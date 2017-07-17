@@ -216,12 +216,12 @@
             resizable: true
         }).data("kendoWindow");
 		
-	    var crudServiceBaseUrl = "${contextPath}/question/deploy";
+	    var crudServiceBaseUrl = "${contextPath}/mgr/question/deploy";
 		$("#deploy-grid").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readList.do",
+						url: crudServiceBaseUrl + "/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("deploy-grid:dataSource:read:complete");
@@ -300,7 +300,7 @@
                         dataSource: {
                             transport: {
                                 read: {
-                                    url: "${contextPath}/question/deploy/groups.do",
+                                    url: "${contextPath}/mgr/question/deploy/groups.do",
                                     dataType: "jsonp",
                                     data: {
                                     	field: "group_name"
@@ -580,7 +580,7 @@
 			dataSource: {
 				transport: {
 					read	: { 
-						url: "${contextPath}/question/readList.do",
+						url: "${contextPath}/mgr/question/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
 					    	console.log("result-grid:dataSource:read:complete");

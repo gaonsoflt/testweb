@@ -22,8 +22,8 @@
 				<!-- table 하나 -->
 				<div class="box">
 					<div class="box-body">
-<%-- 						<form id="question-form" action="${contextPath}/question/save.do" enctype="application/json" onsubmit="return fn_onsubmit(this);"> --%>
-						<form id="question-form" action="${contextPath}/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
+<%-- 						<form id="question-form" action="${contextPath}/mgr/question/save.do" enctype="application/json" onsubmit="return fn_onsubmit(this);"> --%>
+						<form id="question-form" action="${contextPath}/mgr/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
 							<div>
 								<c:if test="${questionInfo != null }">
 									<button type="submit" name="action" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
@@ -164,7 +164,7 @@
 
 <!-- grading popup editor template -->
 <script id="popup-editor" type="text/x-kendo-template">
-	<div id="popup-editor">
+	<div id="popup-editor" style="width:800px;">
 	    <p>채점데이터</p>
 	    <table style="width:100%;">
         	<colgroup>
@@ -174,7 +174,7 @@
         	<tr><th>문제번호</th></tr>
         	<tr>
 	            <td colspan="2">
-                	<input name="grading_order" data-role="numerictextbox" data-bind="value:grading_order" data-format="n0" data-min="1" data-max="100" required/>
+                	<input id="grading_order" name="grading_order" type="number" data-bind="value:grading_order" required/>
             	</td>
         	</tr>
         	<tr>
@@ -230,7 +230,7 @@
 		setExecMsg("테스트코드를 실행중입니다. 잠시만 기다려주세요.");
 		$.ajax({
 			type : "post",
-			url : "<c:url value='/question/execute/test.do'/>",
+			url : "<c:url value='/mgr/question/test/execute.do'/>",
 			data : {
 				"question_seq" : "${questionInfo.question_seq}"
 			},
@@ -357,7 +357,7 @@
 			dataSource : {
 				transport : {
 					read : {
-						url : "<c:url value='/question/getSupportLanguage.do'/>",
+						url : "<c:url value='/mgr/question/languages.do'/>",
 						dataType : "jsonp"
 					},
 					parameterMap : function(data, type) {
@@ -380,23 +380,23 @@
 			index : 0
 		});
 		
-		var crudServiceBaseUrl = "${contextPath}/question";
+		var crudServiceBaseUrl = "${contextPath}/mgr/question";
 		$("#grid-grading").kendoGrid({
 			dataSource : new kendo.data.DataSource({
 				transport: {
-					read:  { url: crudServiceBaseUrl + "/grading/readList.do", dataType: "jsonp",
+					read:  { url: crudServiceBaseUrl + "/grading/list.do", dataType: "jsonp",
             			complete: function(e){ 
             				console.log("grid-grading:grid:datasource:read:complete");
             			}
 					},
 					update: { 
-// 						url: crudServiceBaseUrl + "/grading/update.do", dataType: "jsonp"
+						url: crudServiceBaseUrl + "/grading/update.do", dataType: "jsonp"
 					},
 					destroy: { 
-// 						url: crudServiceBaseUrl + "/grading/delete.do", dataType: "jsonp" 
+						url: crudServiceBaseUrl + "/grading/delete.do", dataType: "jsonp" 
 					},
 					create: { 
-// 						url: crudServiceBaseUrl + "/grading/create.do", dataType: "jsonp" 
+						url: crudServiceBaseUrl + "/grading/create.do", dataType: "jsonp" 
 					},
 					parameterMap: function(data, type) {
 						if (type == "read"){
@@ -423,10 +423,11 @@
 					model:{//가져온 값이 있음...
 						id:"grading_seq",//id 로 insert할건지 update 할건지 판단함.
 						fields: {
-							grading_seq: { editable: false, nullable: true },
+							question_seq: { editable: false, nullable: false, defaultValue: "${questionInfo.question_seq}" },
+							grading_seq: { editable: false, nullable: false },
 							grading_input: { type: "string", validation: { required: true } },
 							grading_output: { type: "string", validation: { required: true } },
-							grading_order: { type: "number", nullable: false, validation: { required: true }, defalutValue: 0 },
+							grading_order: { type: "number", nullable: false, validation: { required: true }, defalutValue: 1 },
 							correct: { type: "boolean", editable: false },
 							exe_time: { type: "number", editable: false }
 						}   
@@ -446,18 +447,21 @@
 			navigatable : true,
             toolbar: [
 				{ name: "create", text: "추가" },
+// 				{ name: "save", text: "저장" },
 				{ name: "cancel", text: "취소" }
             ],
 			columns : [
+				{ field : "question_seq", hidden: true },
 				{ field : "grading_order", title : "번호", width : "10%", attributes : { style : "text-align: center;" } },
 				{ field : "grading_input", title : "입력값", width : "20%", attributes : { style : "text-align: center;" }, },
 				{ field : "grading_output", title : "출력값", width : "20%", attributes : { style : "text-align: center;" } },
-				{ field : "correct", title : "테스트", width : "60", attributes : { style : "text-align: center;" } },
+				{ field : "correct", title : "결과", width : "60", attributes : { style : "text-align: center;" },
+					template: "#= (correct) ? '성공' : '실패' #"},
 				{ field : "exec_time", title : "ms", width : "60", attributes : { style : "text-align: center;" } },
 				{
 					width : "90",
 					command: [
-						{ name: "destroy", text: "" }
+						{ name: "destroy", text: "삭제" }
 					]
 				}
 			],
@@ -472,15 +476,14 @@
 					width: '900px',
 					height: '400px'
 				});
-// 				if(e.model.isNew()) {
-// 					console.log("new");
-// 					temp = e.model;
-// 					if(e.model.get("grading_order") == 0) {
-// 	 					e.model.set("grading_order", Number(this.dataSource.at(this.dataSource.total()-1).get("grading_order")) + 1);
-// 					}
-// 				} else {
-// 					console.log("edit");
-// 				}
+				if(e.model.isNew()) {
+					console.log("new");
+					temp = e.model;
+						$("input[name=grading_order]")
+	 					e.model.set("grading_order", Number(this.dataSource.at(this.dataSource.total() - 1).get("grading_order")) + 1);
+				} else {
+					console.log("edit");
+				}
 			},  
 			change: function(e) {
             	console.log("grid-grading:grid:change");
@@ -499,7 +502,6 @@
 			}
 		});
 		
-// 		 $("#grid-grading").delegate("tbody>tr", "dblclick", function () {
 		$("#grid-grading").delegate("tbody>tr", "click", function () {
 			if (!$(this).hasClass('k-grid-edit-row')) {
 				$("#grid-grading").data("kendoGrid").editRow($(this));

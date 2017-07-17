@@ -21,8 +21,6 @@ public interface QuestionDeployService {
 	
 	public Map<String, Object> getDeployedQuestionDetailByUser(Map<String, Object> map);
 	
-	public Map<String, Object> getDeployedQuestionDetail(long seq);
-	
 	public Map<String, Object> getGroupOfDeployedQuestionByUser(Map<String, Object> map);
 	
 	public Map<String, Object> getGroupOfDeployedQuestion(Map<String, Object> map);

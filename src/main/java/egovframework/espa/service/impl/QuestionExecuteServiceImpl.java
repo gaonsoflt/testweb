@@ -92,7 +92,7 @@ public class QuestionExecuteServiceImpl extends EgovAbstractServiceImpl implemen
 	@Override
 	public void execute(Map<String, Object> map) throws Exception {
 		final ESPAExecuteVO executeVO = new ESPAExecuteVO();
-		Map<String, Object> result = (deployMapper.readDeployedQuestionDetailByUser(map)).get(0);
+		Map<String, Object> result = deployMapper.readDeployedQuestionDetailByUser(map);
 		List<Map<String, Object>> conditionList = conditionMapper.selectConditionList(result);
 		List<Map<String, Object>> gradingList = gradingMapper.selectGradingList(result);
 		executeVO.setDeploySeq(Long.valueOf(result.get("deploy_seq").toString()));

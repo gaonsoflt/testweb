@@ -22,7 +22,7 @@
 				<!-- table 하나 -->
 				<div class="box">
 					<div class="box-body">
-						<form id="question-form" action="${contextPath}/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
+						<form id="question-form" action="${contextPath}/mgr/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
 							<div>
 								<c:if test="${questionInfo != null }">
 									<button type="submit" name="action" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
@@ -329,7 +329,7 @@
 			dataSource : {
 				transport : {
 					read : {
-						url : "<c:url value='/question/getSupportLanguage.do'/>",
+						url : "<c:url value='/mgr/question/languages.do'/>",
 						dataType : "jsonp"
 					},
 					parameterMap : function(data, type) {

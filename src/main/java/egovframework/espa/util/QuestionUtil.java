@@ -20,4 +20,20 @@ public class QuestionUtil {
 		}
 		return score;
 	}
+	
+	public static int calculateAvgExectime(List<Map<String, Object>> grading) {
+		int gradingCnt = grading.size();
+		int exectime = 0;
+		if (gradingCnt > 0) {
+			try {
+				for (Map<String, Object> grade : grading) {
+					exectime += Integer.valueOf(grade.get("exec_time").toString());
+				}
+				exectime = exectime / grading.size();
+			} catch (Exception e) {
+				return 0;
+			}
+		}
+		return exectime;
+	}
 }

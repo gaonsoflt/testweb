@@ -30,6 +30,12 @@ public class MgrQuestionResultController {
 	@Resource(name = "questionGradingHistoryService")
 	private QuestionGradingHistoryService gradingHisService;
 	
+	@Resource(name = "questionDeployService")
+	private QuestionDeployService deployService;
+	
+	@Resource(name = "systemMgrMenuService")
+	private SystemMgrMenuService menuService;
+
 	@RequestMapping(value = "/list.do")
 	public @ResponseBody JSONPObject list(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -47,14 +53,23 @@ public class MgrQuestionResultController {
 		return new JSONPObject(c, rtnMap);
 	}
 
+	@RequestMapping(value = "detail.do")
+	public ModelAndView mgrResultDetailView(Model model, @RequestParam(value="deploy", required=false)String seq)  throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/questionResult");
+		mav.addObject("deploy_seq", seq);
+		mav.addObject("depQuesInfo", gradingHisService.getDeployedQuestinResult(Long.valueOf(seq)));
+		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
+		return mav;
+	}
+	
 	/**
 	 * ESPA manager result detail user list
 	 * @param c
 	 * @param params
 	 * @return
 	 */
-	@RequestMapping(value = "/detail/users.do")
-	public @ResponseBody JSONPObject detailList(@RequestParam("callback") String c, @RequestParam("params") String params) {
+	@RequestMapping(value = "/user.do")
+	public @ResponseBody JSONPObject users(@RequestParam("callback") String c, @RequestParam("params") String params) {
 		logger.debug("params:" + params);
 		 Map<String, Object> param = EgovWebUtil.parseJsonToMap(params);
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
@@ -69,19 +84,33 @@ public class MgrQuestionResultController {
 		return new JSONPObject(c, rtnMap);
 	}
 	
-	@Resource(name = "questionDeployService")
-	private QuestionDeployService deployService;
-	
-	@Resource(name = "systemMgrMenuService")
-	private SystemMgrMenuService menuService;
-	
-	@RequestMapping(value = "detail.do")
-	public ModelAndView mgrResultDetailView(Model model, @RequestParam(value="deploy", required=false)String seq)  throws Exception {
-		ModelAndView mav = new ModelAndView("espa/mgr/questionResult");
-		mav.addObject("deploy_seq", seq);
-		mav.addObject("depQuesInfo", gradingHisService.getDeployedQuestinResult(Long.valueOf(seq)));
-		mav.addObject("menu", menuService.getMenuVo("espaMgrQuestionResult"));
-		return mav;
+	@RequestMapping(value = "/user/answer.do")
+	public @ResponseBody JSONPObject userAnswers(@RequestParam("callback") String c, @RequestParam("params") String params) {
+		logger.debug("params:" + params);
+		 Map<String, Object> param = EgovWebUtil.parseJsonToMap(params);
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			List<Map<String, Object>> rtnList = gradingHisService.getUserAnswerHistoryList(param);
+			rtnMap.put("rtnList", rtnList);
+			rtnMap.put("total", rtnList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			rtnMap.put("error", e.toString());
+		}
+		return new JSONPObject(c, rtnMap);
 	}
-
+	
+	@RequestMapping(value = "/user/grading.do")
+	public ModelAndView userGrading(@RequestParam HashMap<String, Object> params) throws Exception {
+		logger.debug("[BBAEK] params: " + params);
+		ModelAndView model = new ModelAndView();
+		try {
+			model.addObject("result", gradingHisService.getUserGradingResultDetail(params));
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addObject("error", e);
+		}
+		model.setViewName("jsonView");
+		return model;
+	}
 }

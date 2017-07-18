@@ -8,7 +8,7 @@
 			A.user_seq as user_seq,
 			A.submit_dt,
 			B.score_rate,
-			B.grading_order,
+			B.grading_seq,
 			B.exec_time
 		FROM TB_QUESTION_ANSWER_HIS A
 		LEFT JOIN TB_QUESTION_GRADING_HIS B ON A.DEPLOY_SEQ = B.DEPLOY_SEQ AND A.USER_SEQ = B.USER_SEQ AND A.SUBMIT_DT = B.SUBMIT_DT 
@@ -21,6 +21,29 @@
 			WHERE deploy_seq = CAST(#{deploy_seq} as integer)
 			AND user_seq = CAST(#{user_seq} as integer)
 		)
+	</select>
+	
+	<select id="readGradingHistoryByUser" parameterType="map" resultType="map">
+		SELECT
+			A.deploy_seq as deploy_seq,
+			A.user_seq as user_seq,
+			A.submit_dt,
+			A.answer,
+			A.err_code,
+			A.err_msg,
+			B.score_rate,
+			B.grading_seq,
+			B.exec_time,
+			C.grading_order
+		FROM TB_QUESTION_ANSWER_HIS A
+		LEFT JOIN TB_QUESTION_GRADING_HIS B ON A.DEPLOY_SEQ = B.DEPLOY_SEQ AND A.USER_SEQ = B.USER_SEQ AND A.SUBMIT_DT = B.SUBMIT_DT 
+		LEFT JOIN tb_question_grading C ON B.grading_seq = C.grading_seq
+		WHERE A.deploy_seq = CAST(#{deploy_seq} as integer)
+		AND A.user_seq = CAST(#{user_seq} as integer)
+		<![CDATA[
+		AND A.submit_dt >= (select to_timestamp(#{submit_dt}, 'YYYY-MM-DD HH24:MI:SS'))
+		AND A.submit_dt < (select to_timestamp(#{submit_dt}, 'YYYY-MM-DD HH24:MI:SS') + interval '1 sec')
+		]]>
 	</select>
 	
 	<select id="readDeployedQuestinResultList" parameterType="map" resultType="map">
@@ -50,11 +73,16 @@
 		SELECT 
 			A.deploy_seq,
 			A.question_seq,
+			CASE WHEN C.candidate iS NULL THEN 0 ELSE C.candidate END,
+			CASE WHEN D.submit_user IS NULL THEN 0 ELSE D.submit_user END,
+			ROUND((CASE WHEN D.submit_user IS NULL THEN 0 ELSE D.submit_user END * 100 / CASE WHEN C.candidate IS NULL THEN 0 ELSE C.candidate END), 1) AS submit_rate, 
 			A.title,
 			A.submit_from,
 			A.submit_to,
 			A.max_submit_cnt,
 			<![CDATA[CASE WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,]]>
+			A.group_id,
+			G.cd_nm as group_name,
 			B.TITLE AS QUESTION_TITLE,
 			B.CON_QUESTION AS QUESTION,
 			B.CON_IO AS QUESTION_IO,
@@ -66,6 +94,9 @@
 			B.MAX_CODESIZE AS MAX_CODESIZE
 		FROM TB_QUESTION_DEPLOY A 
 		INNER JOIN TB_QUESTION B ON A.QUESTION_SEQ = B.QUESTION_SEQ
+		INNER JOIN TB_CODE_MASTER G ON A.GROUP_ID = G.CD_ID
+		LEFT JOIN (SELECT deploy_seq, COUNT(*) AS candidate FROM tb_question_candidate GROUP BY deploy_seq) C ON A.deploy_seq = C.deploy_seq
+		LEFT JOIN (SELECT deploy_seq, COUNT(DISTINCT(user_seq)) AS submit_user FROM tb_question_answer_his GROUP BY deploy_seq) D ON A.deploy_seq = D.deploy_seq
 		WHERE A.DEPLOY_SEQ = CAST(#{deploy_seq} AS INTEGER)
 	</select>
 	
@@ -90,6 +121,25 @@
 		WHERE A.deploy_seq = cast(#{deploy_seq} as integer)
 	</select>
 	
+	<select id="readUserAnswerHistories" parameterType="map" resultType="map">
+		SELECT *
+		FROM (
+			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+			FROM (
+				select
+					deploy_seq,
+					user_seq,
+					submit_dt
+				FROM TB_QUESTION_ANSWER_HIS
+				WHERE deploy_seq = cast(#{deploy_seq} as integer)
+				AND user_seq = cast(#{user_seq} as integer)
+				GROUP BY submit_dt, deploy_seq, user_seq
+				ORDER BY submit_dt
+			) A 
+		) A
+		ORDER BY RNUM DESC
+	</select>
+	
     <insert id="createGradingHistory" parameterType="egovframework.espa.dao.ESPAExecuteResultVO">
 		INSERT INTO tb_question_grading_his(
 			deploy_seq,
@@ -97,14 +147,14 @@
 	      	submit_dt,
 	      	exec_time,
 	      	score_rate,
-	      	grading_order
+	      	grading_seq
 		) VALUES (
 			CAST(#{deploySeq} as integer),
 			CAST(#{userSeq} as integer),
 			#{submitDt},
 			CAST(#{executeTime} as integer),
 			CAST(#{socoreRate} as integer),
-			CAST(#{gradingOrder} as integer)
+			CAST(#{gradingSeq} as integer)
 		) 
 	</insert> 
 </mapper>

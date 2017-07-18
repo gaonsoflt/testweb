@@ -121,7 +121,7 @@
 												</div>
 												<div>
 													<div id="gradedata">
-														<button id="test-btn" type="button" onclick="startTest()">테스트시작</button>
+														<button id="test-btn" type="button" onclick="fn_executeTest()">테스트시작</button>
 														<div><span id="exec-msg"></span></div>
 														<div id="grid-grading"></div>
 <%-- 														<button id="btn-add-grading" type="button"><spring:message code="button.add"/></button> --%>
@@ -226,7 +226,7 @@
 	    document.getElementById("exec-msg").innerHTML = msg;
 	}
 	
-	function startTest() {
+	function fn_executeTest() {
 		setExecMsg("테스트코드를 실행중입니다. 잠시만 기다려주세요.");
 		$.ajax({
 			type : "post",

@@ -15,7 +15,7 @@ public interface QuestionGradingHistoryService {
 	
 	public List<Map<String, Object>> getGradingResultOfUserList(Map<String, Object> map) throws Exception;
 	
-	public List<Map<String, Object>> getGradingResultUser(Map<String, Object> map) throws Exception;
+	public Map<String, Object> getUserGradingResultDetail(Map<String, Object> map) throws Exception;
 	
-	public List<Map<String, Object>> getGradingResultUserDetail(Map<String, Object> map) throws Exception;
+	public List<Map<String, Object>> getUserAnswerHistoryList(Map<String, Object> map) throws Exception;
 }

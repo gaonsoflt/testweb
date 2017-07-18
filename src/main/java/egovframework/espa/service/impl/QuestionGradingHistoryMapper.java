@@ -11,11 +11,15 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 public interface QuestionGradingHistoryMapper {
 	public List<Map<String, Object>> readLatestGradingHistoryByUser(Map<String, Object> map) throws Exception;
 	
+	public List<Map<String, Object>> readGradingHistoryByUser(Map<String, Object> map) throws Exception;
+	
 	public List<Map<String, Object>> readGradingResultUserList(Map<String, Object> map) throws Exception;
 	
 	public List<Map<String, Object>> readDeployedQuestinResultList(Map<String, Object> map) throws Exception;
 	
 	public List<Map<String, Object>> readDeployedQuestionResult(Map<String, Object> map) throws Exception;
+	
+	public List<Map<String, Object>> readUserAnswerHistories(Map<String, Object> map) throws Exception;
 	
 	public int createGradingHistory(ESPAExecuteResultVO vo) throws Exception;
 }

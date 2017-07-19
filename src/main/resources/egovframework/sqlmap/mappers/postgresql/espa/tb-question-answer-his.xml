@@ -3,6 +3,21 @@
 
 <mapper namespace="egovframework.espa.service.impl.QuestionAnswerHistoryMapper"> 
 
+	<select id="checkUserSubmitCount" parameterType="map" resultType="boolean">
+		SELECT
+			<![CDATA[
+			A.max_submit_cnt <= A.user_submit_cnt
+			]]>
+		FROM (
+			SELECT
+				deploy_seq,
+				max_submit_cnt,
+				(SELECT COUNT(*) FROM tb_question_answer_his where user_seq = CAST(#{user_seq} as integer) AND deploy_seq = deploy_seq) as user_submit_cnt
+			FROM TB_QUESTION_DEPLOY
+			WHERE deploy_seq = CAST(#{deploy_seq} as integer)
+		) A
+	</select>
+	
     <insert id="insertAnswerHistory" >
 		INSERT INTO tb_question_answer_his(
 			deploy_seq,

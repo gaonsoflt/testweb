@@ -1,6 +1,6 @@
 package egovframework.espa.service.impl;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -27,25 +27,30 @@ public class QuestionAnswerServiceImpl extends EgovAbstractServiceImpl implement
 
 
 	@Override
-	public boolean saveAnswer(HashMap<String, Object> map) {
-		try {
-			if(map.get("deploy_seq") == null) {
-				throw new Exception("deploy seq is null");
-			}
-			logger.debug("check available deployed question: " + map.get("deploy_seq"));
-			map.put("user_seq", userService.getLoginUserInfo().getUserseq());
-			if(deployMapper.readAvailableDeployedQuestion(map) <= 0) {
-				throw new Exception("there are not available deployed question");
-			}
-			
-			logger.debug("request parameter: " + map);
-			logger.debug("insert answer to history table");
-			answerHisMapper.insertAnswerHistory(map);
-			
-			return true; 
-		} catch (Exception e) {
-			e.printStackTrace();
+	public boolean saveAnswer(Map<String, Object> map) throws Exception {
+		if(map.get("deploy_seq") == null) {
 			return false;
 		}
+		logger.debug("check available deployed question: " + map.get("deploy_seq"));
+		map.put("user_seq", userService.getLoginUserInfo().getUserseq());
+		
+		// check submission time
+		logger.debug("check submission time");
+		if(deployMapper.readAvailableDeployedQuestion(map) <= 0) {
+			throw new Exception("Submission time has been finished.");
+		}
+		
+		// check max submit count
+		logger.debug("check max submit count");
+		if(answerHisMapper.checkUserSubmitCount(map)) {
+			throw new Exception("The number of submissions has been exceeded.");
+		}
+		
+		logger.debug("request parameter: " + map);
+		logger.debug("insert answer to history table");
+		if(answerHisMapper.insertAnswerHistory(map) > 0) {
+			return true; 
+		}
+		return false;
 	}
 }

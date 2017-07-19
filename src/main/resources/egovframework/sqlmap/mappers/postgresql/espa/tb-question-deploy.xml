@@ -38,6 +38,41 @@
 		ORDER BY group_name, submit_from, submit_to
 	</select>
 	
+	<select id="readNotFinishDeployList" parameterType="map" resultType="map">
+		SELECT *
+		FROM (
+			SELECT (ROW_NUMBER() OVER()) AS RNUM, A.*
+			FROM (
+				SELECT
+					A.deploy_seq,
+					A.question_seq, 
+					A.group_id,
+					<![CDATA[
+					CASE WHEN A.submit_from > now() THEN '대기' WHEN A.submit_to < now() THEN '마감' ELSE '진행중' end as status,
+					]]>
+					B.cd_nm as group_name,
+					A.submit_from,
+					A.submit_to,
+					(SELECT COUNT(*) FROM TB_QUESTION_CANDIDATE WHERE deploy_seq = A.deploy_seq) as candidate,
+					A.title,
+					C.title as question_title,
+					C.lang_type as question_language
+				FROM TB_QUESTION_DEPLOY A 
+				INNER JOIN TB_CODE_MASTER B ON A.GROUP_ID = B.CD_ID
+				INNER JOIN TB_QUESTION C ON A.QUESTION_SEQ = C.QUESTION_SEQ
+				WHERE submit_to > now() 
+			) A
+		) A
+		WHERE 1 = 1
+		<if test='PAGE != null'>
+		<![CDATA[
+			AND A.RNUM > (#{PAGE} - 1) * #{PAGESIZE}
+			AND A.RNUM <= #{PAGE} * #{PAGESIZE}
+    	]]>
+		</if>
+		ORDER BY group_name, submit_from, submit_to
+	</select>
+	
 	<select id="readDeploy" parameterType="map" resultType="map">
 		SELECT
 			A.deploy_seq,

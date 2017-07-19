@@ -10,7 +10,7 @@
 			grading_output,
 			grading_order,
 			grading_seq,
-			CASE WHEN correct = '1' THEN true ELSE false end correct,
+			CASE WHEN correct = '1' THEN true ELSE false end as correct,
 			exec_time
 		FROM tb_question_grading
 		WHERE question_seq = cast(#{question_seq} as integer) 
@@ -51,9 +51,13 @@
 		AND grading_seq = CAST(#{gradingSeq} as integer)
 	</update>
 	
+	<delete id="deleteGradingByQuestionSeq">
+		DELETE FROM tb_question_grading 
+		WHERE question_seq = CAST(#{question_seq} as integer) 
+	</delete>
+	
 	<delete id="deleteGrading">
 		DELETE FROM tb_question_grading 
-		WHERE 1 = 1
-		AND question_seq = CAST(#{question_seq} as integer) 
+		WHERE grading_seq = CAST(#{grading_seq} as integer) 
 	</delete>
 </mapper>

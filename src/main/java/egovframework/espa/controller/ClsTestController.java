@@ -19,29 +19,20 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import egovframework.com.cmm.EgovWebUtil;
 import egovframework.common.util.FileUtil;
-import egovframework.espa.service.QuestionAnswerService;
 import egovframework.espa.service.QuestionDeployService;
 import egovframework.espa.service.QuestionExecuteService;
 import egovframework.espa.service.impl.QuestionDeployMapper;
-import egovframework.systemmgr.service.SystemMgrUserService;
 
 @RequestMapping("/cls/question/test")
 @Controller
 public class ClsTestController {
 	Logger logger = LoggerFactory.getLogger(ClsTestController.class.getName());
 
-	@Resource(name = "questionAnswerService")
-	private QuestionAnswerService questionAnswerService;
-	
 	@Resource(name = "questionExecuteService")
 	private QuestionExecuteService executeService;
 	
 	@Resource(name = "questionDeployMapper")
 	private QuestionDeployMapper deployMapper;
-	
-	@Resource(name = "systemMgrUserService")
-	private SystemMgrUserService userService;
-	
 	
 	@RequestMapping(value = "/complete.do", method = RequestMethod.GET)
 	public ModelAndView form(HttpServletRequest request,  ModelAndView model) {
@@ -52,25 +43,24 @@ public class ClsTestController {
 	
 	@RequestMapping(value = "/submit.do", method = RequestMethod.POST)
 	public ModelAndView submit(HttpServletRequest request, @RequestParam(value="submit_file", required=false)MultipartFile file) throws Exception {
-		ModelAndView mav = new ModelAndView("redirect:/cls/question/test/complete.do");
+		ModelAndView mav = new ModelAndView();
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		param.put("deploy_seq", request.getParameter("deploy_seq"));
 		String answerType = request.getParameter("answer_type");
 		if(answerType.equals("file")) {
-			param.put("answer", FileUtil.readFile(file));
+			param.put("answer", FileUtil.getFileString(file));
 		} else {
 			param.put("answer", request.getParameter("submit_editor"));
 		}
-		// insert answer history
-		if(questionAnswerService.saveAnswer(param)) {
-			param.put("user_seq", userService.getLoginUserInfo().getUserseq());
+		try {
 			executeService.execute(param);
-//			ESPAExecuteVO result = executeService.execute(param);
-//			result.setCode("");
-//			result.setGrading(null);
-//			mav.addObject("result", result);
+			mav.setViewName("redirect:/cls/question/test/complete.do");
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("error", e.getMessage());
+			// TODO: setViewName for error
+//			mav.setViewName(view);
 		}
-
 		return mav;
 	}
 	

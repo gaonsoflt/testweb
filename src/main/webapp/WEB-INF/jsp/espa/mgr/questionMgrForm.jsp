@@ -26,15 +26,15 @@
 						<form id="question-form" action="${contextPath}/mgr/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
 							<div>
 								<c:if test="${questionInfo != null }">
-									<button type="submit" name="action" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
+									<button type="submit" name="action" class="btn btn-primary btn-sm" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
 								</c:if>
-								<button type="submit" name="action" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
-								<button type="button" id="list-btn" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
+								<button type="submit" name="action" class="btn btn-primary btn-sm" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
+								<button type="button" id="list-btn" class="btn btn-primary btn-sm" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
 								<c:if test="${questionInfo == null }">
-									<button type="button" name="btn-import" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.import" text="import" /></button>
+									<button type="button" name="btn-import" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#formModal" onclick="fn_openImportDlg();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.import" text="import" /></button>
 								</c:if>
 								<c:if test="${questionInfo != null }">
-									<button type="button" name="btn-export" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.export" text="export" /></button>
+									<button type="button" name="btn-export" class="btn btn-primary btn-sm" onclick="fn_export();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.export" text="export" /></button>
 								</c:if>
 							</div>
 							<input type="hidden" name="bbs" value="${bbsInfo.bbs_seq}"/>
@@ -124,24 +124,6 @@
 														<button id="test-btn" type="button" onclick="fn_executeTest()">테스트시작</button>
 														<div><span id="exec-msg"></span></div>
 														<div id="grid-grading"></div>
-<%-- 														<button id="btn-add-grading" type="button"><spring:message code="button.add"/></button> --%>
-<!-- 														<table name="grading-meta"> -->
-<!-- 															<tr> -->
-<!-- 																<th>num</th> -->
-<!-- 																<th>input</th> -->
-<!-- 																<th>output</th> -->
-<!-- 															</tr> -->
-<!-- 															<tr> -->
-<!-- 																<td><input name="grading[0][num]" value="1"/></td> -->
-<!-- 																<td><input name="grading[0][input]" value="abc"/></td> -->
-<!-- 																<td><input name="grading[0][output]" value="abc"/></td> -->
-<!-- 															</tr> -->
-<!-- 															<tr> -->
-<!-- 																<td><input name="grading[1][num]" value="2"/></td> -->
-<!-- 																<td><input name="grading[1][input]" value="123"/></td> -->
-<!-- 																<td><input name="grading[1][output]" value="123"/></td> -->
-<!-- 															</tr> -->
-<!-- 														</table> -->
 													</div>
 												</div>
 												<div>
@@ -160,6 +142,23 @@
 			</div> <!-- col-xs-12 -->
 		</div> <!-- row -->
 	</section>
+</div>
+
+<div id="window" style="display:none;">
+	<div style="width:500px;">	
+		<form id="form-import" action="${contextPath}/mgr/question/import/submit.do" method="post" enctype="multipart/form-data" onsubmit="return true;">
+			<div>
+		        <button type="button" class="btn btn-primary" onclick="fn_closeImportDlg()" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.close"/></button>
+		        <button type="submit" class="btn btn-primary" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.import"/></button>
+		    </div>
+		    <div>
+            	<input type="file" id="file-import" name="file-import">
+            </div>
+		</form>
+	</div>
+	<div>	
+		<a href="${contextPath}/mgr/question/import/downloadsample.do">Download import sample file</a>
+	</div>
 </div>
 
 <!-- grading popup editor template -->
@@ -195,13 +194,15 @@
 
 <script>
 	var editor;
+	var wnd;
 	var temp;
 	function fn_list() {
 		location.href='${contextPath}/mgr/question.do';	
 	}
 	
 	function fn_onsubmit(e) {
-		var msg; 
+		var msg = "";
+		temp=e;
 		if(e.action.value == "save") {
 			msg = "<spring:message code='msg.save'/>";
 		} else if (e.action.value == "delete") {
@@ -214,12 +215,25 @@
 		return false;
 	}
 	
+	function fn_openImportDlg() {
+		wnd.center().open();
+	}
+	
+	function fn_closeImportDlg() {
+		wnd.close();
+		document.getElementById("form-import").reset();
+	}
+	
+	function fn_export() {
+		location.href='${contextPath}/mgr/question/${questionInfo.question_seq}/export.do';	
+	}
+	
 	function setCodeEditor(value) {
 		editor.getDoc().setValue(value);
 	}
 	
 	function getCodeEditor() {
-		console.log(editor.getDoc().getValue("\r\n"));
+		console.log(editor.getDoc().getValue("\n"));
 	}
 	
 	function setExecMsg(msg) {
@@ -315,7 +329,7 @@
 		editor = CodeMirror.fromTextArea(document.getElementById('test-code'), {
 			lineNumbers: true
 		});
-		<% pageContext.setAttribute("enter","\r\n"); %>
+		<% pageContext.setAttribute("enter","\n"); %>
 		editor.getDoc().setValue('${fn:replace(questionInfo.test_code, enter, "\\n")}');
 		
 //             save: function (e) {
@@ -447,7 +461,6 @@
 			navigatable : true,
             toolbar: [
 				{ name: "create", text: "추가" },
-// 				{ name: "save", text: "저장" },
 				{ name: "cancel", text: "취소" }
             ],
 			columns : [
@@ -468,7 +481,7 @@
 			editable: {
 				mode: "popup",
 	            template: kendo.template($("#popup-editor").html()),
-				confirmation: "선택한 행을 삭제하시겠습니까?(저장 클릭시 적용됩니다.)"
+				confirmation: "<spring:message code='msg.del'/>"
 			},
 			edit: function(e) {
 				console.log("grid-grading:grid:edit");
@@ -478,9 +491,8 @@
 				});
 				if(e.model.isNew()) {
 					console.log("new");
-					temp = e.model;
-						$("input[name=grading_order]")
-	 					e.model.set("grading_order", Number(this.dataSource.at(this.dataSource.total() - 1).get("grading_order")) + 1);
+// 						$("input[name=grading_order]")
+ 					e.model.set("grading_order", Number(this.dataSource.at(this.dataSource.total() - 1).get("grading_order")) + 1);
 				} else {
 					console.log("edit");
 				}
@@ -507,6 +519,24 @@
 				$("#grid-grading").data("kendoGrid").editRow($(this));
 			}
 		});
+		
+		wnd = $("#window").kendoWindow({
+            title: "가져오기",
+            width: 600,
+            height: 150,
+            actions: [
+				"Close"
+			],
+            modal: true,
+            visible: false,
+            resizable: true,
+            open: function() {
+            	console.log("window.open");
+            },
+            close: function() {
+            	console.log("window.close");
+            }
+        }).data("kendoWindow");
 	});//document ready javascript end...
 </script>
 

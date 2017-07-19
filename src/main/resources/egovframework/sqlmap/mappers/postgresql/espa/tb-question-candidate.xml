@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="egovframework.espa.service.impl.QuestionCadidateMapper"> 
-	<select id="readCandidate" parameterType="map" resultType="map">
+<mapper namespace="egovframework.espa.service.impl.QuestionCandidateMapper"> 
+	<select id="readCandidateList" parameterType="map" resultType="map">
 		SELECT 
-			*
-		FROM tb_question_candidate
+			A.deploy_seq,
+			A.user_seq,
+			B.user_name,
+			B.user_id,
+			B.birthday
+		FROM tb_question_candidate A
+		INNER JOIN tb_user_info B ON A.user_seq = B.user_seq
+		WHERE deploy_seq = CAST(#{deploy_seq} as integer)
 	</select>
 	
-    <insert id="createCandidate" parameterType="map">
+	<select id="readNotCandidateList" parameterType="map" resultType="map">
+		SELECT
+			user_seq,
+			user_name,
+			user_id,
+			birthday
+		FROM tb_user_info
+		WHERE user_seq NOT IN(SELECT user_seq FROM tb_question_candidate WHERE deploy_seq = CAST(#{deploy_seq} as integer))
+	</select>
+	
+	<delete id="deleteCandidate">
+		DELETE FROM tb_question_candidate
+		WHERE deploy_seq = CAST(#{deploy_seq} as integer)
+		AND user_seq = CAST(#{user_seq} as integer) 
+	</delete>
+	
+	<delete id="deleteCandidateByDeploySeq">
+		DELETE FROM tb_question_candidate
+		WHERE deploy_seq = CAST(#{deploy_seq} as integer)
+	</delete>
+	
+    <insert id="createCandidateByGroup" parameterType="map">
 		INSERT INTO tb_question_candidate
 			SELECT cast(#{deploy_seq} as integer), USER_SEQ 
 			FROM TB_USER_INFO
 			WHERE USE_YN = '1'
 			AND USER_SEQ IN (SELECT USER_SEQ 
 				FROM TB_USER_GROUP 
-				WHERE GROUP_ID = cast(#{group_id} as varchar))
+				WHERE GROUP_ID = CAST(#{group_id} as varchar))
+	</insert>
+	 
+    <insert id="createCandidate" parameterType="map">
+		INSERT INTO tb_question_candidate (
+			deploy_seq,
+			user_seq
+		) VALUES (
+			CAST(#{deploy_seq} as integer),
+			CAST(#{user_seq} as integer)
+		)
 	</insert> 
 </mapper>

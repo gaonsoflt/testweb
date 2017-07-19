@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,10 +43,17 @@ public class FileUtil {
 		return rtn;
 	}
 	
-	public static String readFile(MultipartFile file) throws IOException {
+	public static String getFileString(MultipartFile file) throws IOException {
 		if(!file.isEmpty()){
 			byte[] fileData = file.getBytes();
 			return new String(fileData, "UTF8");
+		}
+		return null;
+	}
+	
+	public static InputStream getFileInputStream(MultipartFile file) throws IOException {
+		if(!file.isEmpty()){
+			return file.getInputStream();
 		}
 		return null;
 	}

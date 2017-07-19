@@ -19,11 +19,11 @@
 <!-- Font CSS (Via CDN) -->
 <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
 <!-- Theme CSS -->
-<link rel="stylesheet" type="text/css" href="<c:url value='/resource/css/espa/assets/skin/default_skin/css/theme.css'/>">
+<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/skin/default_skin/css/theme.css'/>">
 <!-- Admin Forms CSS -->
-<link rel="stylesheet" type="text/css" href="<c:url value='/resource/css/espa/assets/admin-tools/admin-forms/css/admin-forms.css'/>">
+<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/admin-tools/admin-forms/css/admin-forms.css'/>">
 <!-- Favicon -->
-<link rel="shortcut icon" href="<c:url value='/resource/css/espa/assets/img/favicon.ico'/>">
+<link rel="shortcut icon" href="<c:url value='/resource/style/espa/assets/img/favicon.ico'/>">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
@@ -52,7 +52,7 @@
 					<div class="row mb15 table-layout">
 						<div class="col-xs-6 va-m pln">
 							<a href="dashboard.html" title="Return to Dashboard"> 
-								<img src="<c:url value='/resource/css/espa/assets/img/logos/logo_white.png'/>" title="AdminDesigns Logo" class="img-responsive w250">
+								<img src="<c:url value='/resource/style/espa/assets/img/logos/logo_white.png'/>" title="AdminDesigns Logo" class="img-responsive w250">
 							</a>
 						</div>
 						<div class="col-xs-6 text-right va-b pr5">
@@ -173,20 +173,20 @@
 
 	<!-- jQuery -->
 	<script
-		src="<c:url value='/resource/css/espa/vendor/jquery/jquery-1.11.1.min.js'/>"></script>
+		src="<c:url value='/resource/style/espa/vendor/jquery/jquery-1.11.1.min.js'/>"></script>
 	<script
-		src="<c:url value='/resource/css/espa/vendor/jquery/jquery_ui/jquery-ui.min.js'/>"></script>
+		src="<c:url value='/resource/style/espa/vendor/jquery/jquery_ui/jquery-ui.min.js'/>"></script>
 
 	<!-- CanvasBG Plugin(creates mousehover effect) -->
 	<script
-		src="<c:url value='/resource/css/espa/vendor/plugins/canvasbg/canvasbg.js'/>"></script>
+		src="<c:url value='/resource/style/espa/vendor/plugins/canvasbg/canvasbg.js'/>"></script>
 
 	<!-- Theme Javascript -->
 	<script
-		src="<c:url value='/resource/css/espa/assets/js/utility/utility.js'/>"></script>
+		src="<c:url value='/resource/style/espa/assets/js/utility/utility.js'/>"></script>
 	<script
-		src="<c:url value='/resource/css/espa/assets/js/demo/demo.js'/>"></script>
-	<script src="<c:url value='/resource/css/espa/assets/js/main.js'/>"></script>
+		src="<c:url value='/resource/style/espa/assets/js/demo/demo.js'/>"></script>
+	<script src="<c:url value='/resource/style/espa/assets/js/main.js'/>"></script>
 
 	<!-- Page Javascript -->
 	<script type="text/javascript">

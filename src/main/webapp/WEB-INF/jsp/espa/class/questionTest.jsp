@@ -33,7 +33,6 @@
 <div id="window" style="display:none;">
 	<div>
 		<button id="submit-btn" data-role="button" data-icon="pencil" data-bind="click: submit" style="float:right;margin:10px 10px 0 0;">제출</button>
-<!-- 		<button id="submit-btn" data-role="button" data-icon="pencil" data-bind="click: submit" style="float:right;margin:10px 10px 0 0;">제출</button> -->
 		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
 	</div>
 	<table style="width:100%">
@@ -384,6 +383,11 @@
 					model: questionModel,
 					parse: function(response) {
 						console.log("questionViewModel:dataSource:schema:parse");
+						if(response.max_submit_cnt <= response.user_submit_cnt) {
+							$("#submit-btn").css({ "display" : "none" });
+						} else {
+							$("#submit-btn").css({ "display" : "block" });
+						}
                     	return response;
 					},
 					errors: function(response) {

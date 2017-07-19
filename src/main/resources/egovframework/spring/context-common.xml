@@ -70,5 +70,16 @@
 				<prop key="mail.debug">true</prop>
 			</props>
 		</property>
-</bean>
+	</bean>
+	
+	<!-- FileDownloadView클래스의 bean객체 설정 -->
+	<!-- id는 쓰일 이름을 적어주고 class에는 실제 FileDownloadView의 정보를 써주면 된다 -->
+	<bean id="fileDownloadView" class="egovframework.common.view.FileDownloadView" />
+ 
+	<!-- 따로 만든 커스텀 view를 쓰기 위한 viewResolver 설정 -->
+	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" >
+		<property name="order">
+			<value>0</value>
+		</property>
+	</bean>
 </beans>

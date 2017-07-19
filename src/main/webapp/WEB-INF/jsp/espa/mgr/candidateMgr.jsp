@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ include file="../inc/header.jsp"%>
-<%@ include file="../inc/aside.jsp"%>
+<%@ include file="../../inc/header.jsp"%>
+<%@ include file="../../inc/aside.jsp"%>
 
 <!-- 내용 -->
 <!-- Content Wrapper. Contains page content -->
@@ -25,26 +25,26 @@
 					<div class="box-body">
 						<table style="width:100%;height:715px;">
 							<colgroup>
-								<col width="20%">
 								<col width="40%">
+								<col width="30%">
 								<col>
-								<col width="40%">
+								<col width="30%">
 							</colgroup>
 							<tr>
 								<th></th>
-								<th>사용자</th>
+								<th>미응시대상자</th>
 								<th></th>
-								<th><span id="group_name"></span> 사용자</th>
+								<th><span id="deploy_name"></span> 응시대상자</th>
 							</tr>
 							<tr>
-								<td><div id="group-grid"></div></td>
-								<td><div id="user-grid"></div></td>
+								<td><div id="grid-deploy"></div></td>
+								<td><div id="grid-user"></div></td>
 								<td>
-									<div><Button style="width:50px;height:40px;" onclick="addGroupUser();">&gt;</Button></div>
+									<div><Button style="width:50px;height:40px;" onclick="addCandidate();">&gt;</Button></div>
 									<p>
-									<div><Button style="width:50px;height:40px;" onclick="removeGroupUser();">&lt;</Button></div>
+									<div><Button style="width:50px;height:40px;" onclick="removeCandidate();">&lt;</Button></div>
 								</td>
-								<td><div id="groupuser-grid"></div></td>
+								<td><div id="grid-candidate"></div></td>
 							</tr>
 						</table>
                 	</div>
@@ -59,7 +59,7 @@
 	</div>
 </script>     
 <script>
-	var G_GROUP;
+	var G_SEQ;
 	var temp;
 	var selectedUser = null;
 	var selectedGroupUser = null;
@@ -68,14 +68,13 @@
 		var id = e.id;
 		
 		if(id == 'save-btn') {
-// 			var users = $("#groupuser-grid").data("kendoGrid").dataSource.data();
 			var list = {
-				'group_id': G_GROUP,
-				'users': JSON.stringify($("#groupuser-grid").data("kendoGrid").dataSource.data())
+				'deploy_seq': G_SEQ,
+				'candidate': JSON.stringify($("#grid-candidate").data("kendoGrid").dataSource.data())
 			};
 			$.ajax({
 				type: "post",
-				url: "<c:url value='/sm/usergroup/update.do'/>",
+				url: "${contextPath}/mgr/question/deploy/candidate/update.do",
 				data: list,
 				async: false, //동기 방식
 				success: function(data, status){
@@ -92,47 +91,47 @@
 		}
 	}
 	
-	function addGroupUser() {
-		console.log("addGroupUser");
+	function addCandidate() {
+		console.log("addCandidate");
 		if(selectedUser != null) {
-			$("#groupuser-grid").data("kendoGrid").dataSource.add(selectedUser);
-			$("#user-grid").data("kendoGrid").dataSource.remove(selectedUser);
+			$("#grid-candidate").data("kendoGrid").dataSource.add(selectedUser);
+			$("#grid-user").data("kendoGrid").dataSource.remove(selectedUser);
 			selectedUser = null;
 		}
 	}
 	
-	function removeGroupUser() {
-		console.log("removeGroupUser");
+	function removeCandidate() {
+		console.log("removeCandidate");
 		if(selectedGroupUser != null) {
-			$("#user-grid").data("kendoGrid").dataSource.add(selectedGroupUser);
-			$("#groupuser-grid").data("kendoGrid").dataSource.remove(selectedGroupUser);
+			$("#grid-user").data("kendoGrid").dataSource.add(selectedGroupUser);
+			$("#grid-candidate").data("kendoGrid").dataSource.remove(selectedGroupUser);
 			selectedGroupUser = null;
 		}
 	}
 	
 	function refreshUserGrid() {
-		$("#user-grid").data("kendoGrid").dataSource.read();
-		$("#groupuser-grid").data("kendoGrid").dataSource.read();
+		$("#grid-user").data("kendoGrid").dataSource.read();
+		$("#grid-candidate").data("kendoGrid").dataSource.read();
 	}
 	
 	$(document).ready(function () {
 		/*************************/
 		/*       splitter        */
 		/*************************/
-		$("#group-grid").kendoGrid({
+	    var crudServiceBaseUrl = "${contextPath}/mgr/question/deploy/candidate";
+		$("#grid-deploy").kendoGrid({
 			dataSource: {
 				transport: {
 					read : { 
-						url: "${contextPath}/sm/code" + "/readDetails.do",
+						url: crudServiceBaseUrl + "/deploylist.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
-					    	console.log("group-grid:dataSource:read");
+					    	console.log("grid-deploy:dataSource:read");
 					    }
 					},
-					parameterMap: function(data, type) {//type =  read, create, update, destroy
+					parameterMap: function(data, type) {
 						if (type == "read"){
 	                       	var result = {
-								CATGR: "100462" // 100462=_USER_GROUP_
 							};
 							return { params: kendo.stringify(result) }; 
 						}
@@ -140,6 +139,7 @@
 				},
 				schema: {
 					data: function(response) {
+						console.log(response.rtnList);
 						return response.rtnList;
 					},
 					total: function(response) {
@@ -149,17 +149,24 @@
 						return response.error;
 					},
 					model:{
-						id: "cd",
-						fields: { 
-							cd		: { type: "string" },
-							cd_nm	: { type: "string" },
-							cd_id	: { type: "string" }
-						}  
+						id: "deploy_seq",
+						fields: {
+							deploy_seq:		{ type: "number" },
+							question_seq:	{ type: "number" },
+							group_name:		{ type: "string" },
+							title:			{ type: "string" },
+							status:			{ type: "string" },
+							lana_type:		{ type: "string" },
+							candidate:		{ type: "number" },
+							submit_from:	{ type: "string" },
+							submit_to:		{ type: "string" },
+							max_submit_cnt:	{ type: "number" }
+						}
 					}
 				}
 			},
 	        error : function(e) {
-		    	console.log('group-grid:dataSource:error:' + e.errors);
+		    	console.log('grid-deploy:dataSource:error:' + e.errors);
 	        },
 			pageable: false,
 			height: 715,
@@ -172,40 +179,33 @@
 			mobile: true,
 			toolbar: false,
 			columns: [
-				{ field: "cd", title: "시퀀스", width: 80, attributes: {style: "text-align: center;"}, hidden: true },
-				{ field: "cd_nm", title: "그룹명", attributes: {style: "text-align: center;"},
-					filterable: {
-                        cell: {
-                            operator: "contains",
-                            suggestionOperator: "contains"
-                        }
-                    }},
-				{ field: "cd_id", title: "그룹코드", width: 100, attributes: {style: "text-align: center;"}, hidden: true }
+				{ field: "deploy_seq", hidden: true },
+				{ field: "group_name", title: "배포그룹", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "status", title: "상태", width : 80, attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "title", title: "제목", attributes : { style : "text-align: center;" }, filterable: false },
+				{ field: "candidate", title: "응시자수", width : 80, attributes : { style : "text-align: center;" }, filterable: false },
 			],
 			editable: false,
 			noRecords: false,
-            filterable: {
-                mode: "row"
-            },
+            filterable: true,
             change: function(e) {
-				console.log("group-grid:change");
+				console.log("grid-deploy:change");
 				var selectedItem = this.dataItem(this.select());
-		        G_GROUP = selectedItem.cd_id;
-		        document.getElementById("group_name").innerHTML = selectedItem.cd_nm;
-				console.log("selected item: " + G_GROUP + "(seq)");
+		        G_SEQ = selectedItem.deploy_seq;
+		        document.getElementById("deploy_name").innerHTML = selectedItem.title;
+				console.log("selected item: " + G_SEQ + "(seq)");
 				refreshUserGrid();
             }
 		});
 		
-	    var crudServiceBaseUrl = "${contextPath}/sm/usergroup";
-		$("#user-grid").kendoGrid({
+		$("#grid-user").kendoGrid({
 			dataSource: {
 				transport: {
 					read	: { 
-						url: crudServiceBaseUrl + "/readNoGroupUser.do",
+						url: crudServiceBaseUrl + "/userlist.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
-					    	console.log("user-grid:dataSource:read");
+					    	console.log("grid-user:dataSource:read");
 					    }
 					},
 					parameterMap: function(data, type) {//type =  read, create, update, destroy
@@ -215,7 +215,7 @@
 								SKIP : data.skip,
 								PAGE : data.page,
 								TAKE : data.take,
-		                   		group_id: G_GROUP
+		                   		deploy_seq: G_SEQ
 							};
 							return { params: kendo.stringify(result) }; 
 						}
@@ -242,7 +242,7 @@
 					}
 				},
 		        error : function(e) {
-			    	console.log('user-grid:dataSource:error: ' + e.errors);
+			    	console.log('grid-user:dataSource:error: ' + e.errors);
 		        },
 		        batch : true,
 				page : 1, //     반환할 페이지
@@ -280,24 +280,24 @@
 			editable: false,
 			noRecords: false,
             change: function(e) {
-				console.log("user-grid:change");
+				console.log("grid-user:change");
 				selectedUser = this.dataItem(this.select());
 				console.log("selected item: " + selectedUser.user_seq + "(seq)");
             },
             dataBound: function(e) {
-            	console.log("user-grid:dataBound");
+            	console.log("grid-user:dataBound");
             	selectedUser = null;
             }
 		});
 		
-		$("#groupuser-grid").kendoGrid({
+		$("#grid-candidate").kendoGrid({
 			dataSource: {
 				transport: {
 					read : { 
-						url: crudServiceBaseUrl + "/readGroupUser.do",
+						url: crudServiceBaseUrl + "/list.do",
 						dataType: "jsonp", 
 						complete: function(e){ 
-					    	console.log("groupuser-grid:dataSource:read");
+					    	console.log("grid-candidate:dataSource:read");
 					    }
 					},
 					update : { url: crudServiceBaseUrl + "/update.do", dataType: "jsonp" },
@@ -310,13 +310,13 @@
 								SKIP : data.skip,
 								PAGE : data.page,
 								TAKE : data.take,
-		                   		group_id: G_GROUP
+		                   		deploy_seq: G_SEQ
 							};
 							return { params: kendo.stringify(result) }; 
 						}
 						if (type == "update"){
 		                   	var result = {
-		                   		group_id: G_GROUP
+			                   	deploy_seq: G_SEQ
 							};
 							return { 
 								params: kendo.stringify(result), 
@@ -349,13 +349,13 @@
 					}
 				},
 		        error : function(e) {
-			    	console.log('groupuser-grid:dataSource:error: ' + e.errors);
+			    	console.log('grid-candidate:dataSource:error: ' + e.errors);
 		        },
 		        change : function(e) {
-		        	console.log("groupuser-grid:dataSource:change");
+		        	console.log("grid-candidate:dataSource:change");
 		        },  	
 		        sync: function(e) {
-		        	console.log("groupuser-grid:dataSource:sync");
+		        	console.log("grid-candidate:dataSource:sync");
 					alert("정상적으로 처리되었습니다.");  
 					refreshUserGrid();
 				}, 
@@ -395,33 +395,33 @@
 			editable: false,
 			noRecords: false,
 			save: function(e) {
-				console.log("groupuser-grid:save");
+				console.log("grid-candidate:save");
 			},
 			saveChanges: function(e) { 
-				console.log("groupuser-grid:saveChanges");
+				console.log("grid-candidate:saveChanges");
 			},
             change: function(e) {
-				console.log("groupuser-grid:change");
+				console.log("grid-candidate:change");
 				selectedGroupUser = this.dataItem(this.select());
 				console.log("selected item: " + selectedGroupUser.user_seq + "(seq)");
             },
             dataBound: function(e) {
-				console.log("groupuser-grid:dataBound");
-				invokeUserAuth($("#groupuser-grid"), "kendoGrid");
+				console.log("grid-candidate:dataBound");
+				invokeUserAuth($("#grid-candidate"), "kendoGrid");
             	selectedGroupUser = null;
             }
 		});
 		
-		$("#user-grid").delegate("tbody>tr", "dblclick", function () {
-			var grid = $("#user-grid").data("kendoGrid");
+		$("#grid-user").delegate("tbody>tr", "dblclick", function () {
+			var grid = $("#grid-user").data("kendoGrid");
 			selectedUser = grid.dataItem(grid.select())
-			addGroupUser();
+			addCandidate();
 		});
 		
-		$("#groupuser-grid").delegate("tbody>tr", "dblclick", function () {
-			var grid = $("#groupuser-grid").data("kendoGrid");
+		$("#grid-candidate").delegate("tbody>tr", "dblclick", function () {
+			var grid = $("#grid-candidate").data("kendoGrid");
 			selectedGroupUser = grid.dataItem(grid.select())
-			removeGroupUser();
+			removeCandidate();
 		});
 	});	
 </script>	
@@ -430,4 +430,4 @@
 		table-layout: fixed;
 	}
 </style>
-<%@ include file="../inc/footer.jsp"%>
+<%@ include file="../../inc/footer.jsp"%>

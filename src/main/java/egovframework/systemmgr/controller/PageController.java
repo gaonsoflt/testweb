@@ -109,6 +109,13 @@ Logger logger = LoggerFactory.getLogger(PageController.class.getName());
 		return mav;
 	}
 	
+	@RequestMapping(value = "/mgr/question/deploy/candidate.do")
+	public ModelAndView mgrCandidateView(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView("espa/mgr/candidateMgr");
+		mav.addObject("menu", menuService.getMenuVo("espaMgrCandidate"));
+		return mav;
+	}
+	
 	@RequestMapping(value = "/mgr/question/deploy/result.do")
 	public ModelAndView mgrResultView(Model model) throws Exception {
 		ModelAndView mav = new ModelAndView("espa/mgr/questionResultAll");

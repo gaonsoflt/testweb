@@ -12,6 +12,8 @@ public interface QuestionDeployMapper {
 	public List<Map<String, Object>> readDeployList(Map<String, Object> map) throws Exception;
 	
 	public List<Map<String, Object>> readDeploy(Map<String, Object> map) throws Exception;
+	
+	public List<Map<String, Object>> readNotFinishDeployList(Map<String, Object> map) throws Exception;
 
 	public int readDeployAllCount(Map<String, Object> map) throws Exception;
 	

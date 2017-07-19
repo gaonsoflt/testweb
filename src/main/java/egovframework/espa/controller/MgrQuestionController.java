@@ -1,5 +1,6 @@
 package egovframework.espa.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -52,7 +55,7 @@ public class MgrQuestionController {
 			long _seq = Long.valueOf(seq);
 			mav.addObject("questionInfo", questionService.getQuestion(_seq).get(0));
 		}catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		mav.addObject("default_timeout", config.getEspaConfigVoValue("DEFAULT_TIMEOUT"));
 		mav.addObject("default_ban_kw", config.getEspaConfigVoValue("DEFAULT_BAN_KW"));
@@ -89,6 +92,7 @@ public class MgrQuestionController {
 	@RequestMapping(value = "/save.do", method = RequestMethod.POST)
 	public ModelAndView save(HttpServletRequest request, @RequestParam String action, @RequestParam(value="file", required=false)MultipartFile file) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
+		ModelAndView mav = null;
 		logger.debug("[BBAEK] action: " + action);
 		try {
 			param.put("question_seq", request.getParameter("question-seq"));
@@ -105,10 +109,12 @@ public class MgrQuestionController {
 				param.put("max_codesize", request.getParameter("max-codesize"));
 				param.put("grading", request.getParameter("grading"));
 				questionService.saveQuestion(param);
+				mav = new ModelAndView("redirect:/mgr/question/form.do?id=" + param.get("question_seq").toString());
 			} else if(action.equals("delete")) {
 				questionService.deleteQuestion(param);
+				mav = new ModelAndView("redirect:/mgr/question.do");
 			}
-			return new ModelAndView("redirect:/mgr/question/form.do?id=" + param.get("question_seq").toString());
+			return mav;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("/egovframework/cmmn/bizError");
@@ -325,7 +331,6 @@ public class MgrQuestionController {
 	/*
 	 * execute test code
 	 */
-
 	@Resource(name = "questionExecuteService")
 	private QuestionExecuteService executeService;
 	
@@ -344,5 +349,55 @@ public class MgrQuestionController {
 		model.addObject("success", result);
 		model.setViewName("jsonView");
 		return model;
+	}
+	
+	/*
+	 * download sample file for import
+	 */
+	@RequestMapping(value = "/import/downloadsample.do")
+	public ModelAndView downloadSampleFile(Model model) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		try {
+			if(logger.isDebugEnabled()) {
+				logger.debug("file: " + getClass().getResource("/egovframework/file/sample_question_import.xlsx").getFile());
+			}
+			File f = new File(getClass().getResource("/egovframework/file/sample_question_import.xlsx").getFile());
+			mav.addObject("file", f);
+			mav.setViewName("fileDownloadView");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	/*
+	 * import
+	 */
+	@RequestMapping(value = "/import/submit.do", method = RequestMethod.POST)
+	public ModelAndView submitImportFile(MultipartHttpServletRequest req) throws Exception {
+		ModelAndView mav;
+		try {
+			Map<String, Object> param = questionService.importQuestion(req);
+			mav = new ModelAndView("redirect:/mgr/question/form.do?id=" + param.get("question_seq"));
+		} catch(Exception e) {
+			mav = new ModelAndView("redirect:/mgr/question.do");
+		}
+		return mav;
+	}
+	
+	/*
+	 * export
+	 */
+	@RequestMapping(value = "/{seq}/export.do")
+	public ModelAndView exportFile(Model model, @PathVariable(value="seq") long seq) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		try {
+			File f = questionService.exportQuestion(seq);
+			mav.addObject("file", f);
+			mav.setViewName("fileDownloadView");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return mav;
 	}
 }

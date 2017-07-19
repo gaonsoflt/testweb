@@ -22,8 +22,8 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 	@Resource(name = "questionDeployMapper")
 	private QuestionDeployMapper deployMapper;
 	
-	@Resource(name = "questionCadidateMapper")
-	private QuestionCadidateMapper candidateMapper;
+	@Resource(name = "questionCandidateMapper")
+	private QuestionCandidateMapper candidateMapper;
 	
 	@Resource(name = "systemMgrUserService")
 	private SystemMgrUserService userService;
@@ -52,7 +52,7 @@ public class QuestionDeployServiceImpl extends EgovAbstractServiceImpl implement
 			map.put("group_id", group.get("cd_id"));
 			executeCnt = deployMapper.createDeploy(map);
 			logger.debug("get pk: " + map.get("deploy_seq"));
-			candidateMapper.createCandidate(map);
+			candidateMapper.createCandidateByGroup(map);
 		}
 		return executeCnt;
 	}

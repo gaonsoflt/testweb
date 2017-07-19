@@ -16,6 +16,8 @@ public interface QuestionGradingMapper {
 	
 	public int updateGrading(Map<String, Object> map) throws Exception;
 	
+	public int deleteGradingByQuestionSeq(Map<String, Object> map) throws Exception;
+	
 	public int deleteGrading(Map<String, Object> map) throws Exception;
 	
 	public int updateGradingTestResult(ESPAExecuteResultVO map) throws Exception;

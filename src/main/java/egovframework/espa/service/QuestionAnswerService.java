@@ -1,7 +1,7 @@
 package egovframework.espa.service;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface QuestionAnswerService {
-	public boolean saveAnswer(HashMap<String, Object> map);
+	public boolean saveAnswer(Map<String, Object> map) throws Exception;
 }

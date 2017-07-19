@@ -4,11 +4,11 @@
 <!-- Font CSS (Via CDN) -->
 <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
 <!-- Theme CSS -->
-<link rel="stylesheet" type="text/css" href="<c:url value='/resource/css/espa/assets/skin/default_skin/css/theme.css'/>">
+<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/skin/default_skin/css/theme.css'/>">
 <!-- Admin Forms CSS -->
-<link rel="stylesheet" type="text/css" href="<c:url value='/resource/css/espa/assets/admin-tools/admin-forms/css/admin-forms.css'/>">
+<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/admin-tools/admin-forms/css/admin-forms.css'/>">
 <!-- Favicon -->
-<link rel="shortcut icon" href="<c:url value='/resource/css/espa/assets/img/favicon.ico'/>">
+<link rel="shortcut icon" href="<c:url value='/resource/style/espa/assets/img/favicon.ico'/>">
 
 <div class="content-wrapper">
 	<!-- Content Header (Page header) -->

@@ -1,44 +1,39 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../../inc/header.jsp"%>
 <%@ include file="../../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
+
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
 	<!-- Main content -->
-	<section class="content">
+	<section id="content" class="table-layout animated fadeIn">
 		<div class="row">
-			<!-- 내용 -->
-			<div class="col-xs-12">
-				<!-- table 하나 -->
-				<div class="box">
-					<div class="box-body">
-						<div id="gridList"></div>
-					</div>
-				</div> <!-- box -->
-			</div> <!-- col-xs-12 -->
-		</div> <!-- row -->
+			<div class="col-md-12">
+				<div id="gridList"></div>
+			</div>
+		</div>
 	</section>
-</div>
+</section>
 
 <div id="window" style="display:none;">
 	<div>
 		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
 	</div>
 	<table style="width:100%">
-<!-- 		<colgroup> -->
-<!-- 			<col width="50%"> -->
-<!-- 			<col width="50%"> -->
-<!-- 		</colgroup> -->
 		<tbody>
 			<tr>
 				<td>

@@ -27,18 +27,18 @@
     <!-- Ionicons -->
     <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
-    <link href="<c:url value='/resource/dist/css/AdminLTE.css'/>" rel="stylesheet" type="text/css" />
+<%--     <link href="<c:url value='/resource/dist/css/AdminLTE.css'/>" rel="stylesheet" type="text/css" /> --%>
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
-    <link href="<c:url value='/resource/dist/css/skins/skin-blue.min.css'/>" rel="stylesheet" type="text/css" />
+<%--     <link href="<c:url value='/resource/dist/css/skins/skin-blue.min.css'/>" rel="stylesheet" type="text/css" /> --%>
     <!-- fullCalendar 3.0.1-->
 	<%-- <link href="<c:url value='/resource/fullCalendar/3.0.1/fullcalendar.css'/>" rel="stylesheet" type="text/css" />
 	<link href="<c:url value='/resource/fullCalendar/3.0.1/fullcalendar.print.css'/>" rel='stylesheet' media='print' /> --%>
     <!-- fullCalendar 2.2.5-->
-    <link href="<c:url value='/resource/plugins/fullcalendar/fullcalendar.min.css'/>" rel="stylesheet" type="text/css" />
-    <link href="<c:url value='/resource/plugins/fullcalendar/fullcalendar.print.css'/>" rel="stylesheet" type="text/css" media='print' />
+<%--     <link href="<c:url value='/resource/plugins/fullcalendar/fullcalendar.min.css'/>" rel="stylesheet" type="text/css" /> --%>
+<%--     <link href="<c:url value='/resource/plugins/fullcalendar/fullcalendar.print.css'/>" rel="stylesheet" type="text/css" media='print' /> --%>
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,10 +55,8 @@
     <!-- Bootstrap 3.3.2 JS -->
     <script src="<c:url value='/resource/bootstrap/js/bootstrap.min.js'/>" type="text/javascript"></script>
     <!-- AdminLTE App -->
-    <script src="<c:url value='/resource/dist/js/app.min.js'/>" type="text/javascript"></script>
-    
-    <script src="<c:url value='/resource/js/comm/dgms.js'/>" type="text/javascript"></script>
-    
+<%--     <script src="<c:url value='/resource/dist/js/app.min.js'/>" type="text/javascript"></script> --%>
+<%--     <script src="<c:url value='/resource/js/comm/dgms.js'/>" type="text/javascript"></script> --%>
     <script src="<c:url value='/resource/js/comm/jquery.modal.js'/>" type="text/javascript"></script>
   	<link rel="stylesheet" href="<c:url value='/resource/css/jquery.modal.css'/>" type="text/css" media="screen" />
     <!-- Common Kendo UI CSS for web widgets and widgets for data visualization. -->
@@ -88,17 +86,20 @@
 	<!--CDN방식-->
 	<script src="<c:url value='/resource/js/multifile/jQuery.MultiFile.min.js'/>" type="text/javascript" language="javascript"></script>
 
-	<!-- style neuboard -->
-    <!-- Custom styles for this theme -->
-<!--     Font CSS (Via CDN) -->
-<!-- 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'> -->
 	<!-- Theme CSS -->
-<%-- 	<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/skin/default_skin/css/theme.css'/>"> --%>
-	<!-- Admin Forms CSS -->
-<%-- 	<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/admin-tools/admin-forms/css/admin-forms.css'/>"> --%>
-	<!-- Favicon -->
-<%-- 	<link rel="shortcut icon" href="<c:url value='/resource/style/espa/assets/img/favicon.ico'/>"> --%>
-    
+	<link rel="stylesheet" type="text/css" href="<c:url value='/resource/style/espa/assets/skin/default_skin/css/theme.css'/>">
+	 <!-- jQuery -->
+<%--   	<script src="<c:url value='/resource/style/espa/vendor/jquery/jquery-1.11.1.min.js'/>"></script> --%>
+  	<script src="<c:url value='/resource/style/espa/vendor/jquery/jquery_ui/jquery-ui.min.js'/>"></script>
+  	<!-- Bootstrap Tabdrop Plugin -->
+  	<script src="<c:url value='/resource/style/espa/vendor/plugins/tabdrop/bootstrap-tabdrop.js'/>"></script>
+	<!-- Theme Javascript -->
+	<script src="<c:url value='/resource/style/espa/assets/js/utility/utility.js'/>" type="text/javascript" ></script>
+	<script src="<c:url value='/resource/style/espa/assets/js/demo/demo.js'/>" type="text/javascript" ></script>
+	<script src="<c:url value='/resource/style/espa/assets/js/main.js'/>" type="text/javascript" ></script>
+  	 <!-- Widget Javascript -->
+	<script src="<c:url value='/resource/style/espa/assets/js/demo/widgets.js'/>" type="text/javascript" ></script>
+  	
 	<style>
 	.k-header .k-link{
 		text-align: center;

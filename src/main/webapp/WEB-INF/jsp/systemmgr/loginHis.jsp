@@ -1,47 +1,44 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp"%>
 <%@ include file="../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
-	<!-- Main content -->
-	<section class="content">
-		<div class="row">
-			<!-- 내용 -->
-			<div class="col-xs-12">
 
-				<!-- table 하나 -->
-				<div class="box">
-					<!-- <div class="box-header">
-                  <h3 class="box-title"><i class="fa fa-tag"></i>사용자관리</h3>
-                </div> -->
-					<div class="box-body">
-						<!-- jQuery Plug-Ins Widget Initialization -->
-						<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
-							검색&nbsp;&nbsp;&nbsp;&nbsp;
-							<input id="in_search" /> 
-							<input id="in_keyword" /> 
-							<input id="in_searchDate" />
-							<input id="in_user" /> 
-							<button id="searchBtn" type="button">조회</button>
-						</p>
-						<div id="gridDetail"></div>
-					</div>
-				</div> <!-- box -->
-			</div> <!-- col-xs-12 -->
-		</div> <!-- row -->
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
+	<!-- Main content -->
+	<section id="content" class="table-layout animated fadeIn">
+		<div class="row">
+			<div class="col-md-12">
+				<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
+					검색&nbsp;&nbsp;&nbsp;&nbsp;
+					<input id="in_search" /> 
+					<input id="in_keyword" /> 
+					<input id="in_searchDate" />
+					<input id="in_user" /> 
+					<button id="searchBtn" type="button">조회</button>
+				</p>
+			</div>
+			<div class="col-md-12">
+				<div id="gridDetail"></div>
+			</div>
+		</div>
 	</section>
-</div>
+</section>
+
 <script>
 	/* DropDownList Template */
 	var codelist = "_USER_TYPE_";
@@ -288,7 +285,7 @@
 			dataSource : dataSourceDetail,
 			navigatable : true,
 			pageable : true,
-			height : 710,
+			height : 650,
 			toolbar : [{
 				name : "excel",
 				text : "엑셀"

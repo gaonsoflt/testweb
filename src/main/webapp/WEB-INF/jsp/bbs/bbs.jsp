@@ -1,42 +1,44 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp"%>
 <%@ include file="../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
-	<section class="content">
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="box">
-					<div class="box-body">
-						<!-- jQuery Plug-Ins Widget Initialization -->
-						<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
-							검색&nbsp;&nbsp;&nbsp;&nbsp;
-							<input id="in_search" /> 
-							<input id="in_keyword" /> 
-							<input id="in_searchDate" />
-							<input id="in_user" /> 
-							<button id="searchBtn" type="button">조회</button>
-						</p>
-						<button type="button" onclick="location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}'"><spring:message code="button.add"/></button>
-						<div id="gridList"></div>
-					</div>
-				</div> <!-- box -->
-			</div> <!-- col-xs-12 -->
-		</div> <!-- row -->
-	</section>
-</div>
 
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
+	<!-- Main content -->
+	<section id="content" class="table-layout animated fadeIn">
+		<div class="row">
+			<div class="col-md-12">
+				<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
+					검색&nbsp;&nbsp;&nbsp;&nbsp;
+					<input id="in_search" /> 
+					<input id="in_keyword" /> 
+					<input id="in_searchDate" />
+					<input id="in_user" /> 
+					<button id="searchBtn" type="button">조회</button>
+				</p>
+			</div>
+			<div class="col-md-12">
+				<button type="button" onclick="location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}'"><spring:message code="button.add"/></button>
+				<div id="gridList"></div>
+			</div>
+		</div>
+	</section>
+</section>
 <div id="window" style="display:none;">
 	<div>
 		<button id="delete-btn" data-role="button" data-icon="close" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
@@ -52,10 +54,14 @@
 			<tr>
 				<td>
 					<div style="width:100%;">
-						<div>제목</div>
-						<div><input name="title" data-bind="value:selected.title" style="width:100%;" readonly="readonly"/></div>
-						<div>내용</div>
-						<div><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></div>
+						<h4>제목</h4>
+						<div>
+							<input name="title" data-bind="value:selected.title" style="width:100%;" readonly="readonly"/>
+						</div>
+						<h4>내용</h4>
+						<div>
+							<textarea id="bbs-content" name="bbs-content" data-role="editor" data-bind="value:selected.content" style="width:100%;height:500px;"></textarea>
+						</div>
 					</div>
 				</td>
 				<td valign="top">
@@ -78,7 +84,6 @@
 		</tbody>
 	</table>
 </div>
-
 <script type="text/x-kendo-template" id="toolbar-template">
 	<div id="toolbar" style="float:left;">
 		<a href="\\#" class="k-pager-refresh k-link k-button" id="add-btn" title="Create" onclick="return onClick(this);">등록</a>
@@ -343,8 +348,12 @@
             resizable: true,
             open: function(e) {
             	updateReply();
-            	$('.k-editor-toolbar').hide();
-				$($('#content').data().kendoEditor.body).attr('contenteditable', false);
+// 				$($('#content').data().kendoEditor.body).attr('contenteditable', false);
+				var editor = $('#bbs-content').data('kendoEditor');
+			    if (editor !== undefined) {
+			        editor.body.contentEditable = false;
+			        $('.k-editor-toolbar').hide();
+			    }
             }
         }).data("kendoWindow");
 		
@@ -434,7 +443,7 @@
 			},
 			navigatable : true,
 			pageable : true,
-			height : 710,
+			height : 600,
             toolbar: false,
 			columns : [
 				{ field : "board_id", title : "uid", hidden: true },
@@ -625,14 +634,6 @@
 	    
 	    // binding data to window
 		kendo.bind($("#window"), bbsViewModel);
-	    		
-		$("#content").kendoEditor({
-			resizable: {
-	        	content: true,
-	        	toolbar: true
-	        },
-	        encoded: false
-		});
 
 		invokeUserAuth($("#add-btn"), 'kendoButton', 'C');
 		invokeUserAuth($("#save-btn"), 'kendoButton', 'U');

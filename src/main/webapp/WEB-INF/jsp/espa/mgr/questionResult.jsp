@@ -1,73 +1,74 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../../inc/header.jsp"%>
 <%@ include file="../../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
+
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
 	<!-- Main content -->
-	<section class="content">
+	<section id="content" class="table-layout animated fadeIn">
 		<div class="row">
-			<div class="col-xs-12">
-<!-- 				<div class="box"> -->
-					<div class="box-body">
-						<div>
-							<button type="button" id="list-btn" onclick="fn_list();"><spring:message code="button.list" text="list" /></button>
-						</div>
-						<table class="mytable" style="width:100%;">
-							<colgroup>
-								<col width="50%">
-								<col width="50%">
-							</colgroup>
-							<tbody>
-								<tr>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.title"/></label>
-										<div class="col-sm-6">${depQuesInfo.title}</div>
-									</td>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.period"/></label>
-										<div class="col-sm-6">${depQuesInfo.submit_from} ~ ${depQuesInfo.submit_to}</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.group"/></label>
-										<div class="col-sm-6">${depQuesInfo.group_name}</div>
-									</td>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.language"/></label>
-										<div class="col-sm-6">${depQuesInfo.lang_type}</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.status"/></label>
-										<div class="col-sm-6">${depQuesInfo.status}</div>
-									</td>
-									<td>
-										<label class="col-sm-3 control-label"><spring:message code="grading.rate"/></label>
-										<div class="col-sm-6">${depQuesInfo.submit_user} / ${depQuesInfo.candidate} (${depQuesInfo.submit_rate}%) </div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div id="grid-users"></div>
-					</div>
-				</div> <!-- box -->
-			</div> <!-- col-xs-12 -->
-		</div> <!-- row -->
+			<div class="col-md-12">
+				<div>
+					<button type="button" id="list-btn" onclick="fn_list();"><spring:message code="button.list" text="list" /></button>
+				</div>
+				<table class="mytable" style="width:100%;">
+					<colgroup>
+						<col width="50%">
+						<col width="50%">
+					</colgroup>
+					<tbody>
+						<tr>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.title"/></label>
+								<div class="col-sm-6">${depQuesInfo.title}</div>
+							</td>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.period"/></label>
+								<div class="col-sm-6">${depQuesInfo.submit_from} ~ ${depQuesInfo.submit_to}</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.group"/></label>
+								<div class="col-sm-6">${depQuesInfo.group_name}</div>
+							</td>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.language"/></label>
+								<div class="col-sm-6">${depQuesInfo.lang_type}</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.status"/></label>
+								<div class="col-sm-6">${depQuesInfo.status}</div>
+							</td>
+							<td>
+								<label class="col-sm-3 control-label"><spring:message code="grading.rate"/></label>
+								<div class="col-sm-6">${depQuesInfo.submit_user} / ${depQuesInfo.candidate} (${depQuesInfo.submit_rate}%) </div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="grid-users"></div>
+			</div>
+		</div>
 	</section>
-</div>
+</section>
 
 <div id="window" style="display:none;">
 	<div>
@@ -109,6 +110,7 @@
 			type : "post",
 			url : "<c:url value='/mgr/question/deploy/result/user/grading.do'/>",
 			data : {
+				"user_seq" : G_SEQ,
 				"deploy_seq" : "${deploy_seq}",
 				"submit_dt" : submitDT
 			},

@@ -19,93 +19,92 @@ $.ajax({
 	},
 	complete: function(){}
 });
-
-function fnCodeNameByCdID(code){
-	var rtnVal = "";
-	for (var i = 0; i < codeModles.length; i++) {
-        if (codeModles[i].CD_ID == code) {
-        	rtnVal = codeModles[i].CD_NM;
-        }
-    }
-	//return rtnVal;
-	document.getElementById("area-id").innerHTML = rtnVal;
-}
 </script>
 
-<body class="skin-blue">
-    <div class="wrapper">
-      	<!-- Main Header -->
-      	<header class="main-header">
-	        <!-- Logo -->
-	        <a href="<c:url value='/main.do'/>" class="logo">
-	        	<img src="${contextPath}/resource/images/dalogo.gif"/>' alt="로고 이미지" />
-	        </a>
-	       	<!-- Header Navbar -->
-	       	<nav class="navbar navbar-static-top" role="navigation">
-	        <!-- Sidebar toggle button-->
-	        <!-- 사이드 메뉴바 토글 -->
-	        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-	            <span class="sr-only">Toggle navigation</span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	      	</a>
-	   		<!-- Navbar Right Menu -->
-	   		<div class="navbar-custom-menu">
-	     		<ul class="nav navbar-nav">
-	        		<!-- User Account Menu -->
-	        		<li class="dropdown user user-menu">
-		          		<!-- Menu Toggle Button -->
-		          		<a href="#" class="" data-toggle="">
-			          		<!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown"> -->
-			   				<!-- The user image in the navbar-->
-			   				<%-- <img src="<c:url value='/resource/dist/img/user2-160x160.jpg'/>" class="user-image" alt="User Image"/> --%>
-			   				<!-- hidden-xs hides the username on small devices so only the image appears. -->
-			   				<span class="hidden-xs">
-			   					<c:out value="${userStore.fullname}"/>님 &lt;<c:out value="${userStore.username}"/>&gt; 반갑습니다.
-			   				</span>
-			   				&nbsp;
-			   				<a href="${contextPath}/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">
-			   					로그아웃
-			   				</a>
-		       			</a>
-		       			<ul class="dropdown-menu">
-		         			<!-- Menu Footer-->
-		       				<li class="user-footer">
-		           				<div class="pull-right"><a href="/com/login/logout.do" class="btn btn-default btn-flat" onclick="logout();">로그아웃</a></div>
-		         			</li>
-		       			</ul>
-	       			</li>
-	       		</ul>
+<body class="dashboard-page">
+    <div class="main">
+    	<header class="navbar navbar-fixed-top navbar-shadow">
+			<div class="navbar-branding">
+				<a class="navbar-brand" href="<c:url value='/main.do'/>">
+					<strong>ESPA</strong>
+        		</a>
+				<span id="toggle_sidemenu_l" class="ad ad-lines"></span>
 			</div>
-		</nav>
-	</header>
-     
-	<!-- Left side column. contains the logo and sidebar -->
-	<aside class="main-sidebar">
-		<!-- sidebar: style can be found in sidebar.less -->
-		<section class="sidebar">
-         		<div class="user-panel">
-	            <div class="pull-left" style="width:100%;padding:20px 0px;">
-					<div><!-- <img class="img" style="display:block;margin:auto;" src="<c:url value='/resource/images/main_logo.png'/>" width="135px" height="112px" alt="로고 이미지" /> --></div>
-					<div>
-						<p id="area-id" style="font-size:150%;text-align:center;">
-							<script>/*fnCodeNameByCdID("${userStore.areaId}");*/</script>${userStore.areaNm}
-						</p>
+			<ul class="nav navbar-nav navbar-right">
+			</ul>
+    	</header>
+    	<!-- End: Header -->
+    	
+		<aside id="sidebar_left" class="nano nano-light affix">
+		<!-- Start: Sidebar Left Content -->
+			<div class="sidebar-left-content nano-content">
+			<!-- Start: Sidebar Header -->
+				<header class="sidebar-header">
+					<div class="sidebar-widget author-widget">
+						<div class="media">
+							<a class="media-left" href="#">
+								<img src="<c:url value='/resource/images/user_default.jpg'/>" class="img-responsive">
+							</a>
+							<div class="media-body">
+								<div class="media-author">
+									<div class="media-links">
+										<a href="#" class="sidebar-menu-toggle">
+											<c:out value="${userStore.username}"/><br>
+											<c:out value="${userStore.fullname}"/>
+<%-- 											 &lt;<c:out value="${userStore.userType}"/>&gt; --%>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-	            </div>
-	        </div>
-       		<ul id="menu-body" class="sidebar-menu"></ul>
-       	</section>
-     </aside>
-      	
-<style>
-#area-id{display:block; margin-top:132px;}
-.user-panel{background:url("${contextPath}/resource/images/main_logo.png") center 15px no-repeat; width:230px; height:214px;}
-.user-panel .pull-left{width:100%; height:100%;}
-#gridDetail table th{text-align:center;}
-</style>
-
+	
+					<!-- Sidebar Widget - Menu (slidedown) -->
+					<div class="sidebar-widget menu-widget">
+						<div class="row text-center mbn">
+							<div class="col-xs-4">
+								<a href="dashboard.html" class="text-primary" data-toggle="tooltip" data-placement="top" title="Dashboard">
+									<span class="glyphicon glyphicon-home"></span>
+								</a>
+							</div>
+							<div class="col-xs-4">
+								<a href="#" class="text-info" data-toggle="tooltip" data-placement="top" title="Messages">
+									<span class="glyphicon glyphicon-inbox"></span>
+								</a>
+								</div>
+							<div class="col-xs-4">
+								<a href="#" class="text-alert" data-toggle="tooltip" data-placement="top" title="Tasks">
+									<span class="glyphicon glyphicon-bell"></span>
+								</a>
+								</div>
+							<div class="col-xs-4">
+								<a href="#" class="text-profile" data-toggle="tooltip" data-placement="top" title="Profile">
+									<span class="glyphicon glyphicon-user"></span>
+								</a>
+								</div>
+							<div class="col-xs-4">
+								<a href="#" class="text-danger" data-toggle="tooltip" data-placement="top" title="Settings">
+									<span class="fa fa-gears"></span>
+								</a>
+							</div>
+							<div class="col-xs-4">
+								<a href="${contextPath}/com/login/logout.do" class="text-logout" data-toggle="tooltip" data-placement="top" title="Logout">
+									<span class="glyphicon glyphicon-log-out"></span>
+								</a>
+							</div>
+						</div>
+					</div>
+				</header>
+				<!-- Start: Sidebar Menu -->
+	       		<ui id="menu-body" class="nav sidebar-menu"></ui>
+				<!-- End: Sidebar Menu -->
+			</div>
+			<!-- End: Sidebar Left Content -->
+	    </aside>
+	    <!-- End: Sidebar Left -->
+	    <section id="content_wrapper">
+			<!-- Content Header (Page header) -->
+			<header id="topbar" class="alt">
 <script>
 //alert("${userStore.userType}")
 var userType = "${userStore.userType}";
@@ -206,8 +205,10 @@ $(document).ready(function() {
 		});
 		
 		var parentIdx = 0; 
-		
-		var temp = '<li class="header">MENU</li>';
+		var temp = "";
+		temp += '<li class="sidebar-label pt20">Menu</li>';
+		temp += '<li class="active"><a href="${contextPath}/dashboard.do">';
+		temp += '<span class="glyphicon glyphicon-home"></span><span class="sidebar-title">Dashboard</span></a></li>';
 		for (i = 0; i < menuList.length; i++) {
 			
 			if(parentIdx != menuList[i].parent_sq) {
@@ -215,18 +216,18 @@ $(document).ready(function() {
 					temp += '</ul></li>';
 				}
 				// new
-				temp += '<li class="treeview"><a href="#"><i class="fa fa-laptop"></i><span>';
-				temp += menuList[i].main_nm;
-				temp += '</span><i class="fa fa-angle-left pull-right"></i></a>'
-				temp += '<ul class="treeview-menu">';
+				temp += '<li><a class="accordion-toggle" href="#">';
+				temp += '<span class="glyphicon glyphicon-duplicate"></span>';
+				temp += '<span class="sidebar-title">' + menuList[i].main_nm + '</span>';
+				temp += '<span class="caret"></span></a>'
+				temp += '<ul class="nav sub-nav">';
 			}
 			// old
-			temp += '<li id="' + menuList[i].menu_id + '">' +
-				'<a name="' + menuList[i].menu_id + '" href="${contextPath}' + menuList[i].menu_url + '" onclick="setMenuId(this);"><i class="fa fa-circle-o"></i>' + menuList[i].menu_nm + '</a></li>';
-//				'<a name="' + menuList[i].menu_id + '" href="<c:url value="' + menuList[i].menu_url + '"/>" onclick="setMenuId(this);"><i class="fa fa-circle-o"></i>' + menuList[i].menu_nm + '</a></li>';
+			temp += '<li><a name="' + menuList[i].menu_id + '" href="${contextPath}' + menuList[i].menu_url + '">';
+			temp += '<span class="fa fa-desktop"></span>' + menuList[i].menu_nm + '</a></li>';
 			parentIdx = menuList[i].parent_sq;
 		}
-		temp += '</ul></li>';
+		temp += '</li>';
 		var body = document.getElementById("menu-body");
 		body.innerHTML = temp;
 	};

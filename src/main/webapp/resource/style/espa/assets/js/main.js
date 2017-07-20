@@ -236,6 +236,7 @@ var Core = function(options) {
 
       // 3. LEFT MENU LINKS TOGGLE
       $('.sidebar-menu li a.accordion-toggle').on('click', function(e) {
+    	  console.log('.sidebar-menu li a.accordion-toggle');
          e.preventDefault();
 
          // If the clicked menu item is minified and is a submenu (has sub-nav parent) we do nothing

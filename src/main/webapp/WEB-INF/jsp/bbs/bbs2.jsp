@@ -1,24 +1,23 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp"%>
 <%@ include file="../inc/aside.jsp"%>
-
-<!--main content start-->
+<!-- 내용 -->
+<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-	<!-- Main content -->
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>
+			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
+			<li class="active">${menu.menu_nm}</li>
+		</ol>
+	</section>
 	<section class="content">
-        <section class="main-content-wrapper">
-            <div class="pageheader">
-                <h1>${menu.menu_nm} </h1>
-                <p class="description">${menu.menu_desc}</p>
-                <div class="breadcrumb-wrapper hidden-xs">
-                    <ol class="breadcrumb">
-						<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-						<li class="active">${menu.menu_nm}</li>
-                    </ol>
-                </div>
-            </div>
-            <section id="main-content" class="animated fadeInUp">
-                <div class="row">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
 					<div class="box-body">
 						<!-- jQuery Plug-Ins Widget Initialization -->
 						<p id="searchArea" style="font-size: 15px; padding: 10px 0px;">
@@ -29,23 +28,24 @@
 							<input id="in_user" /> 
 							<button id="searchBtn" type="button">조회</button>
 						</p>
+						<button type="button" onclick="location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}'"><spring:message code="button.add"/></button>
 						<div id="gridList"></div>
 					</div>
-                </div>
-            </section>
-        </section>
-    </section>
+				</div> <!-- box -->
+			</div> <!-- col-xs-12 -->
+		</div> <!-- row -->
+	</section>
 </div>
 
 <div id="window" style="display:none;">
 	<div>
 		<button id="delete-btn" data-role="button" data-icon="close" data-bind="click: remove" style="float:right;margin:10px 10px 0 0;">삭제</button>
-		<button id="save-btn" data-role="button" data-icon="pencil" data-bind="click: save" style="float:right;margin:10px 10px 0 0;">저장</button>
-		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">취소</button>
+		<button id="modify-btn" data-role="button" data-icon="pencil" data-bind="click: modify" style="float:right;margin:10px 10px 0 0;">수정</button>
+		<button id="cancel-btn" data-role="button" data-icon="cancel" data-bind="click: cancel" style="float:right;margin:10px 10px 0 0;">닫기</button>
 	</div>
 	<table style="width:100%;">
 		<colgroup>
-			<col width="50%">
+			<col width="60%">
 			<col width="40%">
 		</colgroup>
 		<tbody>
@@ -53,7 +53,7 @@
 				<td>
 					<div style="width:100%;">
 						<div>제목</div>
-						<div><input id="title" class="bind_input" name="title" data-bind="value:selected.title" style="width:100%;" required/></div>
+						<div><input name="title" data-bind="value:selected.title" style="width:100%;" readonly="readonly"/></div>
 						<div>내용</div>
 						<div><textarea id="content" name="content" data-bind="value:selected.content" placeholder="내용을 입력하시고 [저장]버튼을 눌러주세요." style="width:100%;height:500px;"></textarea></div>
 					</div>
@@ -61,17 +61,17 @@
 				<td valign="top">
 					<c:if test="${bbsInfo.use_attach == true}">
 						<div>
-							<div>첨부파일</div> 
-							<input type="file"/>
+							<div>첨부파일</div>
+							<div id="file-list" style="border:2px solid #c9c9c9;min-height:50px"></div>
 						</div>
 					</c:if>
-					<div style="width:100%;">
+					<div id="reply" style="width:100%;">
 						<div>댓글</div>
 						<c:if test="${userStore.username != null}">
-							<textarea rows="3" cols="80" id="reply" name="reply" placeholder="댓글을 입력하세요."></textarea>
+							<textarea rows="3" cols="80" id="replyText" name="replyText" placeholder="댓글을 입력하세요."></textarea>
 							<button type="button" id="writeReply">댓글 등록</button>
 						</c:if>
-						<div id="reply-list" style="overflow:scroll;height:400px;"></div>
+						<div id="reply-list" style="overflow:scroll;height:350px"></div>
 					</div>
 				</td>
 			</tr>
@@ -202,8 +202,7 @@
 		$("#searchBtn").kendoButton({
 			icon : "search",
 			click : function(e) {
-				var gridList = $("#gridList").data("kendoGrid");
-				gridList.dataSource.read();
+				$("#gridList").data("kendoGrid").dataSource.read();
 			}
 		});
 	
@@ -232,11 +231,11 @@
 			}
 		});
 	});
-	
+
 	function addNew(e) {
 		// invisible delete button
 		$("#delete-btn").css("display", "none");
-		
+		$("#reply").css("display", "none");
 		// open window
 		wnd.center().open();		
 		bbsViewModel.set("selected", new bbsModel());
@@ -260,7 +259,7 @@
 	}
 	
 	function updateReply(){
-		$("#reply").val("");
+		$("#replyText").val("");
         $.ajax({
             type: "get",
             url: "<c:url value='/bbs/board/reply/readList.do'/>",
@@ -307,10 +306,9 @@
 	}
 	
 	$(document).ready(function() {
-		
 		$("#writeReply").click(function() {
 			console.log("writeReply");
-			var replyText = $("#reply").val();
+			var replyText = $("#replyText").val();
 			if(replyText != '') {
 				$.ajax({
 					type : "post",
@@ -335,7 +333,7 @@
 		/*************************/
 		wnd = $("#window").kendoWindow({
             title: "",
-            width: 1000,
+            width: 1100,
             actions: [
 				"Maximize",
 				"Close"
@@ -343,7 +341,11 @@
             modal: true,
             visible: false,
             resizable: true,
-            open: updateReply
+            open: function(e) {
+            	updateReply();
+            	$('.k-editor-toolbar').hide();
+				$($('#content').data().kendoEditor.body).attr('contenteditable', false);
+            }
         }).data("kendoWindow");
 		
 		var crudServiceBaseUrl = "${contextPath}/bbs/board";
@@ -433,7 +435,7 @@
 			navigatable : true,
 			pageable : true,
 			height : 710,
-            toolbar: kendo.template($("#toolbar-template").html()),
+            toolbar: false,
 			columns : [
 				{ field : "board_id", title : "uid", hidden: true },
 				{ field : "rnum", title : "번호", width : 100, attributes : { style : "text-align: center;" } },
@@ -463,6 +465,7 @@
         		// read bbsViewModel by G_SEQ 
         		bbsViewModel.dataSource.read();
         		$("#delete-btn").css("display", "inline-block");
+        		$("#reply").css("display", "inline-block");
                 // open window
         		wnd.center().open();
 			},
@@ -496,7 +499,7 @@
 		bbsModel = kendo.data.Model.define({
 			id: "board_id",
 			fields: {
-				board_id		:{ type: "string" },
+				board_id	:{ type: "string" },
 				bbs_seq		:{ type: "string", defaultValue: "${bbsInfo.bbs_seq}" },
 				title		:{ type: "string" },
 				content		:{ type: "string" },
@@ -600,20 +603,9 @@
             batch: true,
             selected: null,
             hasChanges: false,
-            save: function (e) {
-				console.log("kendo.observable:save");
-				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
-	        	// convert tag for editor
-	        	if( typeof $("#content").val() != "undefined" ){
-	        		var inData = $("#content").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-		        	if(inData.length < 1 || inData == null){
-							alert("내용을 입력해주세요.");
-				    	   	e.preventDefault();	
-			        } else {
-		            	this.dataSource.sync();
-			        }//if
-	        	}//undefined
+            modify: function (e) {
+				console.log("kendo.observable:modify");
+				location.href='${contextPath}/bbs/board/form.do?bbs=${bbsInfo.bbs_seq}&board=' + G_SEQ;
             },
             remove: function(e) {
             	console.log("kendo.observable:remove");
@@ -633,145 +625,6 @@
 	    
 	    // binding data to window
 		kendo.bind($("#window"), bbsViewModel);
-	    
-// 		replyModel = kendo.data.Model.define({
-// 			id: "reply_seq",
-// 			fields: {
-// 				reply_seq			:{ type: "number" },
-// 				parent_reply_seq	:{ type: "number" },
-// 				board_id				:{ type: "string", defaultValue: G_SEQ },
-// 				reply				:{ type: "string" },
-// 				mod_dt				:{ type: "string" },
-// 				mod_usr				:{ type: "string" },           
-// 				reg_dt				:{ type: "string" },
-// 				reg_usr				:{ type: "string" }           
-// 			}
-// 		});
-		
-// 	    /*** dataSource ***/
-// 		replyViewModel = kendo.observable({
-// 			dataSource: new kendo.data.DataSource({
-// 				transport: {
-// 					read: {
-// 						url: crudServiceBaseUrl + "/reply/read.do",
-// 		    			dataType: "jsonp",
-// 		    			complete: function(e){ 
-// 		    				console.log("complete /read.do...................");
-// 		    			}
-// 					},
-// // 					update: { url: crudServiceBaseUrl + "/update.do", dataType: "jsonp" },
-// 					destroy: { url: crudServiceBaseUrl + "/reply/delete.do", dataType: "jsonp" },
-// 					create: { url: crudServiceBaseUrl + "/reply/create.do", dataType: "jsonp" },
-// 					parameterMap: function(data, type) {//type =  read, create, update, destroy
-// 						if (type == "read"){
-// 		                   	var result = {
-// 								bbs_seq : "${bbsInfo.bbs_seq}",
-// 								board_id : G_SEQ
-// 							};
-// 							return { params: kendo.stringify(result) }; 
-// 						}
-		               
-// 						if (type !== "read" && data.models) {
-// 							return { models: kendo.stringify(data.models) };
-// 						}
-// 					}
-// 				},
-// 				batch: true,
-// 				schema: {
-// 					model: bbsModel,
-// 					data: function(response) {
-// 						console.log("viewmodel data: ");
-// 						console.log(response);
-// 						return response;
-// 					},
-// 					total: function(response) {
-// 						console.log("viewmodel total: " + 1);
-// 						return 1;
-// 					},
-// 					errors: function(response) {
-// 						console.log("viewmodel error: " + response.error);
-// 						return response.error;
-// 					},
-// 					parse: function(response) {
-// 						console.log("viewmodel parse: ");
-//                     	return response;
-// 					}
-// 				},
-// 		        error : function(e) {
-// 			    	console.log('viewmodel error: ');
-// 			    	console.log(e)
-// 		        },
-// 		        change : function(e) {
-// 		        	console.log("viewmodel change: set selected :");
-// 		            var _data = this.data()[0];
-// 					console.log(_data);
-// 					if(typeof _data != "undefined") {
-// 					} else {
-						
-// 					}
-// 					bbsViewModel.set("selected", _data);
-// 		        },
-// 		        requestStart : function(e) {
-// 				},
-// 				requestEnd : function(e) {
-// 					console.log("deployViewModel:dataSource:requestEnd");
-// 		        	if(e.type != 'read' && e.response.error == null) {
-// 		        		alert("저장되었습니다.");
-// 		        	} else if(e.type != 'read' && e.response.error != null) {
-// 		        		e.preventDefault();
-// 						this.cancelChanges();
-// 		        		alert("저장되지 않았습니다.");
-// 		        	}
-// 				},
-// 		        sync: function(e) { 
-// 		        	console.log("viewmodel save data: ");
-//      			    console.log(this.data()[0]);
-// 				},
-// 				dataBound: function(e){ 
-// 					console.log("viewmodel dataBound");
-// 				}
-// 			}),
-// 			error : function(e) {
-//             	console.log("kendo.observable:error" + e.errors);
-//             },
-//             change: function(e) {
-//             	console.log("kendo.observable:change");
-//             },
-//             batch: true,
-//             selected: null,
-//             hasChanges: false,
-//             save: function (e) {
-// 				console.log("kendo.observable:save");
-// 				bbsViewModel.dataSource.data()[0].set("reg_usr", "${userStore.username}")
-// 	        	bbsViewModel.dataSource.data()[0].set("mod_usr", "${userStore.username}")
-// 	        	// convert tag for editor
-// 	        	if( typeof $("#reply").val() != "undefined" ){
-// 	        		var inData = $("#reply").val().replace(/\s/gi, '').replace(/&nbsp;|<p>|<\/p>/gi, '');
-// 		        	if(inData.length < 1 || inData == null){
-// 							alert("내용을 입력해주세요.");
-// 				    	   	e.preventDefault();	
-// 			        } else {
-// 		            	this.dataSource.sync();
-// 			        }//if
-// 	        	}//undefined
-//             },
-//             remove: function(e) {
-//             	console.log("kendo.observable:remove");
-//                 if (confirm("삭제하시겠습니까?")) {
-//                 	console.log("remove");
-//                     this.dataSource.remove(this.dataSource.data()[0]);
-//                     this.dataSource.sync();
-// 					closeWindow();
-//                 }
-//             },
-//             cancel: function(e) {
-//             	console.log("kendo.observable:cancel");
-//                 this.dataSource.cancelChanges();
-//                 closeWindow();
-//             }
-// 		});
-// 		kendo.bind($("#reply-view"), replyViewModel);
-
 	    		
 		$("#content").kendoEditor({
 			resizable: {
@@ -802,5 +655,15 @@
 	text-overflow: ellipsis;
 }
 
+#dropzone {
+    border:2px dotted #3292A2;
+    width:100%;
+    height:70px;
+    color:#92AAB0;
+    text-align:center;
+    font-size:24px;
+    padding-top:12px;
+    margin-top:10px;
+}
 </style>
 <%@ include file="../inc/footer.jsp"%>

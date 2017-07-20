@@ -108,7 +108,7 @@ public class QuestionGradingHistoryServiceImpl extends EgovAbstractServiceImpl i
 		for (Map<String, Object> resultUser : gradingHisMapper.readUserAnswerHistories(map)) {
 			logger.debug("params: " + map);
 			List<Map<String, Object>> grading = gradingHisMapper.readGradingHistoryByUser(resultUser);
-			if(grading.size() > 0) {
+			if(grading.get(0).get("err_code") == null) {
 				float score = QuestionUtil.calculateScore(grading);
 //				resultUser.put("submit_dt", grading.get(0).get("submit_dt"));
 				resultUser.put("avg_exectime", QuestionUtil.calculateAvgExectime(grading));
@@ -125,7 +125,6 @@ public class QuestionGradingHistoryServiceImpl extends EgovAbstractServiceImpl i
 
 	@Override
 	public Map<String, Object> getUserGradingResultDetail(Map<String, Object> map) throws Exception {
-		map.put("user_seq", userService.getLoginUserInfo().getUserseq());
 		Date date = new Date(Long.valueOf(map.get("submit_dt").toString()));
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateText = df2.format(date);

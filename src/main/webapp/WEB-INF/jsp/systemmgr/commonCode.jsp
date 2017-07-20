@@ -1,46 +1,45 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp" %>
 <%@ include file="../inc/aside.jsp" %>
- 
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-  	<!-- Content Header (Page header) -->
-	<section class="content-header">
-  		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
+
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
 	<!-- Main content -->
-	<section class="content">
+	<section id="content" class="table-layout animated fadeIn">
 		<div class="row">
-  			<!-- 내용 -->
-			<div class="col-xs-12">
-   				<!-- table 하나 -->
-				<div class="box">
-  					<div class="box-body">
-  						<div id="horizontal" style="height:715px">
-							<div id="left-pane">
-								<div id="gridMaster"></div>
-							</div>
-							<div id="vertical">
-								<div id="right-pane">
-									<div id="gridDetail"></div>	
-								</div>
-							</div>
-	                	</div>
+			<div class="col-md-12">
+				<div id="horizontal" style="height:715px">
+					<div id="left-pane">
+						<div id="gridMaster"></div>
 					</div>
-				</div><!-- box -->
-			</div><!-- col-xs-12 -->
-		</div><!-- row -->
-	</section>    
-</div>
+					<div id="vertical">
+						<div id="right-pane">
+							<div id="gridDetail"></div>	
+						</div>
+					</div>
+               	</div>
+			</div>
+		</div>
+	</section>
+</section> 
+
 <script>
-                $(document).ready(function () {
+            $(document).ready(function () {
 				var G_CATGR;//마스터에서 선택한 분류코드 값
 				
                 	
@@ -373,6 +372,6 @@
 						}
 					});//gridDetail end...
 				});//document ready javascript end...
-            	</script>
+</script>
 			      
 <%@ include file="../inc/footer.jsp" %>

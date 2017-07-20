@@ -1,148 +1,146 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../../inc/header.jsp"%>
 <%@ include file="../../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
+
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
 	<!-- Main content -->
-	<section class="content">
+	<section id="content" class="table-layout animated fadeIn">
 		<div class="row">
-			<!-- 내용 -->
-			<div class="col-xs-12">
-				<!-- table 하나 -->
-				<div class="box">
-					<div class="box-body">
-<%-- 						<form id="question-form" action="${contextPath}/mgr/question/save.do" enctype="application/json" onsubmit="return fn_onsubmit(this);"> --%>
-						<form id="question-form" action="${contextPath}/mgr/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
-							<div>
-								<c:if test="${questionInfo != null }">
-									<button type="submit" name="action" class="btn btn-primary btn-sm" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
-								</c:if>
-								<button type="submit" name="action" class="btn btn-primary btn-sm" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
-								<button type="button" id="list-btn" class="btn btn-primary btn-sm" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
-								<c:if test="${questionInfo == null }">
-									<button type="button" name="btn-import" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#formModal" onclick="fn_openImportDlg();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.import" text="import" /></button>
-								</c:if>
-								<c:if test="${questionInfo != null }">
-									<button type="button" name="btn-export" class="btn btn-primary btn-sm" onclick="fn_export();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.export" text="export" /></button>
-								</c:if>
-							</div>
-							<input type="hidden" name="bbs" value="${bbsInfo.bbs_seq}"/>
-							<c:if test="${questionInfo != null }">
-								<input type="hidden" name="question-seq" value="${questionInfo.question_seq}"/>
-							</c:if>
-							<table style="width:100%;">
-								<colgroup>
-									<col width="50%">
-									<col width="50%">
-								</colgroup>
-								<tbody>
-									<tr>
-										<td>
-											<div>
-												<c:if test="${questionInfo != null }">
-												<label class="col-sm-3 control-label">등록자</label>
-												<div class="col-sm-3">
-													${questionInfo.reg_usr}
-                                       			</div>
-												<label class="col-sm-3 control-label">수정일</label>
-												<div class="col-sm-3">
-													${questionInfo.mod_dt}
-                                       			</div>
-												</c:if>
-											</div>
-											<div>
-												<label class="col-sm-4 control-label">제목</label>
-												<div class="col-sm-12">
-                                           			<input type="text" name="title" class="form-control" value="<c:if test='${questionInfo != null}'>${questionInfo.title}</c:if>" required/>
-                                       			</div>
-											</div>
-											<div>
-												<label class="col-sm-3 control-label">문제</label>
-												<div class="col-sm-12">
-													<textarea id="con-question" name="con-question" class="form-control" style="height:200px;"></textarea>
-												</div>
-											</div>
-											<div>
-												<label class="col-sm-3 control-label">입출력</label>
-												<div class="col-sm-12">
-													<textarea id="con-io" name="con-io" class="form-control" style="height:200px;"></textarea>
-												</div>
-											</div>
-											<div>
-												<label class="col-sm-3 control-label">예제</label>
-												<div class="col-sm-12">
-													<textarea id="con-example" name="con-example" class="form-control" style="height:200px;"></textarea>
-												</div>
-											</div>
-											<div>
-												<label class="col-sm-3 control-label">힌트</label>
-												<div class="col-sm-12">
-													<textarea id="con-hint" name="con-hint" class="form-control" style="height:200px;"></textarea>
-												</div>
-											</div>
-										</td>
-										<td valign="top">
-											<div id="tabstrip">
-												<ul>
-													<li class='k-state-active'>기본설정</li>
-													<li>채점데이터</li>
-													<li>테스트코드</li>
-												</ul>
-												<div>
-													<div>
-														<label class="col-sm-3 control-label">언어</label>
-														<div class="col-sm-10">
-															<input id="lang-type" name="lang-type" class="form-control" style="width:100%;" required/>
-														</div>
-														<label class="col-sm-3 control-label">최대 코드 사이즈</label>
-														<div class="col-sm-10">
-															<input type="text" id="max-codesize" name="max-codesize" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.max_codesize}</c:when><c:otherwise>${default_max_codesize}</c:otherwise></c:choose>"/>byte
-														</div>
-														<label class="col-sm-3 control-label">실행시간(timeout)</label>
-														<div class="col-sm-10">
-															<input type="text" id="timeout" name="timeout" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.timeout}</c:when><c:otherwise>${default_timeout}</c:otherwise></c:choose>" required/>ms
-														</div>
-														<label class="col-sm-3 control-label">금지어(, 로 구분)</label>
-														<div class="col-sm-10">
-															<input type="text" id="ban-keyword" name="ban-keyword" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.ban_keyword}</c:when><c:otherwise>${default_ban_kw}</c:otherwise></c:choose>"/>
-														</div>
-													</div>
-												</div>
-												<div>
-													<div id="gradedata">
-														<button id="test-btn" type="button" onclick="fn_executeTest()">테스트시작</button>
-														<div><span id="exec-msg"></span></div>
-														<div id="grid-grading"></div>
-													</div>
-												</div>
-												<div>
-													<div id="testcode" style="height:100%;">
-														<textarea id="test-code" name="test-code" class="form-control" style="height:100%;"></textarea>
-													</div>
-												</div>
-											</div>
-										</td>	
-									</tr>
-								</tbody>
-							</table>
-						</form>
+			<div class="col-md-12">
+				<form id="question-form" action="${contextPath}/mgr/question/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
+					<div>
+						<c:if test="${questionInfo != null }">
+							<button type="submit" name="action" class="btn btn-primary btn-sm" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
+						</c:if>
+						<button type="submit" name="action" class="btn btn-primary btn-sm" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
+						<button type="button" id="list-btn" class="btn btn-primary btn-sm" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
+						<c:if test="${questionInfo == null }">
+							<button type="button" name="btn-import" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#formModal" onclick="fn_openImportDlg();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.import" text="import" /></button>
+						</c:if>
+						<c:if test="${questionInfo != null }">
+							<button type="button" name="btn-export" class="btn btn-primary btn-sm" onclick="fn_export();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.export" text="export" /></button>
+						</c:if>
 					</div>
-				</div> <!-- box -->
-			</div> <!-- col-xs-12 -->
-		</div> <!-- row -->
+					<input type="hidden" name="bbs" value="${bbsInfo.bbs_seq}"/>
+					<c:if test="${questionInfo != null }">
+						<input type="hidden" name="question-seq" value="${questionInfo.question_seq}"/>
+					</c:if>
+					<table style="width:100%;">
+						<colgroup>
+							<col width="50%">
+							<col width="50%">
+						</colgroup>
+						<tbody>
+							<tr>
+								<td>
+									<div>
+										<c:if test="${questionInfo != null }">
+											<label class="col-lg-3 control-label">등록자</label>
+										<div class="col-sm-3">
+											${questionInfo.reg_usr}
+                                     			</div>
+										<label class="col-lg-3 control-label">수정일</label>
+										<div class="col-sm-3">
+											${questionInfo.mod_dt}
+                                     			</div>
+										</c:if>
+									</div>
+									<div>
+										<label for="title" class="col-lg-12 control-label">제목</label>
+										<div class="col-lg-12">
+                                         			<input type="text" name="title" class="form-control" value="<c:if test='${questionInfo != null}'>${questionInfo.title}</c:if>" required/>
+                                     			</div>
+									</div>
+									<div>
+										<label for="con-question" class="col-lg-12 control-label">문제</label>
+										<div class="col-lg-12">
+											<textarea id="con-question" name="con-question" class="form-control" style="height:200px;"></textarea>
+										</div>
+									</div>
+									<div>
+										<label for="con-io" class="col-lg-12 control-label">입출력</label>
+										<div class="col-lg-12">
+											<textarea id="con-io" name="con-io" class="form-control" style="height:200px;"></textarea>
+										</div>
+									</div>
+									<div>
+										<label for="con-example" class="col-lg-12 control-label">예제</label>
+										<div class="col-lg-12">
+											<textarea id="con-example" name="con-example" class="form-control" style="height:200px;"></textarea>
+										</div>
+									</div>
+									<div>
+										<label for="con-hint" class="col-lg-12 control-label">힌트</label>
+										<div class="col-lg-12">
+											<textarea id="con-hint" name="con-hint" class="form-control" style="height:200px;"></textarea>
+										</div>
+									</div>
+								</td>
+								<td valign="top">
+									<div id="tabstrip">
+										<ul>
+											<li class='k-state-active'>기본설정</li>
+											<li>채점데이터</li>
+											<li>테스트코드</li>
+										</ul>
+										<div>
+											<div>
+												<label for="lang-type" class="col-lg-12 control-label">언어</label>
+												<div class="col-sm-10">
+													<input id="lang-type" name="lang-type" class="form-control" style="width:100%;" required/>
+												</div>
+												<label for="max-codesize" class="col-lg-12 control-label">최대 코드 사이즈</label>
+												<div class="col-sm-10">
+													<input type="text" id="max-codesize" name="max-codesize" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.max_codesize}</c:when><c:otherwise>${default_max_codesize}</c:otherwise></c:choose>"/>byte
+												</div>
+												<label for="timeout" class="col-lg-12 control-label">실행시간(timeout)</label>
+												<div class="col-sm-10">
+													<input type="text" id="timeout" name="timeout" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.timeout}</c:when><c:otherwise>${default_timeout}</c:otherwise></c:choose>" required/>ms
+												</div>
+												<label for="ban-keyword" class="col-lg-12 control-label">금지어(, 로 구분)</label>
+												<div class="col-sm-10">
+													<input type="text" id="ban-keyword" name="ban-keyword" class="form-control" value="<c:choose><c:when test='${questionInfo != null}'>${questionInfo.ban_keyword}</c:when><c:otherwise>${default_ban_kw}</c:otherwise></c:choose>"/>
+												</div>
+											</div>
+										</div>
+										<div>
+											<div id="gradedata">
+												<button id="test-btn" type="button" onclick="fn_executeTest()">테스트시작</button>
+												<div><span id="exec-msg"></span></div>
+												<div id="grid-grading"></div>
+											</div>
+										</div>
+										<div>
+											<div id="testcode" style="height:100%;">
+												<textarea id="test-code" name="test-code" class="form-control" style="height:100%;"></textarea>
+											</div>
+										</div>
+									</div>
+								</td>	
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+		</div>
 	</section>
-</div>
+</section>
 
 <div id="window" style="display:none;">
 	<div style="width:500px;">	

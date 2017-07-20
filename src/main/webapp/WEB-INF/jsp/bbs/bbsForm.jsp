@@ -1,76 +1,78 @@
 <%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ include file="../inc/header.jsp"%>
 <%@ include file="../inc/aside.jsp"%>
-<!-- 내용 -->
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			<i class="fa fa-caret-right"></i>${menu.menu_nm} <small>${menu.menu_desc}</small>
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> ${menu.main_nm}</a></li>
-			<li class="active">${menu.menu_nm}</li>
-		</ol>
-	</section>
-	<section class="content">
+
+		<div class="topbar-left">
+			<ol class="breadcrumb">
+				<li class="crumb-active">
+					<a href="<c:url value='${menu.menu_url}'/>">${menu.menu_nm}</a>
+				</li>
+				<li class="crumb-link">
+					<a href="#">${menu.main_nm}</a>
+				</li>
+				<li class="crumb-trail">${menu.menu_nm}</li>
+			</ol>
+		</div>
+		<div class="topbar-right">
+			<div class="ib topbar-dropdown">
+				<label for="topbar-multiple" class="control-label pr10 fs11 text-muted">${menu.menu_desc}</label>
+			</div>
+		</div>
+	</header>
+	<!-- Main content -->
+	<section id="content" class="table-layout animated fadeIn">
 		<div class="row">
-			<div class="col-xs-12">
-				<div class="box">
-					<div class="box-body">
-						<form id="bbs_form" action="${contextPath}/bbs/board/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
-							<div>
-								<c:if test="${boardInfo != null }">
-									<button type="submit" name="action" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
-								</c:if>
-								<button type="submit" name="action" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
-								<button type="button" id="list-btn" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
-							</div>
-							<input type="hidden" name="bbs" value="${bbsInfo.bbs_seq}"/>
-							<c:if test="${boardInfo != null }">
-								<input type="hidden" name="board" value="${boardInfo.board_id }"/>
-							</c:if>
-							<table style="width:100%;">
-								<colgroup>
-									<col width="50%">
-									<col width="40%">
-								</colgroup>
-								<tbody>
-									<tr>
-										<td>
-											<div style="width:100%;">
-												<div>
-													<label class="col-sm-3 control-label">제목</label>
-													<div class="col-sm-12">
-                                            			<input type="text" name="title" class="form-control" value="<c:if test='${boardInfo != null}'>${boardInfo.title}</c:if>" required/>
-                                        			</div>
-												</div>
-												<div>
-													<label class="col-sm-3 control-label">내용</label>
-													<div class="col-sm-12">
-														<textarea id="content" name="content" class="form-control" style="height:500px;"></textarea>
-													</div>
-												</div>
-											</div>
-										</td>
-										<c:if test="${bbsInfo.use_attach == true}">
-											<td valign="top">
-												<div>
-													<label class="col-sm-3 control-label">첨부파일</label>
-													<div class="col-sm-12">
-														<input type="file" id="files" class="file"/>
-														<div id="file-list" style="border:2px solid #c9c9c9;min-height:200px"></div>
-	                                       			</div>
-												</div>
-											</td>
-										</c:if>
-									</tr>
-								</tbody>
-							</table>
-						</form>
+			<div class="col-md-12">
+				<form id="bbs_form" action="${contextPath}/bbs/board/save.do" method="post" enctype="multipart/form-data" onsubmit="return fn_onsubmit(this);">
+					<div>
+						<c:if test="${boardInfo != null }">
+							<button type="submit" name="action" value="delete" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.delete" text="delete" /></button>
+						</c:if>
+						<button type="submit" name="action" value="save" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.save" text="save" /></button>
+						<button type="button" id="list-btn" onclick="fn_list();" style="float:right;margin:10px 10px 0 0;"><spring:message code="button.list" text="list" /></button>
 					</div>
-				</div>
+					<input type="hidden" name="bbs" value="${bbsInfo.bbs_seq}"/>
+					<c:if test="${boardInfo != null }">
+						<input type="hidden" name="board" value="${boardInfo.board_id }"/>
+					</c:if>
+					<table style="width:100%;">
+						<colgroup>
+							<col width="50%">
+							<col width="40%">
+						</colgroup>
+						<tbody>
+							<tr>
+								<td>
+									<div style="width:100%;">
+										<div>
+											<label for="title" class="col-lg-12 control-label">제목</label>
+											<div class="col-lg-12">
+                                          		<input type="text" id="title" name="title" class="form-control" value="<c:if test='${boardInfo != null}'>${boardInfo.title}</c:if>" required/>
+                                     		</div>
+										</div>
+										<div>
+											<label for="bbs-content" class="col-lg-12 control-label">내용</label>
+											<div class="col-lg-12">
+												<textarea id="bbs-content" name="bbs-content" class="form-control" style="height:600px;"></textarea>
+											</div>
+										</div>
+									</div>
+								</td>
+								<c:if test="${bbsInfo.use_attach == true}">
+									<td valign="top">
+										<div>
+											<label class="col-log-12 control-label">첨부파일</label>
+											<div class="col-lg-12">
+												<input type="file" id="files" class="file"/>
+												<div id="file-list" style="border:2px solid #c9c9c9;min-height:200px"></div>
+											</div>
+										</div>
+									</td>
+								</c:if>
+							</tr>
+						</tbody>
+					</table>
+				</form>
 			</div>
 		</div>
 	</section>
@@ -153,7 +155,7 @@
 	});
 	
 	$(document).ready(function() {
-		$("#content").kendoEditor({
+		$("#bbs-content").kendoEditor({
 			resizable: {
 	        	content: false,
 	        	toolbar: true
@@ -161,7 +163,7 @@
 	        encoded: false
 		});
 		
-		$("#content").data("kendoEditor").value("${boardInfo.content}");
+		$("#bbs-content").data("kendoEditor").value("${boardInfo.content}");
 	});//document ready javascript end...
 </script>
 
